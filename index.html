@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CançoNet">
-<script>if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));</script>
+<script>if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'));</script>
 <style>
 :root{--gold:#D4A017;--red:#C1121F;--bg:#0d0d1a;--card:#161e35;--text:#eee;--muted:#778;--ok:#4caf50;--err:#f44336;--purple:#7c3aed}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -53,6 +53,11 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .zone-btn{background:rgba(255,255,255,.05);border:2px solid transparent;border-radius:12px;padding:14px 6px;color:var(--text);cursor:pointer;font-size:.9rem;font-weight:600;transition:all .2s;text-align:center;touch-action:manipulation;min-height:50px}
 .zone-btn:hover,.zone-btn.sel{border-color:var(--gold);color:var(--gold);background:rgba(212,160,23,.1)}
 .zone-btn.wide{grid-column:1/-1}
+.style-card{background:var(--card);border:2px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 10px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s;touch-action:manipulation;min-height:90px;width:100%}
+.style-card:hover,.style-card:active{border-color:var(--gold);transform:scale(1.04)}
+.style-emoji{font-size:1.8rem;line-height:1}
+.style-label{font-size:.78rem;font-weight:700;color:var(--text);text-align:center;line-height:1.2}
+
 .hud{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:460px;margin:8px 0}
 .lvl-badge{background:var(--red);color:#fff;font-size:.75rem;font-weight:700;padding:5px 12px;border-radius:99px;letter-spacing:1px}
 .lives{display:flex;gap:4px}.heart{font-size:1.3rem;transition:all .3s}.heart.dead{opacity:.2;filter:grayscale(1)}
@@ -151,17 +156,9 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="sub" id="login-sub">🎵 Endevina la cançó catalana</div>
   <div class="card" id="login-card-email">
     <div style="text-align:center;margin-bottom:18px"><div style="font-size:2.5rem;margin-bottom:8px">🎵</div><div style="font-weight:700;font-size:1.1rem;margin-bottom:6px" id="login-title">Entra a CançoNet</div><div style="font-size:.82rem;color:var(--muted);line-height:1.7" id="login-desc">Posa el teu correu i et enviarem un enllaç màgic.</div></div>
-    <div class="field"><label id="login-lbl-email">Correu electrònic</label><input id="login-email" type="email" placeholder="correu@exemple.com" autocomplete="email" oninput="checkDevEmail(this.value)"></div>
+    <div class="field"><label id="login-lbl-email">Correu electrònic</label><input id="login-email" type="email" placeholder="correu@exemple.com" autocomplete="email"></div>
     <button class="btn btn-gold" id="login-btn" onclick="onMagicLink()">Enviar enllaç màgic 🎵</button>
     <div style="text-align:center;margin-top:10px"><span style="font-size:.75rem;color:var(--muted)" id="login-privacy">En entrar acceptes les condicions d'ús</span></div>
-  </div>
-  <div id="guest-wrap" style="width:100%;max-width:420px;margin-top:8px;display:none">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <div style="flex:1;height:0.5px;background:rgba(255,255,255,.1)"></div>
-      <span style="font-size:.72rem;color:var(--muted)">o</span>
-      <div style="flex:1;height:0.5px;background:rgba(255,255,255,.1)"></div>
-    </div>
-    <button class="btn btn-ghost" style="font-size:.82rem;padding:11px;opacity:.7" onclick="onGuestLogin()">🎮 Entrar com a convidat (dev)</button>
   </div>
   <div class="card" id="login-card-sent" style="display:none;text-align:center">
     <div style="font-size:2.5rem;margin-bottom:12px">📧</div>
@@ -207,6 +204,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div id="sb-status" style="font-size:.72rem;margin-bottom:8px;color:var(--muted)">🔄 Verificant connexió...</div>
     <div class="big" id="m-hello"></div><div class="muted mt" id="m-zone" style="margin-bottom:14px"></div>
     <div id="m-daily-info"></div>
+    <div id="m-daily-style" style="font-size:.72rem;color:var(--gold);text-align:center;margin-bottom:4px;font-weight:600;letter-spacing:.3px"></div>
     <button class="btn btn-gold" id="m-btn-daily" onclick="onDaily()"></button>
     <button class="btn btn-red" id="m-btn-free" onclick="onFree()"></button>
     <button class="btn btn-purple" id="m-btn-autor" onclick="onAutor()"></button>
@@ -272,6 +270,16 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="w-full"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
 </div>
 
+
+<div id="s-style" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 2px" id="sty-title">🎮 Partida lliure</div>
+  <div class="sub" id="sty-sub">Tria un estil musical</div>
+  <div id="sty-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:460px;margin:8px 0"></div>
+  <div style="width:100%;max-width:460px;margin-top:6px">
+    <button class="btn btn-ghost" onclick="go('s-menu')" id="sty-back">↩️ Enrere</button>
+  </div>
+</div>
+
 <div id="s-challenge-create" class="scr">
   <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">⚔️ Repte a un amic</div><div class="sub">Envia un repte i compara resultats!</div>
   <div class="card center">
@@ -331,19 +339,6 @@ const V={nick(v){if(!v||typeof v!=='string')return{ok:false,e:'Nom obligatori'};
 function esc(s){if(s==null)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
 
 async function sendMagicLink(email){const rUrl=window.location.origin+window.location.pathname;try{const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY},body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true,options:{emailRedirectTo:rUrl}})});if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}return{ok:true}}catch(e){return{ok:false,msg:'Error de connexió'}}}
-
-function checkDevEmail(val){
-  const wrap=document.getElementById('guest-wrap');
-  if(wrap) wrap.style.display=val.trim().toLowerCase()==='kinblay@gmail.com'?'block':'none';
-}
-function onGuestLogin(){
-  G.nick='Kinblay_Dev';G.zone='Tarragona';G.lang='ca';
-  localStorage.setItem('cn:guest','1');
-  localStorage.setItem('cn:user-email','kinblay@gmail.com');
-  localStorage.setItem('cn:profile:kinblay@gmail.com',JSON.stringify({nick:'Kinblay_Dev',zone:'Tarragona',lang:'ca',ts:Date.now()}));
-  toast('👋 Mode dev activat');
-  setTimeout(()=>{renderMenu();go('s-menu')},800);
-}
 async function handleAuthCallback(){const hash=window.location.hash;if(!hash.includes('access_token'))return false;try{const p=new URLSearchParams(hash.slice(1));const a=p.get('access_token'),rf=p.get('refresh_token');if(!a)return false;const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;localStorage.setItem(key,JSON.stringify({access_token:a,refresh_token:rf,expires_at:Date.now()+3600000}));window.history.replaceState(null,'',window.location.pathname);return true}catch(e){return false}}
 async function loadUserProfile(user){
   // 1. Intenta carregar de Supabase (funciona entre dispositius)
@@ -476,6 +471,39 @@ const SONGS_INT=[
 {id:64,t:"Uptown Funk",a:"Mark Ronson ft. Bruno Mars",y:2014,g:"Funk",ai:"M",dec:"anys 2010",ytId:"OPf0YbXqDm0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:65,t:"Gangnam Style",a:"PSY",y:2012,g:"K-pop",ai:"P",dec:"anys 2010",ytId:"9bZkp7q19f0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}}
 ];
+
+const STYLES={
+  ca:[
+    {id:'all',  emoji:'🎵', label:'Tots els estils'},
+    {id:'rock', emoji:'🎸', label:'Rock català'},
+    {id:'pop',  emoji:'🎤', label:'Pop català'},
+    {id:'folk', emoji:'🌿', label:'Folk / Mestissatge'},
+    {id:'autor',emoji:'🎹', label:"Cançó d'autor"},
+    {id:'festa',emoji:'💃', label:'Festa / Rumba'},
+  ],
+  es:[
+    {id:'all',     emoji:'🎵', label:'Todos los estilos'},
+    {id:'pop',     emoji:'🎤', label:'Pop español'},
+    {id:'balada',  emoji:'❤️', label:'Balada'},
+    {id:'autor',   emoji:'🎹', label:'Cantautor'},
+    {id:'flamenco',emoji:'💃', label:'Flamenco'},
+  ],
+  eu:[
+    {id:'all',  emoji:'🎵', label:'All styles'},
+    {id:'pop',  emoji:'🎤', label:'Pop'},
+    {id:'rock', emoji:'🎸', label:'Rock'},
+    {id:'dance',emoji:'🔊', label:'Dance / Eurodance'},
+  ],
+  int:[
+    {id:'all',   emoji:'🎵', label:'All styles'},
+    {id:'pop',   emoji:'🎤', label:'Pop'},
+    {id:'rock',  emoji:'🎸', label:'Rock'},
+    {id:'balada',emoji:'❤️', label:'Ballad'},
+    {id:'hiphop',emoji:'🎤', label:'Hip-hop / Rap'},
+    {id:'funk',  emoji:'🎷', label:'Funk / Soul'},
+    {id:'kpop',  emoji:'🌸', label:'K-pop'},
+  ]
+};
 const SONGS_BY_LANG={ca:SONGS_CA,es:SONGS_ES,eu:SONGS_EU,int:SONGS_INT};
 const AUTOR_BY_LANG={ca:SONGS_AUTOR_CA,es:SONGS_ES.slice(0,5),eu:SONGS_EU.slice(0,5),int:SONGS_INT.slice(0,5)};
 const ALL_SONGS=[...SONGS_CA,...SONGS_AUTOR_CA,...SONGS_ES,...SONGS_EU,...SONGS_INT];
@@ -529,13 +557,45 @@ function renderWelcome(){const t=T[G.lang];document.getElementById('w-sub').text
     t.zones.forEach((z,i)=>{const b=document.createElement('button');b.className='zone-btn'+(i===t.zones.length-1&&t.zones.length%2!==0?' wide':'');b.dataset.z=z;b.textContent=z;b.onclick=()=>pickZone(b);zg.appendChild(b)});
   }
 }
-function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
+function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';
+  const ds=getDailyStyle(G.lang);
+  const dailyStyleEl=document.getElementById('m-daily-style');
+  if(dailyStyleEl)dailyStyleEl.textContent=`Avui: ${ds.emoji} ${ds.label}`;const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
 function onLogin(){const nv=V.nick(document.getElementById('inp-nick').value);if(!nv.ok)return toast('⚠️ '+nv.e);if(!selZone)return toast('⚠️ Selecciona zona!');if(!selGender)return toast('⚠️ Selecciona gènere!');G.nick=nv.val;G.zone=selZone;G.gender=selGender;G.age=selAge;saveUserProfile();renderMenu();go('s-menu');testSB()}
 async function testSB(){const el=document.getElementById('sb-status');const r=await sbS('scores','','score.desc',1);if(r===null){el.textContent='❌ Sense connexió';el.style.color='var(--err)'}else{el.textContent='✅ Connectat';el.style.color='var(--ok)'}}
 
 function seededShuffle(arr,seed){const r=[...arr];let s=seed>>>0;for(let i=r.length-1;i>0;i--){s=(s*1664525+1013904223)>>>0;const j=s%(i+1);[r[i],r[j]]=[r[j],r[i]]}return r}
-function onDaily(){const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}G.mode='daily';initGame(seededShuffle(SONGS_BY_LANG[G.lang],today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily')}
-function onFree(){G.mode='free';initGame(seededShuffle(SONGS_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'free')}
+function onDaily(){
+  const today=new Date().toISOString().slice(0,10);
+  if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}
+  const ds=getDailyStyle(G.lang);
+  const pool=SONGS_BY_LANG[G.lang]||[];
+  const filtered=pool.filter(s=>s.st===ds.id);
+  const list=filtered.length>=5?filtered:pool;
+  G.mode='daily';G.style=ds.id;
+  initGame(seededShuffle(list,today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily');
+}
+
+function getDailyStyle(lang){
+  const styles=(STYLES[lang]||STYLES.ca).filter(s=>s.id!=='all');
+  const today=new Date().toISOString().slice(0,10);
+  const idx=today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%styles.length;
+  return styles[idx];
+}
+function onFree(){
+  const styles=STYLES[G.lang]||STYLES.ca;
+  const grid=document.getElementById('sty-grid');
+  document.getElementById('sty-title').textContent='🎮 Partida lliure';
+  grid.innerHTML=styles.map(s=>`<button class="style-card" onclick="onStartWithStyle('${s.id}')"><div class="style-emoji">${s.emoji}</div><div class="style-label">${s.label}</div></button>`).join('');
+  go('s-style');
+}
+function onStartWithStyle(styleId){
+  const pool=SONGS_BY_LANG[G.lang]||[];
+  const filtered=styleId==='all'?pool:pool.filter(s=>s.st===styleId);
+  const list=filtered.length>=5?filtered:pool;
+  G.mode='free';G.style=styleId==='all'?null:styleId;
+  initGame(seededShuffle(list,Math.floor(Math.random()*999999)),'free');
+}
 function onAutor(){G.mode='autor';initGame(seededShuffle(AUTOR_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'autor')}
 function initGame(list,mode){G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];G.songList=list;G.songIdx=0;G.song=list[0];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel()}
 
