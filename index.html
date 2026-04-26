@@ -337,11 +337,12 @@ function checkDevEmail(val){
   if(wrap) wrap.style.display=val.trim().toLowerCase()==='kinblay@gmail.com'?'block':'none';
 }
 function onGuestLogin(){
-  G.nick='Kinblay_Dev';G.zone='Tarragona';
-  localStorage.setItem('cn_nick','Kinblay_Dev');
-  localStorage.setItem('cn_zone','Tarragona');
+  G.nick='Kinblay_Dev';G.zone='Tarragona';G.lang='ca';
+  localStorage.setItem('cn:guest','1');
+  localStorage.setItem('cn:user-email','kinblay@gmail.com');
+  localStorage.setItem('cn:profile:kinblay@gmail.com',JSON.stringify({nick:'Kinblay_Dev',zone:'Tarragona',lang:'ca',ts:Date.now()}));
   toast('👋 Mode dev activat');
-  setTimeout(()=>{go('s-modes')},800);
+  setTimeout(()=>{renderMenu();go('s-menu')},800);
 }
 async function handleAuthCallback(){const hash=window.location.hash;if(!hash.includes('access_token'))return false;try{const p=new URLSearchParams(hash.slice(1));const a=p.get('access_token'),rf=p.get('refresh_token');if(!a)return false;const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;localStorage.setItem(key,JSON.stringify({access_token:a,refresh_token:rf,expires_at:Date.now()+3600000}));window.history.replaceState(null,'',window.location.pathname);return true}catch(e){return false}}
 async function loadUserProfile(user){
