@@ -151,9 +151,17 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="sub" id="login-sub">🎵 Endevina la cançó catalana</div>
   <div class="card" id="login-card-email">
     <div style="text-align:center;margin-bottom:18px"><div style="font-size:2.5rem;margin-bottom:8px">🎵</div><div style="font-weight:700;font-size:1.1rem;margin-bottom:6px" id="login-title">Entra a CançoNet</div><div style="font-size:.82rem;color:var(--muted);line-height:1.7" id="login-desc">Posa el teu correu i et enviarem un enllaç màgic.</div></div>
-    <div class="field"><label id="login-lbl-email">Correu electrònic</label><input id="login-email" type="email" placeholder="correu@exemple.com" autocomplete="email"></div>
+    <div class="field"><label id="login-lbl-email">Correu electrònic</label><input id="login-email" type="email" placeholder="correu@exemple.com" autocomplete="email" oninput="checkDevEmail(this.value)"></div>
     <button class="btn btn-gold" id="login-btn" onclick="onMagicLink()">Enviar enllaç màgic 🎵</button>
     <div style="text-align:center;margin-top:10px"><span style="font-size:.75rem;color:var(--muted)" id="login-privacy">En entrar acceptes les condicions d'ús</span></div>
+  </div>
+  <div id="guest-wrap" style="width:100%;max-width:420px;margin-top:8px;display:none">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <div style="flex:1;height:0.5px;background:rgba(255,255,255,.1)"></div>
+      <span style="font-size:.72rem;color:var(--muted)">o</span>
+      <div style="flex:1;height:0.5px;background:rgba(255,255,255,.1)"></div>
+    </div>
+    <button class="btn btn-ghost" style="font-size:.82rem;padding:11px;opacity:.7" onclick="onGuestLogin()">🎮 Entrar com a convidat (dev)</button>
   </div>
   <div class="card" id="login-card-sent" style="display:none;text-align:center">
     <div style="font-size:2.5rem;margin-bottom:12px">📧</div>
@@ -322,7 +330,19 @@ const canScore=()=>RL.check('sc',3,10*60*1000);const canBustia=()=>RL.check('bu'
 const V={nick(v){if(!v||typeof v!=='string')return{ok:false,e:'Nom obligatori'};const s=v.trim();if(s.length<1||s.length>20)return{ok:false,e:'1-20 caràcters'};if(!/^[\w\s\-àáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ·]+$/u.test(s))return{ok:false,e:'Caràcters no permesos'};return{ok:true,val:s}},msg(v){if(!v||typeof v!=='string')return{ok:false,e:'Missatge obligatori'};const s=v.trim();if(s.length<3||s.length>500)return{ok:false,e:'3-500 caràcters'};return{ok:true,val:s}},email(v){if(!v||v.trim()==='')return{ok:true,val:null};const s=v.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))return{ok:false,e:'Email invàlid'};return{ok:true,val:s}},score(v){const n=parseInt(v);if(isNaN(n)||n<0||n>99999)return{ok:false};return{ok:true,val:n}}};
 function esc(s){if(s==null)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
 
-async function sendMagicLink(email){const rUrl='https://kinblay.github.io/CancoNet/';try{const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY},body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true,options:{emailRedirectTo:rUrl}})});if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}return{ok:true}}catch(e){return{ok:false,msg:'Error de connexió'}}}
+async function sendMagicLink(email){const rUrl=window.location.origin+window.location.pathname;try{const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY},body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true,options:{emailRedirectTo:rUrl}})});if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}return{ok:true}}catch(e){return{ok:false,msg:'Error de connexió'}}}
+
+function checkDevEmail(val){
+  const wrap=document.getElementById('guest-wrap');
+  if(wrap) wrap.style.display=val.trim().toLowerCase()==='kinblay@gmail.com'?'block':'none';
+}
+function onGuestLogin(){
+  G.nick='Kinblay_Dev';G.zone='Tarragona';
+  localStorage.setItem('cn_nick','Kinblay_Dev');
+  localStorage.setItem('cn_zone','Tarragona');
+  toast('👋 Mode dev activat');
+  setTimeout(()=>{go('s-modes')},800);
+}
 async function handleAuthCallback(){const hash=window.location.hash;if(!hash.includes('access_token'))return false;try{const p=new URLSearchParams(hash.slice(1));const a=p.get('access_token'),rf=p.get('refresh_token');if(!a)return false;const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;localStorage.setItem(key,JSON.stringify({access_token:a,refresh_token:rf,expires_at:Date.now()+3600000}));window.history.replaceState(null,'',window.location.pathname);return true}catch(e){return false}}
 async function loadUserProfile(user){
   // 1. Intenta carregar de Supabase (funciona entre dispositius)
