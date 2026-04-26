@@ -2,6 +2,7 @@
 <html lang="ca">
 <head>
 <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CançoNet</title>
 <link rel="manifest" href="manifest.json">
@@ -133,7 +134,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 </head>
 <body>
 <div id="toast"></div>
-<div id="yt-shell"><iframe id="yt-frame" title="audio" src="about:blank" allow="autoplay;encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+<div id="yt-shell"><iframe id="yt-frame" title="audio" src="about:blank" allow="autoplay;encrypted-media" referrerpolicy="no-referrer"></iframe></div>
 
 <div class="modal-overlay hide" id="modal-wip">
   <div class="modal-box">
@@ -322,7 +323,7 @@ const canScore=()=>RL.check('sc',3,10*60*1000);const canBustia=()=>RL.check('bu'
 const V={nick(v){if(!v||typeof v!=='string')return{ok:false,e:'Nom obligatori'};const s=v.trim();if(s.length<1||s.length>20)return{ok:false,e:'1-20 caràcters'};if(!/^[\w\s\-àáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ·]+$/u.test(s))return{ok:false,e:'Caràcters no permesos'};return{ok:true,val:s}},msg(v){if(!v||typeof v!=='string')return{ok:false,e:'Missatge obligatori'};const s=v.trim();if(s.length<3||s.length>500)return{ok:false,e:'3-500 caràcters'};return{ok:true,val:s}},email(v){if(!v||v.trim()==='')return{ok:true,val:null};const s=v.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))return{ok:false,e:'Email invàlid'};return{ok:true,val:s}},score(v){const n=parseInt(v);if(isNaN(n)||n<0||n>99999)return{ok:false};return{ok:true,val:n}}};
 function esc(s){if(s==null)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
 
-async function sendMagicLink(email){const rUrl='https://kinblay.github.io/CancoNet/';try{const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY},body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true,options:{emailRedirectTo:rUrl}})});if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}return{ok:true}}catch(e){return{ok:false,msg:'Error de connexió'}}}
+async function sendMagicLink(email){const rUrl=window.location.origin+window.location.pathname;try{const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY},body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true,options:{emailRedirectTo:rUrl}})});if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}return{ok:true}}catch(e){return{ok:false,msg:'Error de connexió'}}}
 async function handleAuthCallback(){const hash=window.location.hash;if(!hash.includes('access_token'))return false;try{const p=new URLSearchParams(hash.slice(1));const a=p.get('access_token'),rf=p.get('refresh_token');if(!a)return false;const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;localStorage.setItem(key,JSON.stringify({access_token:a,refresh_token:rf,expires_at:Date.now()+3600000}));window.history.replaceState(null,'',window.location.pathname);return true}catch(e){return false}}
 async function loadUserProfile(user){
   // 1. Intenta carregar de Supabase (funciona entre dispositius)
