@@ -2,7 +2,6 @@
 <html lang="ca">
 <head>
 <meta charset="UTF-8">
-<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CançoNet</title>
 <link rel="manifest" href="manifest.json">
@@ -527,15 +526,15 @@ function updTimer(){const bar=document.getElementById('g-tbar');bar.style.width=
 function getACtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}
 function playDemo(songId,dur){const ctx=getACtx(),notes=[261.63,293.66,329.63,349.23,392,440,493.88,523.25],n=Math.ceil(dur*2.5),nd=dur/n,base=songId*7;const mel=[...Array(n)].map((_,i)=>notes[(base+i*3)%notes.length]);const m=ctx.createGain();m.gain.setValueAtTime(0,ctx.currentTime);m.gain.linearRampToValueAtTime(.14,ctx.currentTime+.08);m.gain.linearRampToValueAtTime(0,ctx.currentTime+dur-.05);m.connect(ctx.destination);mel.forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*nd;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.4,t+.02);g.gain.linearRampToValueAtTime(0,t+nd-.02);o.connect(g);g.connect(m);o.start(t);o.stop(t+nd)});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>onSegEnd(),dur*1000+200)}
 function getSegBounds(song,lv){const raw=song.seg?.[lv.seg]||song.seg?.full||{s:0,e:8};const s=Number(raw.s)||0,e=Math.max(s+1,Number(raw.e)||s+lv.dur);const want=Math.max(1,lv.dur),avail=e-s;if(avail<=want)return{start:s,end:e};if(lv.seg==='end')return{start:e-want,end:e};return{start:s,end:s+want}}
-function buildEmbed(ytId,bounds){return`https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&start=${Math.max(0,Math.floor(bounds.start))}&end=${Math.ceil(bounds.end)+1}`}
+function buildEmbed(ytId,bounds){return`https://www.youtube.com/embed/${encodeURIComponent(ytId)}?enablejsapi=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&start=${Math.max(0,Math.floor(bounds.start))}&end=${Math.ceil(bounds.end)+1}`}
 const IS_SANDBOX=(()=>{try{return window.self!==window.top||location.protocol==='about:'||location.hostname==='claude.ai'}catch(e){return true}})();
-function ytPlay(song,lvIdx){const frame=document.getElementById('yt-frame');if(!frame||!song?.ytId||song.ytId==='DEMO')return false;const lv=LEVELS[lvIdx],bounds=getSegBounds(song,lv),durMs=Math.max(1200,(bounds.end-bounds.start)*1000);frame.src='about:blank';setTimeout(()=>{frame.src=buildEmbed(song.ytId,bounds)},80);clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>onSegEnd(),durMs+900);return true}
+function ytPlay(song,lvIdx){const frame=document.getElementById('yt-frame');if(!frame||!song?.ytId||song.ytId==='DEMO')return false;const lv=LEVELS[lvIdx],bounds=getSegBounds(song,lv),durMs=Math.max(1200,(bounds.end-bounds.start)*1000);frame.src='about:blank';setTimeout(()=>{frame.src=buildEmbed(song.ytId,bounds);setTimeout(()=>{try{frame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}','*')}catch(e){}},900)},80);clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>onSegEnd(),durMs+1700);return true}
 function ytStop(silent){clearTimeout(ytStopTimer);const f=document.getElementById('yt-frame');if(f)f.src='about:blank';if(!silent)onSegEnd()}
 function playAudio(song,lvIdx){if(!IS_SANDBOX&&song.ytId&&song.ytId!=='DEMO')ytPlay(song,lvIdx);else playDemo(song.id,LEVELS[lvIdx].dur)}
 function onSegEnd(){if(!G.playing)return;G.playing=false;const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;setWave(false);const rem=Math.max(0,G.maxPlays-G.playCount),t=T[G.lang];document.getElementById('g-pinfo').textContent=rem>0?`${t.playsLeft} ${rem}`:t.noPlays}
 function setWave(on){document.getElementById('g-wave').innerHTML=[...Array(18)].map((_,i)=>`<div class="wb${on?' a':''}" style="${on?`animation-delay:${i*.055}s;height:${4+Math.sin(i*.7)*14+8}px`:'height:4px'}"></div>`).join('')}
 function onPlay(){if(G.playing)return;if(G.playCount>=G.maxPlays){toast(T[G.lang].noPlays);return}G.playCount++;G.playing=true;const pb=document.getElementById('g-pbtn');pb.textContent='■';pb.classList.add('on');pb.disabled=true;document.getElementById('g-pinfo').textContent=`${T[G.lang].playing} (${G.playCount}/${G.maxPlays})`;setWave(true);playAudio(G.song,G.lvl-1)}
-function onListenFull(){if(!G.song)return;if(!IS_SANDBOX&&G.song.ytId&&G.song.ytId!=='DEMO'){const f=document.getElementById('yt-frame');f.src='about:blank';setTimeout(()=>{f.src=buildEmbed(G.song.ytId,{start:0,end:180})},80)}else playDemo(G.song.id,15);toast(T[G.lang].listenFull)}
+function onListenFull(){if(!G.song)return;if(!IS_SANDBOX&&G.song.ytId&&G.song.ytId!=='DEMO'){const f=document.getElementById('yt-frame');f.src='about:blank';setTimeout(()=>{f.src=buildEmbed(G.song.ytId,{start:0,end:180});setTimeout(()=>{try{f.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}','*')}catch(e){}},900)},80)}else playDemo(G.song.id,15);toast(T[G.lang].listenFull)}
 
 const ANS_MODES=['write-title','choose-title','guess-year','guess-author'];
 function getAnswerMode(lvl){return{mode:ANS_MODES[(lvl-1)%4],isBonus:lvl%3===0}}
