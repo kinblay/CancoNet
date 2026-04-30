@@ -52,7 +52,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
 .zone-btn{background:rgba(255,255,255,.05);border:2px solid transparent;border-radius:12px;padding:14px 6px;color:var(--text);cursor:pointer;font-size:.9rem;font-weight:600;transition:all .2s;text-align:center;touch-action:manipulation;min-height:50px}
 .zone-btn:hover,.zone-btn.sel{border-color:var(--gold);color:var(--gold);background:rgba(212,160,23,.1)}
-.zone-btn.wide{grid-column:1/-1}
+.zone-btn.wide{grid-column:1/-1}.style-card{background:var(--card);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 10px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:all .18s;touch-action:manipulation;min-height:88px;width:100%;border:none;color:var(--text)}.style-card:hover,.style-card:active{border:1.5px solid var(--gold);transform:scale(1.03);background:rgba(212,160,23,.1)}.style-emoji{font-size:1.9rem;line-height:1}.style-label{font-size:.8rem;font-weight:600;color:var(--text);text-align:center;line-height:1.3}
 .hud{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:460px;margin:8px 0}
 .lvl-badge{background:var(--red);color:#fff;font-size:.75rem;font-weight:700;padding:5px 12px;border-radius:99px;letter-spacing:1px}
 .lives{display:flex;gap:4px}.heart{font-size:1.3rem;transition:all .3s}.heart.dead{opacity:.2;filter:grayscale(1)}
@@ -125,7 +125,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .social-btn{background:rgba(255,255,255,.07);border:none;border-radius:10px;padding:10px 14px;color:var(--text);font-size:.82rem;cursor:pointer;text-decoration:none;display:inline-block;touch-action:manipulation}
 .social-btn:hover{background:rgba(255,255,255,.14)}
 #yt-shell{position:fixed;bottom:0;right:0;width:1px;height:1px;overflow:hidden;opacity:.01;pointer-events:none;z-index:-1}
-#yt-frame{width:1px;height:1px;border:0}
+#yt-frame{width:320px;height:180px;border:0}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border-radius:14px;padding:12px 20px;font-weight:700;opacity:0;transition:all .3s;pointer-events:none;z-index:999;border:1px solid rgba(255,255,255,.12);font-size:.9rem;max-width:88vw;text-align:center}
 #toast.on{transform:translateX(-50%) translateY(0);opacity:1}
 .w-full{width:100%;max-width:460px}.center{text-align:center}.muted{color:var(--muted)}.field{margin-bottom:14px}.big{font-size:1.3rem;font-weight:700}.mt{margin-top:8px}.sep{height:1px;background:rgba(255,255,255,.07);margin:10px 0}
@@ -197,8 +197,10 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="logo">Cançó<b>Net</b></div><div class="sub" id="m-sub"></div>
   <div class="card center">
     <div id="sb-status" style="font-size:.72rem;margin-bottom:8px;color:var(--muted)">🔄 Verificant connexió...</div>
+    <div id="m-rank-widget" style="width:100%;background:rgba(212,160,23,.08);border:0.5px solid rgba(212,160,23,.25);border-radius:12px;padding:10px 14px;margin-bottom:10px;text-align:left"></div>
     <div class="big" id="m-hello"></div><div class="muted mt" id="m-zone" style="margin-bottom:14px"></div>
     <div id="m-daily-info"></div>
+    <div id="m-daily-style" style="font-size:.72rem;font-weight:600;color:var(--gold);text-align:center;margin-bottom:4px;letter-spacing:.3px"></div>
     <button class="btn btn-gold" id="m-btn-daily" onclick="onDaily()"></button>
     <button class="btn btn-red" id="m-btn-free" onclick="onFree()"></button>
     <button class="btn btn-purple" id="m-btn-autor" onclick="onAutor()"></button>
@@ -209,6 +211,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div class="sep"></div>
     <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Pròximament</div>
     <button class="btn btn-ghost" onclick="go('s-challenge-create');loadChallengeStats()">⚔️ Repte a un amic</button>
+    <button class="btn btn-ghost" onclick="showWip('relax')" style="opacity:.9;border:1.5px solid rgba(134,239,172,.35);background:rgba(134,239,172,.07);position:relative">🎹 Mode Relax <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#000;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px;letter-spacing:.5px">NOU</span></button>
     <button class="btn btn-ghost" onclick="showWip('familia')" style="opacity:.7">👨‍👩‍👧 Mode família</button>
     <button class="btn btn-ghost" onclick="showWip('provinces')" style="opacity:.7">🏴 Repte per zones</button>
     <button class="btn btn-ghost" onclick="showWip('logros')" style="opacity:.7">🏅 Assoliments i badges</button>
@@ -226,6 +229,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div id="g-bonus-badge" class="bonus-badge" style="display:none;margin:6px auto">⭐ BONUS — puntuació màxima!</div>
   <div class="player-box"><button class="play-btn" id="g-pbtn" onclick="onPlay()">▶</button><div class="wave" id="g-wave"></div><div class="p-info" id="g-pinfo"></div></div>
   <div class="hint-box" id="g-hint" style="display:none"><span id="g-hint-txt"></span></div>
+  <div id="g-lvl10-clue" style="display:none;width:100%;max-width:460px;background:rgba(212,160,23,.08);border:.5px solid rgba(212,160,23,.25);border-radius:10px;padding:10px 14px;margin:6px 0;text-align:left"></div>
   <div id="g-answer-container" style="width:100%;max-width:460px;margin:7px 0"></div>
   <div id="g-full-song-wrap" style="display:none;width:100%;max-width:460px"><button class="btn btn-green" id="g-full-btn" onclick="onListenFull()"></button></div>
   <div class="w-full"><button class="btn btn-outline mt" id="g-skip-btn" onclick="onSkip()"></button><button class="btn btn-ghost" id="g-exit-btn" onclick="onExit()" style="font-size:.8rem;padding:10px"></button></div>
@@ -234,7 +238,11 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 <div id="s-gameover" class="scr">
   <div class="go-emoji" id="go-emoji">🎵</div><div class="go-title" id="go-title"></div><div class="go-sub" id="go-sub"></div>
   <div class="card"><div class="card-ttl center">Puntuació final</div><div class="final-pts" id="go-pts">0</div><div class="center muted mt" id="go-lvltxt" style="margin-bottom:12px;font-size:.8rem"></div><div class="sep"></div><div id="go-res"></div></div>
-  <div class="share-card"><div class="share-title">CançoNet · <span id="sh-date"></span></div><div class="share-dots" id="sh-dots"></div><div class="share-score">🏆 <span id="sh-score"></span> pts</div><div class="share-zone">📍 <span id="sh-zone"></span></div><div style="font-size:.75rem;color:#a78bfa;margin-top:3px" id="sh-streak"></div><div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="sh-mode"></div></div>
+  <div id="go-deezer-wrap" style="display:none;width:100%;max-width:460px;margin-top:8px;text-align:center">
+    <a id="go-deezer-link" href="#" target="_blank" rel="noopener" style="display:inline-block;background:rgba(26,195,136,.12);border:.5px solid rgba(26,195,136,.35);color:#1ac37c;font-size:.85rem;font-weight:600;padding:10px 20px;border-radius:10px;text-decoration:none">🎧 Escolta a Deezer</a>
+    <div id="go-deezer-songs" style="margin-top:10px;font-size:.75rem;color:var(--muted)"></div>
+  </div>
+  <div class="share-card"><div class="share-title">CançoNet · <span id="sh-date"></span></div><div class="share-dots" id="sh-dots"></div><div class="share-score">🏆 <span id="sh-score"></span> pts</div><div style="font-size:.72rem;color:var(--gold);margin-top:2px" id="sh-rank"></div><div class="share-zone">📍 <span id="sh-zone"></span></div><div style="font-size:.75rem;color:#a78bfa;margin-top:3px" id="sh-streak"></div><div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="sh-mode"></div></div>
   <div class="w-full"><button class="btn btn-gold" id="go-share-btn" onclick="onShare()"></button><button class="btn btn-red" id="go-again-btn" onclick="onFree()"></button><button class="btn btn-ghost" id="go-menu-btn" onclick="go('s-menu')"></button><button class="btn btn-ghost" id="go-rank-btn" onclick="go('s-rankings')"></button></div>
 </div>
 
@@ -262,6 +270,14 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="card"><div class="card-ttl">Com jugar</div><div style="font-size:.85rem;color:var(--muted);line-height:2">🎵 Escolta · ✅ Respon · ❤️ 3 vides · ⏭️ Saltar · ⏱️ Compte enrere<br>📈 10 nivells creixents<br><br><strong style="color:var(--text)">Modes:</strong> ✏️ Escriu · 🎵 Tria títol · 🗓️ Any · 🎤 Autor<br>⭐ <strong style="color:var(--gold)">BONUS cada 3 nivells</strong><br>📅 Diari: 1/dia · 🎮 Lliure: sense límit</div></div>
   <div class="card"><div class="card-ttl">Segueix-nos</div><div class="social-row"><a class="social-btn" href="https://instagram.com" target="_blank">📸 IG</a><a class="social-btn" href="https://tiktok.com" target="_blank">🎵 TikTok</a><a class="social-btn" href="https://twitter.com" target="_blank">🐦 X</a></div></div>
   <div class="w-full"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+</div>
+
+
+<div id="s-style" class="scr">
+  <div style="font-size:1.6rem;font-weight:900;margin:8px 0 4px;text-align:center">🎮 Partida lliure</div>
+  <div class="sub" id="sty-sub" style="margin-bottom:16px;text-align:center"></div>
+  <div id="sty-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:460px;margin:0 0 12px"></div>
+  <button class="btn btn-ghost" onclick="go('s-menu')" style="width:100%;max-width:460px">↩️ <span id="sty-back-lbl">Enrere</span></button>
 </div>
 
 <div id="s-challenge-create" class="scr">
@@ -369,10 +385,10 @@ async function trackArtist(nick,zona,lang,artist){if(!nick||!artist)return;const
 
 function hideTtl(t){return t.split('').map((c,i)=>{if(c===' ')return' ';if(i===0||i===t.length-1)return c;return i%2===0?c:'_'}).join('')}
 const T={
-ca:{appSub:'Endevina la cançó catalana',yourName:'El teu nom',namePH:'Com et dius?',yourZone:'La teva zona',playBtn:'Jugar! 🎵',seeRank:'🏆 Veure rànquing',hello:'Hola',dailyBtn:'📅 Cançó del dia',freeBtn:'🎮 Partida lliure',autorBtn:'🎸 Cançó d\'Autor',rankBtn:'🏆 Rànquing',suggestBtn:'💌 Bustia',infoBtn:'ℹ️ Informació',answerPH:'Escriu el títol...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Sortir',listenFull:'🎵 Cançó sencera',correct:'✅ Correcte!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escoltes:',playsLeft:'Restants:',noPlays:'No queden',playing:'♪ Reproduint...',hT:s=>`💡 Títol: ${hideTtl(s.t)}`,hL:s=>`💡 Lletra: "${s.t[0]}"`,hY:s=>`💡 Any: ${s.y}`,hG:s=>`💡 Gènere: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Paraules: ${s.t.split(' ').length}`,hD:s=>`💡 Dècada: ${s.dec}`,perfect:'Perfecte! 10/10!',vgood:'Molt bé!',ggame:'Bona partida!',guessed:'cançons encertades',allLvl:'🏆 Tots els nivells!',upToLvl:'Fins al nivell',shareBtn:'📤 Compartir',playAgain:'🔄 Tornar a jugar',mainMenu:'↩️ Menú',dailyPlayed:'✅ Ja has jugat avui!',dailyPlayedSub:'Torna demà.',noScores:'Cap puntuació encara.',levelBadge:{daily:'📅 Diari',free:'🎮 Lliure',autor:'🎸 Autor',challenge:'⚔️ Repte'},lvls:[{n:'Fragment fàcil',d:'Fragment clar i reconeixible'},{n:'Tornada',d:'Un tros de la tornada'},{n:'Introducció',d:'Primers segons'},{n:'Final',d:'Últims segons'},{n:'Fragment del mig',d:'Tros del centre'},{n:'Tornada difícil',d:'Fragment curt de tornada'},{n:'Fragment curt',d:'Pocs segons'},{n:'Mig difícil',d:'Fragment curt del centre'},{n:'Final difícil',d:'Fragment curt del final'},{n:'🔥 Repte final',d:'3 seg — tot o res!'}],zones:["Barcelona","Girona","Lleida","Tarragona","Terres de l'Ebre"]},
-es:{appSub:'Adivina la canción',yourName:'Tu nombre',namePH:'¿Cómo te llamas?',yourZone:'Tu zona',playBtn:'¡Jugar! 🎵',seeRank:'🏆 Ver ranking',hello:'Hola',dailyBtn:'📅 Canción del día',freeBtn:'🎮 Partida libre',autorBtn:'🎸 Canción de Autor',rankBtn:'🏆 Ranking',suggestBtn:'💌 Buzón',infoBtn:'ℹ️ Info',answerPH:'Título de la canción...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Salir',listenFull:'🎵 Canción entera',correct:'✅ ¡Correcto!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escuchas:',playsLeft:'Restantes:',noPlays:'No quedan',playing:'♪ Reproduciendo...',hT:s=>`💡 Título: ${hideTtl(s.t)}`,hL:s=>`💡 Letra: "${s.t[0]}"`,hY:s=>`💡 Año: ${s.y}`,hG:s=>`💡 Género: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Palabras: ${s.t.split(' ').length}`,hD:s=>`💡 Década: ${s.dec}`,perfect:'¡Perfecto!',vgood:'¡Muy bien!',ggame:'¡Buena partida!',guessed:'canciones',allLvl:'🏆 ¡Todos!',upToLvl:'Hasta nivel',shareBtn:'📤 Compartir',playAgain:'🔄 Otra vez',mainMenu:'↩️ Menú',dailyPlayed:'✅ ¡Ya jugaste hoy!',dailyPlayedSub:'Vuelve mañana.',noScores:'Sin puntuaciones.',levelBadge:{daily:'📅 Diario',free:'🎮 Libre',autor:'🎸 Autor',challenge:'⚔️ Reto'},lvls:[{n:'Fragmento fácil',d:'Claro'},{n:'Estribillo',d:'Trozo del estribillo'},{n:'Intro',d:'Primeros segundos'},{n:'Final',d:'Últimos segundos'},{n:'Medio',d:'Trozo central'},{n:'Estribillo difícil',d:'Corto'},{n:'Fragmento corto',d:'Pocos seg'},{n:'Medio difícil',d:'Centro corto'},{n:'Final difícil',d:'Final corto'},{n:'🔥 Reto final',d:'3s — ¡todo o nada!'}],zones:["Andalucía","Aragón","Asturias","Illes Balears","Canàries","Cantàbria","Castella i Lleó","Castella-la Manxa","Catalunya","Extremadura","Galícia","La Rioja","Madrid","Múrcia","Navarra","País Basc","País Valencià","Ceuta i Melilla"]},
-eu:{appSub:'Guess the European song',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'Easy',d:'Clear fragment'},{n:'Chorus',d:'Chorus piece'},{n:'Intro',d:'First seconds'},{n:'Ending',d:'Last seconds'},{n:'Middle',d:'Center piece'},{n:'Hard chorus',d:'Short'},{n:'Short',d:'Few seconds'},{n:'Hard middle',d:'Short center'},{n:'Hard ending',d:'Short end'},{n:'🔥 Final',d:'3s — all or nothing!'}],zones:["France","Germany","Italy","Portugal","Netherlands"]},
-int:{appSub:'Guess the hit',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'Easy',d:'Clear'},{n:'Chorus',d:'Chorus'},{n:'Intro',d:'First sec'},{n:'Ending',d:'Last sec'},{n:'Middle',d:'Center'},{n:'Hard chorus',d:'Short'},{n:'Short',d:'Few sec'},{n:'Hard middle',d:'Short'},{n:'Hard ending',d:'Short'},{n:'🔥 Final',d:'3s!'}],zones:["Americas","Asia","Africa","Oceania","Europe"]}
+ca:{appSub:'Endevina la cançó catalana',yourName:'El teu nom',namePH:'Com et dius?',yourZone:'La teva zona',playBtn:'Jugar! 🎵',seeRank:'🏆 Veure rànquing',hello:'Hola',dailyBtn:'📅 Cançó del dia',freeBtn:'🎮 Partida lliure',autorBtn:'🎸 Cançó d\'Autor',rankBtn:'🏆 Rànquing',suggestBtn:'💌 Bustia',infoBtn:'ℹ️ Informació',answerPH:'Escriu el títol...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Sortir',listenFull:'🎵 Cançó sencera',correct:'✅ Correcte!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escoltes:',playsLeft:'Restants:',noPlays:'No queden',playing:'♪ Reproduint...',hT:s=>`💡 Títol: ${hideTtl(s.t)}`,hL:s=>`💡 Lletra: "${s.t[0]}"`,hY:s=>`💡 Any: ${s.y}`,hG:s=>`💡 Gènere: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Paraules: ${s.t.split(' ').length}`,hD:s=>`💡 Dècada: ${s.dec}`,perfect:'Perfecte! 10/10!',vgood:'Molt bé!',ggame:'Bona partida!',guessed:'cançons encertades',allLvl:'🏆 Tots els nivells!',upToLvl:'Fins al nivell',shareBtn:'📤 Compartir',playAgain:'🔄 Tornar a jugar',mainMenu:'↩️ Menú',dailyPlayed:'✅ Ja has jugat avui!',dailyPlayedSub:'Torna demà.',noScores:'Cap puntuació encara.',levelBadge:{daily:'📅 Diari',free:'🎮 Lliure',autor:'🎸 Autor',challenge:'⚔️ Repte'},listenDeezer:'🎧 Escolta a Deezer',clueLabel:'💡 Pista final:',clueDefault:'Aquesta cançó és molt popular al seu gènere',lvls:[{n:'Fragment fàcil',d:'Fragment clar i reconeixible'},{n:'Tornada',d:'Un tros de la tornada'},{n:'Introducció',d:'Primers segons'},{n:'Final',d:'Últims segons'},{n:'Fragment del mig',d:'Tros del centre'},{n:'Tornada difícil',d:'Fragment curt de tornada'},{n:'Fragment curt',d:'Pocs segons'},{n:'Mig difícil',d:'Fragment curt del centre'},{n:'Final difícil',d:'Fragment curt del final'},{n:'🔥 Repte final',d:'3 seg — tot o res!'}],zones:["Barcelona","Girona","Lleida","Tarragona","Terres de l'Ebre"]},
+es:{appSub:'Adivina la canción',yourName:'Tu nombre',namePH:'¿Cómo te llamas?',yourZone:'Tu zona',playBtn:'¡Jugar! 🎵',seeRank:'🏆 Ver ranking',hello:'Hola',dailyBtn:'📅 Canción del día',freeBtn:'🎮 Partida libre',autorBtn:'🎸 Canción de Autor',rankBtn:'🏆 Ranking',suggestBtn:'💌 Buzón',infoBtn:'ℹ️ Info',answerPH:'Título de la canción...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Salir',listenFull:'🎵 Canción entera',correct:'✅ ¡Correcto!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escuchas:',playsLeft:'Restantes:',noPlays:'No quedan',playing:'♪ Reproduciendo...',hT:s=>`💡 Título: ${hideTtl(s.t)}`,hL:s=>`💡 Letra: "${s.t[0]}"`,hY:s=>`💡 Año: ${s.y}`,hG:s=>`💡 Género: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Palabras: ${s.t.split(' ').length}`,hD:s=>`💡 Década: ${s.dec}`,perfect:'¡Perfecto!',vgood:'¡Muy bien!',ggame:'¡Buena partida!',guessed:'canciones',allLvl:'🏆 ¡Todos!',upToLvl:'Hasta nivel',shareBtn:'📤 Compartir',playAgain:'🔄 Otra vez',mainMenu:'↩️ Menú',dailyPlayed:'✅ ¡Ya jugaste hoy!',dailyPlayedSub:'Vuelve mañana.',noScores:'Sin puntuaciones.',levelBadge:{daily:'📅 Diario',free:'🎮 Libre',autor:'🎸 Autor',challenge:'⚔️ Reto'},listenDeezer:'🎧 Escuchar en Deezer',clueLabel:'💡 Pista final:',clueDefault:'Esta canción es muy popular en su género',lvls:[{n:'Fragmento fácil',d:'Claro'},{n:'Estribillo',d:'Trozo del estribillo'},{n:'Intro',d:'Primeros segundos'},{n:'Final',d:'Últimos segundos'},{n:'Medio',d:'Trozo central'},{n:'Estribillo difícil',d:'Corto'},{n:'Fragmento corto',d:'Pocos seg'},{n:'Medio difícil',d:'Centro corto'},{n:'Final difícil',d:'Final corto'},{n:'🔥 Reto final',d:'3s — ¡todo o nada!'}],zones:["Andalucía","Aragón","Asturias","Illes Balears","Canàries","Cantàbria","Castella i Lleó","Castella-la Manxa","Catalunya","Extremadura","Galícia","La Rioja","Madrid","Múrcia","Navarra","País Basc","País Valencià","Ceuta i Melilla"]},
+eu:{appSub:'Guess the European song',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},listenDeezer:'🎧 Listen on Deezer',clueLabel:'💡 Final clue:',clueDefault:'This song is very popular in its genre',lvls:[{n:'Easy',d:'Clear fragment'},{n:'Chorus',d:'Chorus piece'},{n:'Intro',d:'First seconds'},{n:'Ending',d:'Last seconds'},{n:'Middle',d:'Center piece'},{n:'Hard chorus',d:'Short'},{n:'Short',d:'Few seconds'},{n:'Hard middle',d:'Short center'},{n:'Hard ending',d:'Short end'},{n:'🔥 Final',d:'3s — all or nothing!'}],zones:["France","Germany","Italy","Portugal","Netherlands"]},
+int:{appSub:'Guess the hit',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},listenDeezer:'🎧 Listen on Deezer',clueLabel:'💡 Final clue:',clueDefault:'This song is very popular in its genre',lvls:[{n:'Easy',d:'Clear'},{n:'Chorus',d:'Chorus'},{n:'Intro',d:'First sec'},{n:'Ending',d:'Last sec'},{n:'Middle',d:'Center'},{n:'Hard chorus',d:'Short'},{n:'Short',d:'Few sec'},{n:'Hard middle',d:'Short'},{n:'Hard ending',d:'Short'},{n:'🔥 Final',d:'3s!'}],zones:["Americas","Asia","Africa","Oceania","Europe"]}
 };
 
 const SONGS_CA=[
@@ -469,8 +485,28 @@ function addFloatingNotes(){const el=document.getElementById('s-splash');['🎵'
 function skipSplash(){if(splashDone)return;splashDone=true;document.getElementById('s-splash').classList.add('fadeout');setTimeout(()=>go('s-modes'),500)}
 function initSplash(){addFloatingNotes();document.getElementById('s-splash').addEventListener('click',()=>playSplashMusic(),{once:true});setTimeout(skipSplash,4000)}
 
-const WIP_DATA={familia:{title:'👨‍👩‍👧 Mode família',sub:'Crea un grup familiar!',features:['🔑 Codi de 6 lletres','👥 Fins a 8 jugadors','🏅 Rànquing familiar']},provinces:{title:'🏴 Repte per zones',sub:'Competeix per la teva zona!',features:['🏴 Comarques','🏆 Copa setmanal','⚔️ Derbis']},logros:{title:'🏅 Assoliments',sub:'Desbloqueja badges!',features:['🎸 Mestre de Sau','🔥 En ratxa','⚡ Llampec','👑 Campió']},realia:{title:'🤖 Real o IA?',sub:'Escolta un fragment i endevina si la cançó és real o generada per intel·ligència artificial!',features:['🎵 Fragments de cançons reals i generades amb IA','🧠 Posa a prova el teu oïda','📊 Estadístiques de encerts','🏆 Rànquing dels millors detectors']}};
-function showWip(type){const d=WIP_DATA[type]||{title:'En construcció',sub:'Aviat!',features:[]};document.getElementById('wip-title').textContent=d.title;document.getElementById('wip-sub').textContent=d.sub;document.getElementById('wip-features').innerHTML=d.features.map(f=>`<div>✦ ${esc(f)}</div>`).join('');document.getElementById('modal-wip').classList.remove('hide')}
+const WIP_DATA={relax:{
+  title:'🎹 Mode Relax',
+  sub:'Endevina la cançó escoltant-la en versió de piano — sense veu, sense ritme, només la melodia.',
+  features:[
+    '🎹 Versions de piano de cançons famoses',
+    '🌿 Visual suau i ambient relaxant',
+    '🧘 Ideal per desconnectar jugant',
+    '🎵 Catàleg complet en versió piano',
+    '📅 Partida diària i partida lliure',
+    '🎧 Àudio via YouTube (versions piano)'
+  ],
+  note:'🔧 Per activar aquest mode necessitem afegir les versions de piano (YouTube IDs) a cada cançó. Si coneixes una bona versió piano d\'alguna cançó, suggereix-la!'
+},familia:{title:'👨‍👩‍👧 Mode família',sub:'Crea un grup familiar!',features:['🔑 Codi de 6 lletres','👥 Fins a 8 jugadors','🏅 Rànquing familiar']},provinces:{title:'🏴 Repte per zones',sub:'Competeix per la teva zona!',features:['🏴 Comarques','🏆 Copa setmanal','⚔️ Derbis']},logros:{title:'🏅 Assoliments',sub:'Desbloqueja badges!',features:['🎸 Mestre de Sau','🔥 En ratxa','⚡ Llampec','👑 Campió']},realia:{title:'🤖 Real o IA?',sub:'Escolta un fragment i endevina si la cançó és real o generada per intel·ligència artificial!',features:['🎵 Fragments de cançons reals i generades amb IA','🧠 Posa a prova el teu oïda','📊 Estadístiques de encerts','🏆 Rànquing dels millors detectors']}};
+function showWip(type){
+  const d=WIP_DATA[type]||{title:'En construcció',sub:'Aviat!',features:[]};
+  document.getElementById('wip-title').textContent=d.title;
+  document.getElementById('wip-sub').textContent=d.sub;
+  document.getElementById('wip-features').innerHTML=d.features.map(f=>`<div>✦ ${esc(f)}</div>`).join('');
+  const noteEl=document.getElementById('wip-note');
+  if(noteEl){noteEl.style.display=d.note?'block':'none';if(d.note)noteEl.textContent=d.note;}
+  document.getElementById('modal-wip').classList.remove('hide');
+}
 function closeWip(){document.getElementById('modal-wip').classList.add('hide')}
 
 function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id==='s-rankings')loadRankings();if(id==='s-bustia')loadBustia()}
@@ -508,13 +544,184 @@ function renderWelcome(){const t=T[G.lang];document.getElementById('w-sub').text
     t.zones.forEach((z,i)=>{const b=document.createElement('button');b.className='zone-btn'+(i===t.zones.length-1&&t.zones.length%2!==0?' wide':'');b.dataset.z=z;b.textContent=z;b.onclick=()=>pickZone(b);zg.appendChild(b)});
   }
 }
-function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
+function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;renderRankWidget();const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';
+  const ds=getDailyStyle(G.lang);
+  const dsBadge=document.getElementById('m-daily-style');
+  if(dsBadge){const lbl=ds.label[G.lang]||ds.label.ca;dsBadge.textContent=`${ds.emoji} ${lbl}`;}const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
 function onLogin(){const nv=V.nick(document.getElementById('inp-nick').value);if(!nv.ok)return toast('⚠️ '+nv.e);if(!selZone)return toast('⚠️ Selecciona zona!');if(!selGender)return toast('⚠️ Selecciona gènere!');G.nick=nv.val;G.zone=selZone;G.gender=selGender;G.age=selAge;saveUserProfile();renderMenu();go('s-menu');testSB()}
 async function testSB(){const el=document.getElementById('sb-status');const r=await sbS('scores','','score.desc',1);if(r===null){el.textContent='❌ Sense connexió';el.style.color='var(--err)'}else{el.textContent='✅ Connectat';el.style.color='var(--ok)'}}
 
+
+// ═══════════════════════════════════════
+// SISTEMA DE RANGS — FASE A
+// ═══════════════════════════════════════
+const RANKS = {
+  ca: [
+    {min:0,     name:'🌱 Aprenent',    short:'Aprenent'},
+    {min:500,   name:'🎵 Curiós',      short:'Curiós'},
+    {min:1500,  name:'📻 Aficionat',   short:'Aficionat'},
+    {min:3000,  name:'🎸 Melòman',     short:'Melòman'},
+    {min:6000,  name:'🎤 Veu del Poble',short:'Veu del Poble'},
+    {min:10000, name:'🎼 Trobador',    short:'Trobador'},
+    {min:16000, name:'📜 Cronista',    short:'Cronista'},
+    {min:25000, name:'🌟 Mestre',      short:'Mestre'},
+    {min:40000, name:'👑 Erudit',      short:'Erudit'},
+    {min:60000, name:'🏛️ Llegenda',   short:'Llegenda'}
+  ],
+  es: [
+    {min:0,     name:'🌱 Novato',      short:'Novato'},
+    {min:500,   name:'🎵 Curioso',     short:'Curioso'},
+    {min:1500,  name:'📻 Aficionado',  short:'Aficionado'},
+    {min:3000,  name:'🎸 Melómano',    short:'Melómano'},
+    {min:6000,  name:'🎤 Voz del pueblo',short:'Voz del pueblo'},
+    {min:10000, name:'🎼 Trovador',    short:'Trovador'},
+    {min:16000, name:'📜 Cronista',    short:'Cronista'},
+    {min:25000, name:'🌟 Maestro',     short:'Maestro'},
+    {min:40000, name:'👑 Erudito',     short:'Erudito'},
+    {min:60000, name:'🏛️ Leyenda',    short:'Leyenda'}
+  ],
+  eu: [
+    {min:0,     name:'🌱 Newcomer',    short:'Newcomer'},
+    {min:500,   name:'🎵 Curious',     short:'Curious'},
+    {min:1500,  name:'📻 Fan',         short:'Fan'},
+    {min:3000,  name:'🎸 Music lover', short:'Music lover'},
+    {min:6000,  name:'🎤 Voice',       short:'Voice'},
+    {min:10000, name:'🎼 Troubadour',  short:'Troubadour'},
+    {min:16000, name:'📜 Chronicler',  short:'Chronicler'},
+    {min:25000, name:'🌟 Master',      short:'Master'},
+    {min:40000, name:'👑 Scholar',     short:'Scholar'},
+    {min:60000, name:'🏛️ Legend',     short:'Legend'}
+  ],
+  int: [
+    {min:0,     name:'🌱 Newcomer',    short:'Newcomer'},
+    {min:500,   name:'🎵 Curious',     short:'Curious'},
+    {min:1500,  name:'📻 Fan',         short:'Fan'},
+    {min:3000,  name:'🎸 Music lover', short:'Music lover'},
+    {min:6000,  name:'🎤 Voice',       short:'Voice'},
+    {min:10000, name:'🎼 Troubadour',  short:'Troubadour'},
+    {min:16000, name:'📜 Chronicler',  short:'Chronicler'},
+    {min:25000, name:'🌟 Master',      short:'Master'},
+    {min:40000, name:'👑 Scholar',     short:'Scholar'},
+    {min:60000, name:'🏛️ Legend',     short:'Legend'}
+  ]
+};
+
+function getTotalScore(){
+  try{return parseInt(localStorage.getItem('cn:total_score')||'0')}catch(e){return 0}
+}
+function addTotalScore(pts){
+  try{
+    const cur=getTotalScore();
+    localStorage.setItem('cn:total_score',String(cur+pts));
+  }catch(e){}
+}
+function getRank(lang){
+  const ranks=RANKS[lang]||RANKS.ca;
+  const pts=getTotalScore();
+  let rank=ranks[0];
+  for(const r of ranks){if(pts>=r.min)rank=r;}
+  return rank;
+}
+function getRankProgress(lang){
+  const ranks=RANKS[lang]||RANKS.ca;
+  const pts=getTotalScore();
+  let idx=0;
+  for(let i=0;i<ranks.length;i++){if(pts>=ranks[i].min)idx=i;}
+  const cur=ranks[idx];
+  const next=ranks[idx+1];
+  if(!next)return{rank:cur,pct:100,pts,next:null,needed:0,idx};
+  const pct=Math.round(((pts-cur.min)/(next.min-cur.min))*100);
+  return{rank:cur,pct,pts,next,needed:next.min-pts,idx};
+}
+function renderRankWidget(){
+  const prog=getRankProgress(G.lang);
+  const el=document.getElementById('m-rank-widget');
+  if(!el)return;
+  const nextTxt=prog.next
+    ? `<span style="font-size:.72rem;color:var(--muted)">${prog.needed.toLocaleString()} pts → ${prog.next.short}</span>`
+    : `<span style="font-size:.72rem;color:var(--gold)">Rang màxim!</span>`;
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:1rem;font-weight:700;color:var(--gold)">${prog.rank.name}</span>
+      <span style="font-size:.78rem;color:var(--muted)">${prog.pts.toLocaleString()} pts</span>
+    </div>
+    <div style="background:rgba(255,255,255,.1);border-radius:99px;height:6px;overflow:hidden;margin-bottom:4px">
+      <div style="height:100%;width:${prog.pct}%;background:linear-gradient(90deg,var(--gold),#f59e0b);border-radius:99px;transition:width .5s"></div>
+    </div>
+    ${nextTxt}`;
+}
+
+const STYLES={
+  ca:[
+    {id:'all',  emoji:'🎵', label:{ca:'Tots els estils',es:'Todos',eu:'All',int:'All'}},
+    {id:'rock', emoji:'🎸', label:{ca:'Rock català',es:'Rock catalán',eu:'Catalan Rock',int:'Catalan Rock'}},
+    {id:'pop',  emoji:'🎤', label:{ca:'Pop català',es:'Pop catalán',eu:'Catalan Pop',int:'Catalan Pop'}},
+    {id:'folk', emoji:'🌿', label:{ca:'Folk',es:'Folk',eu:'Folk',int:'Folk'}},
+    {id:'festa',emoji:'💃', label:{ca:'Festa / Rumba',es:'Fiesta / Rumba',eu:'Festa / Rumba',int:'Festa / Rumba'}},
+  ],
+  es:[
+    {id:'all',     emoji:'🎵', label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},
+    {id:'pop',     emoji:'🎤', label:{ca:'Pop',es:'Pop español',eu:'Spanish Pop',int:'Spanish Pop'}},
+    {id:'balada',  emoji:'❤️', label:{ca:'Balada',es:'Balada',eu:'Ballad',int:'Ballad'}},
+    {id:'flamenco',emoji:'💃', label:{ca:'Flamenco',es:'Flamenco',eu:'Flamenco',int:'Flamenco'}},
+  ],
+  eu:[
+    {id:'all',  emoji:'🎵', label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},
+    {id:'pop',  emoji:'🎤', label:{ca:'Pop',es:'Pop',eu:'Pop',int:'Pop'}},
+    {id:'rock', emoji:'🎸', label:{ca:'Rock',es:'Rock',eu:'Rock',int:'Rock'}},
+    {id:'dance',emoji:'🔊', label:{ca:'Dance',es:'Dance',eu:'Dance / Eurodance',int:'Dance / Eurodance'}},
+  ],
+  int:[
+    {id:'all',   emoji:'🎵', label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},
+    {id:'pop',   emoji:'🎤', label:{ca:'Pop',es:'Pop',eu:'Pop',int:'Pop'}},
+    {id:'rock',  emoji:'🎸', label:{ca:'Rock',es:'Rock',eu:'Rock',int:'Rock'}},
+    {id:'balada',emoji:'❤️', label:{ca:'Balada',es:'Balada',eu:'Ballad',int:'Ballad'}},
+    {id:'hiphop',emoji:'🎤', label:{ca:'Hip-hop',es:'Hip-hop',eu:'Hip-hop',int:'Hip-hop'}},
+    {id:'funk',  emoji:'🎷', label:{ca:'Funk / Soul',es:'Funk / Soul',eu:'Funk / Soul',int:'Funk / Soul'}},
+    {id:'kpop',  emoji:'🌸', label:{ca:'K-pop',es:'K-pop',eu:'K-pop',int:'K-pop'}},
+  ]
+};
 function seededShuffle(arr,seed){const r=[...arr];let s=seed>>>0;for(let i=r.length-1;i>0;i--){s=(s*1664525+1013904223)>>>0;const j=s%(i+1);[r[i],r[j]]=[r[j],r[i]]}return r}
-function onDaily(){const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}G.mode='daily';initGame(seededShuffle(SONGS_BY_LANG[G.lang],today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily')}
-function onFree(){G.mode='free';initGame(seededShuffle(SONGS_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'free')}
+function onDaily(){
+  const today=new Date().toISOString().slice(0,10);
+  if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}
+  const ds=getDailyStyle(G.lang);
+  const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);
+  const filtered=pool.filter(s=>s.st===ds.id);
+  const list=filtered.length>=5?filtered:pool;
+  G.mode='daily';G.style=ds.id;
+  initGame(seededShuffle(list,today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily');
+}
+
+function getDailyStyle(lang){
+  const styles=(STYLES[lang]||STYLES.ca).filter(s=>s.id!=='all');
+  const today=new Date().toISOString().slice(0,10);
+  const idx=today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%styles.length;
+  return styles[idx];
+}
+function onFree(){
+  const lang=G.lang;
+  const styles=(STYLES[lang]||STYLES.ca);
+  const t=T[lang];
+  const grid=document.getElementById('sty-grid');
+  document.getElementById('sty-sub').textContent=t.freeBtn||'Tria un estil musical';
+  document.getElementById('sty-back-lbl').textContent=t.mainMenu||'Enrere';
+  grid.innerHTML=styles.map(s=>{
+    const lbl=s.label[lang]||s.label.ca;
+    return `<button class="style-card" onclick="onStartWithStyle('${s.id}')">
+      <div class="style-emoji">${s.emoji}</div>
+      <div class="style-label">${lbl}</div>
+    </button>`;
+  }).join('');
+  go('s-style');
+}
+function onStartWithStyle(styleId){
+  const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);
+  const filtered=styleId==='all'?pool:pool.filter(s=>s.st===styleId);
+  const list=filtered.length>=5?filtered:pool;
+  G.mode='free';G.style=styleId==='all'?null:styleId;
+  initGame(seededShuffle(list,Math.floor(Math.random()*999999)),'free');
+}
 function onAutor(){G.mode='autor';initGame(seededShuffle(AUTOR_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'autor')}
 function initGame(list,mode){G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];G.songList=list;G.songIdx=0;G.song=list[0];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel()}
 
@@ -604,7 +811,25 @@ async function endGame(){
   const t=T[G.lang],ok=G.results.filter(r=>r==='ok').length,gameNum=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),streak=getStreak();
   document.getElementById('go-emoji').textContent=ok>=9?'🏆':ok>=6?'🎵':'😅';document.getElementById('go-title').textContent=ok===10?t.perfect:ok>=7?t.vgood:t.ggame;document.getElementById('go-sub').textContent=`${ok}/10 ${t.guessed}`;document.getElementById('go-pts').textContent=G.score.toLocaleString();document.getElementById('go-lvltxt').textContent=ok===10?t.allLvl:`${t.upToLvl} ${G.lvl}/10`;
   document.getElementById('go-res').innerHTML=G.results.map((r,i)=>{const ico=r==='ok'?'✅':r==='skip'?'⏭️':'❌';const song=G.songList[i]||G.songList[G.songList.length-1];return`<div class="res-row"><span>${ico} ${i+1}. ${esc(t.lvls[i].n)}</span><span class="muted" style="font-size:.76rem">${esc(song.t)}</span></div>`}).join('');
-  document.getElementById('sh-date').textContent=`#${gameNum}`;document.getElementById('sh-dots').textContent=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join('');document.getElementById('sh-score').textContent=G.score.toLocaleString();document.getElementById('sh-zone').textContent=G.zone;document.getElementById('sh-streak').textContent=streak>1?`🔥${'🔥'.repeat(Math.min(streak,5))}`:'';document.getElementById('sh-mode').textContent=t.levelBadge[G.mode]||G.mode;document.getElementById('go-share-btn').textContent=t.shareBtn;document.getElementById('go-again-btn').textContent=t.playAgain;document.getElementById('go-menu-btn').textContent=t.mainMenu;document.getElementById('go-rank-btn').textContent=t.rankBtn;go('s-gameover')
+  
+  // Deezer discovery link (only in free mode)
+  const dzWrap=document.getElementById('go-deezer-wrap');
+  const dzLink=document.getElementById('go-deezer-link');
+  const dzSongs=document.getElementById('go-deezer-songs');
+  if(dzWrap&&G.mode==='free'){
+    dzWrap.style.display='block';
+    // Last song played
+    const lastSong=G.songList[G.songIdx]||G.song;
+    if(lastSong?.dzId&&lastSong.dzId!==0){
+      dzLink.href=`https://www.deezer.com/track/${lastSong.dzId}`;
+      dzLink.textContent=t.listenDeezer;
+    }
+    // Show all songs with Deezer links
+    const songLinks=G.songList.slice(0,10).filter(s=>s?.dzId&&s.dzId!==0)
+      .map(s=>`<a href="https://www.deezer.com/track/${s.dzId}" target="_blank" rel="noopener" style="color:#1ac37c;text-decoration:none;margin:2px 4px;display:inline-block">♪ ${esc(s.t)}</a>`).join('');
+    if(dzSongs)dzSongs.innerHTML=songLinks;
+  }else if(dzWrap){dzWrap.style.display='none'}
+  document.getElementById('sh-date').textContent=`#${gameNum}`;document.getElementById('sh-dots').textContent=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join('');document.getElementById('sh-score').textContent=G.score.toLocaleString();document.getElementById('sh-zone').textContent=G.zone;if(document.getElementById('sh-rank'))document.getElementById('sh-rank').textContent=getRank(G.lang).short;document.getElementById('sh-streak').textContent=streak>1?`🔥${'🔥'.repeat(Math.min(streak,5))}`:'';document.getElementById('sh-mode').textContent=t.levelBadge[G.mode]||G.mode;document.getElementById('go-share-btn').textContent=t.shareBtn;document.getElementById('go-again-btn').textContent=t.playAgain;document.getElementById('go-menu-btn').textContent=t.mainMenu;document.getElementById('go-rank-btn').textContent=t.rankBtn;go('s-gameover')
 }
 function onShare(){const t=T[G.lang],gn=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),dots=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join(''),streak=getStreak(),sf='🔥'.repeat(Math.min(streak,5)),txt=`CançoNet #${gn}\n${dots}\n🏆 ${G.score.toLocaleString()} pts${sf?`\n${sf}`:''}\n📍 ${G.zone}\nhttps://canconet.netlify.app`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
 
