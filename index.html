@@ -19,10 +19,10 @@ body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min
 #s-splash{justify-content:center;align-items:center;padding:0;cursor:pointer;position:relative;overflow:hidden}
 .splash-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,#1a1a3e 0%,#0d0d1a 70%)}
 .splash-inner{position:relative;text-align:center;z-index:2}
-.splash-logo{font-size:4rem;font-weight:900;color:var(--gold);letter-spacing:-3px;opacity:0;transform:scale(.7);animation:sIn 1s cubic-bezier(.34,1.56,.64,1) .4s forwards}
+.splash-logo{font-size:6.5rem;font-weight:900;color:var(--gold);letter-spacing:-4px;opacity:0;transform:scale(.7);animation:sIn 1s cubic-bezier(.34,1.56,.64,1) .4s forwards}
 .splash-logo b{color:var(--red)}
-.splash-sub{font-size:1rem;color:var(--muted);margin-top:10px;opacity:0;animation:sIn .7s ease-out 1.1s forwards}
-.splash-tap{font-size:.75rem;color:rgba(255,255,255,.25);margin-top:30px;opacity:0;animation:sIn .5s ease 2s forwards}
+.splash-sub{font-size:1.5rem;color:var(--muted);margin-top:14px;opacity:0;animation:sIn .7s ease-out 1.1s forwards}
+.splash-tap{font-size:1.1rem;color:rgba(255,255,255,.3);margin-top:40px;opacity:0;animation:sIn .5s ease 2s forwards}
 @keyframes sIn{to{opacity:1;transform:scale(1) translateY(0)}}
 .float-note{position:absolute;font-size:1.8rem;opacity:0;animation:floatUp 2.5s ease-out forwards}
 @keyframes floatUp{0%{opacity:0;transform:translateY(0) rotate(0deg)}20%{opacity:.8}100%{opacity:0;transform:translateY(-200px) rotate(20deg)}}
@@ -34,12 +34,12 @@ body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min
 .mode-card:hover,.mode-card:active{border-color:var(--gold);transform:scale(1.04);box-shadow:0 0 28px rgba(212,160,23,.2)}
 .mode-card-label{font-size:1rem;font-weight:700;color:var(--text);letter-spacing:.5px;text-transform:uppercase}
 .mode-card-sub{font-size:.7rem;color:var(--muted);margin-top:-6px;text-align:center}
-.logo{font-size:2.5rem;font-weight:900;color:var(--gold);letter-spacing:-2px;margin:10px 0 2px;text-align:center}
+.logo{font-size:3.5rem;font-weight:900;color:var(--gold);letter-spacing:-2px;margin:10px 0 2px;text-align:center}
 .logo b{color:var(--red)}
-.sub{color:var(--muted);font-size:.85rem;margin-bottom:14px;text-align:center}
+.sub{color:var(--muted);font-size:1.05rem;margin-bottom:14px;text-align:center}
 .card{background:var(--card);border-radius:16px;padding:18px;width:100%;max-width:460px;margin:7px 0}
 .card-ttl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:10px}
-.btn{display:block;width:100%;padding:15px;border:none;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;margin:5px 0;transition:transform .15s,box-shadow .15s;touch-action:manipulation;min-height:52px}
+.btn{display:block;width:100%;padding:18px;border:none;border-radius:14px;font-size:1.15rem;font-weight:700;cursor:pointer;margin:5px 0;transition:transform .15s,box-shadow .15s;touch-action:manipulation;min-height:60px}
 .btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.98)}
 .btn-gold{background:var(--gold);color:#000}.btn-red{background:var(--red);color:#fff}.btn-purple{background:var(--purple);color:#fff}
 .btn-ghost{background:rgba(255,255,255,.07);color:var(--text)}.btn-ghost:hover{background:rgba(255,255,255,.12)}
@@ -56,7 +56,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .hud{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:460px;margin:8px 0}
 .lvl-badge{background:var(--red);color:#fff;font-size:.75rem;font-weight:700;padding:5px 12px;border-radius:99px;letter-spacing:1px}
 .lives{display:flex;gap:4px}.heart{font-size:1.3rem;transition:all .3s}.heart.dead{opacity:.2;filter:grayscale(1)}
-.score-disp{font-size:1.9rem;font-weight:900;color:var(--gold)}
+.score-disp{font-size:2.2rem;font-weight:900;color:var(--gold)}
 .dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;width:100%;max-width:460px;margin:5px 0}
 .dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.12);color:var(--muted);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center}
 .dot.ok{background:var(--ok);border-color:var(--ok);color:#fff}.dot.cur{background:var(--gold);border-color:var(--gold);color:#000}
@@ -65,7 +65,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .t-fill{height:100%;background:var(--gold);border-radius:99px;transition:width 1s linear,background .4s}.t-fill.hot{background:var(--err)}
 .t-num{text-align:right;font-size:.8rem;color:var(--muted);margin-top:3px}
 .lv-info{background:rgba(255,255,255,.04);border-radius:12px;padding:10px 14px;text-align:center;width:100%;max-width:460px;margin:4px 0}
-.lv-name{font-weight:700;color:var(--gold);font-size:.95rem}.lv-desc{font-size:.78rem;color:var(--muted);margin-top:2px}
+.lv-name{font-weight:700;color:var(--gold);font-size:1.1rem}.lv-desc{font-size:.92rem;color:var(--muted);margin-top:2px}
 .player-box{background:rgba(255,255,255,.04);border:2px solid rgba(212,160,23,.2);border-radius:16px;padding:18px;width:100%;max-width:460px;text-align:center;margin:7px 0}
 .play-btn{width:68px;height:68px;border-radius:50%;background:var(--gold);border:none;font-size:1.7rem;cursor:pointer;transition:all .2s;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;color:#000;touch-action:manipulation}
 .play-btn:hover{transform:scale(1.08);box-shadow:0 0 26px rgba(212,160,23,.5)}
@@ -79,7 +79,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .hint-box{background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.25);border-radius:10px;padding:10px 14px;font-size:.88rem;color:var(--gold);text-align:center;width:100%;max-width:460px;margin:5px 0}
 .ans-mode-label{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;text-align:center;margin-bottom:8px}
 .choice-grid{display:flex;flex-direction:column;gap:8px}
-.choice-btn{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 16px;color:var(--text);font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;touch-action:manipulation;text-align:left}
+.choice-btn{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 18px;color:var(--text);font-size:1.05rem;font-weight:600;cursor:pointer;transition:all .2s;touch-action:manipulation;text-align:left}
 .choice-btn:hover{background:rgba(255,255,255,.13);border-color:var(--gold)}
 .choice-btn.correct{background:rgba(76,175,80,.2);border-color:var(--ok);color:var(--ok)}
 .choice-btn.wrong{background:rgba(244,67,54,.15);border-color:var(--err);color:var(--err)}
@@ -128,7 +128,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border-radius:14px;padding:12px 20px;font-weight:700;opacity:0;transition:all .3s;pointer-events:none;z-index:999;border:1px solid rgba(255,255,255,.12);font-size:.9rem;max-width:88vw;text-align:center}
 #toast.on{transform:translateX(-50%) translateY(0);opacity:1}
-.w-full{width:100%;max-width:460px}.center{text-align:center}.muted{color:var(--muted)}.field{margin-bottom:14px}.big{font-size:1.3rem;font-weight:700}.mt{margin-top:8px}.sep{height:1px;background:rgba(255,255,255,.07);margin:10px 0}
+.w-full{width:100%;max-width:460px}.center{text-align:center}.muted{color:var(--muted)}.field{margin-bottom:14px}.big{font-size:1.6rem;font-weight:700}.mt{margin-top:8px}.sep{height:1px;background:rgba(255,255,255,.07);margin:10px 0}
 </style>
 </head>
 <body>
@@ -211,6 +211,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div class="sep"></div>
     <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Pròximament</div>
     <button class="btn btn-ghost" onclick="go('s-challenge-create');loadChallengeStats()">⚔️ Repte a un amic</button>
+    <button class="btn btn-ghost" onclick="showWip('emsona')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative">🎭 Em Sona — Plagi o Coincidència? <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
     <button class="btn btn-ghost" onclick="showWip('relax')" style="opacity:.9;border:1.5px solid rgba(134,239,172,.35);background:rgba(134,239,172,.07);position:relative">🎹 Mode Relax <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#000;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
     <button class="btn btn-ghost" onclick="showWip('familia')" style="opacity:.7">👨‍👩‍👧 Mode família</button>
     <button class="btn btn-ghost" onclick="showWip('provinces')" style="opacity:.7">🏴 Repte per zones</button>
@@ -240,7 +241,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="card"><div class="card-ttl center">Puntuació final</div><div class="final-pts" id="go-pts">0</div><div class="center muted mt" id="go-lvltxt" style="margin-bottom:12px;font-size:.8rem"></div><div class="sep"></div><div id="go-res"></div></div>
   <div id="go-deezer-wrap" style="display:none;width:100%;max-width:460px;margin-top:8px;text-align:center"><a id="go-deezer-link" href="#" target="_blank" rel="noopener" style="display:inline-block;background:rgba(26,195,136,.12);border:.5px solid rgba(26,195,136,.35);color:#1ac37c;font-size:.85rem;font-weight:600;padding:10px 20px;border-radius:10px;text-decoration:none">🎧 Escolta a Deezer</a><div id="go-deezer-songs" style="margin-top:8px;font-size:.75rem;color:var(--muted)"></div></div>
   <div class="share-card"><div class="share-title">CançoNet · <span id="sh-date"></span></div><div class="share-dots" id="sh-dots"></div><div class="share-score">🏆 <span id="sh-score"></span> pts</div><div style="font-size:.72rem;color:var(--gold);margin-top:2px" id="sh-rank"></div><div class="share-zone">📍 <span id="sh-zone"></span></div><div style="font-size:.75rem;color:#a78bfa;margin-top:3px" id="sh-streak"></div><div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="sh-mode"></div></div>
-  <div class="w-full"><button class="btn btn-gold" id="go-share-btn" onclick="onShare()"></button><button class="btn btn-red" id="go-again-btn" onclick="onFree()"></button><button class="btn btn-ghost" id="go-menu-btn" onclick="go('s-menu')"></button><button class="btn btn-ghost" id="go-rank-btn" onclick="go('s-rankings')"></button></div>
+  <div class="w-full"><button class="btn btn-gold" id="go-share-btn" onclick="onShare()"></button><button class="btn btn-red" id="go-again-btn" onclick="telTrackEvent('play_again',{mode:G.mode,score:G.score});onFree()"></button><button class="btn btn-ghost" id="go-menu-btn" onclick="go('s-menu')"></button><button class="btn btn-ghost" id="go-rank-btn" onclick="go('s-rankings')"></button></div>
 </div>
 
 <div id="s-rankings" class="scr">
@@ -335,7 +336,34 @@ const canScore=()=>RL.check('sc',3,10*60*1000);const canBustia=()=>RL.check('bu'
 const V={nick(v){if(!v||typeof v!=='string')return{ok:false,e:'Nom obligatori'};const s=v.trim();if(s.length<1||s.length>20)return{ok:false,e:'1-20 caràcters'};if(!/^[\w\s\-àáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ·]+$/u.test(s))return{ok:false,e:'Caràcters no permesos'};return{ok:true,val:s}},msg(v){if(!v||typeof v!=='string')return{ok:false,e:'Missatge obligatori'};const s=v.trim();if(s.length<3||s.length>500)return{ok:false,e:'3-500 caràcters'};return{ok:true,val:s}},email(v){if(!v||v.trim()==='')return{ok:true,val:null};const s=v.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))return{ok:false,e:'Email invàlid'};return{ok:true,val:s}},score(v){const n=parseInt(v);if(isNaN(n)||n<0||n>99999)return{ok:false};return{ok:true,val:n}}};
 function esc(s){if(s==null)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
 
-async function sendMagicLink(email){const rUrl=window.location.origin+window.location.pathname;try{const r=await fetch(`${SB_URL}/auth/v1/otp`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY},body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true,options:{emailRedirectTo:rUrl}})});if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}return{ok:true}}catch(e){return{ok:false,msg:'Error de connexió'}}}
+async function sendOtp(email){
+  try{
+    const r=await fetch(`${SB_URL}/auth/v1/otp`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY},
+      body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true})
+    });
+    if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}
+    return{ok:true}
+  }catch(e){return{ok:false,msg:'Error de connexió'}}
+}
+async function verifyOtp(email,token){
+  try{
+    const r=await fetch(`${SB_URL}/auth/v1/otp`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY},
+      body:JSON.stringify({email:email.trim().toLowerCase(),token:String(token).trim(),type:'email'})
+    });
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok)return{ok:false,msg:data.msg||data.message||data.error_description||'Codi invàlid o caducat'};
+    if(data.access_token){
+      const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;
+      localStorage.setItem(key,JSON.stringify({access_token:data.access_token,refresh_token:data.refresh_token,expires_at:Date.now()+2592000000}));
+      return{ok:true,session:data};
+    }
+    return{ok:false,msg:'Resposta inesperada'};
+  }catch(e){return{ok:false,msg:'Error de connexió'}}
+}
 async function handleAuthCallback(){const hash=window.location.hash;if(!hash.includes('access_token'))return false;try{const p=new URLSearchParams(hash.slice(1));const a=p.get('access_token'),rf=p.get('refresh_token');if(!a)return false;const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;localStorage.setItem(key,JSON.stringify({access_token:a,refresh_token:rf,expires_at:Date.now()+3600000}));window.history.replaceState(null,'',window.location.pathname);return true}catch(e){return false}}
 async function loadUserProfile(user){
   // 1. Intenta carregar de Supabase (funciona entre dispositius)
@@ -374,18 +402,43 @@ async function saveProfileToSupabase(email){
 }
 
 let lastEmailSent='';
-async function onMagicLink(){const email=document.getElementById('login-email').value.trim();const ev=V.email(email);if(!ev.ok||!email)return toast('⚠️ Posa un correu vàlid');const btn=document.getElementById('login-btn');btn.disabled=true;btn.textContent='Enviant...';const res=await sendMagicLink(email);btn.disabled=false;btn.textContent='Enviar enllaç màgic 🎵';if(res.ok){lastEmailSent=email;localStorage.setItem('cn:user-email',email);document.getElementById('login-card-email').style.display='none';document.getElementById('login-card-sent').style.display='block';document.getElementById('login-sent-desc').textContent=`Hem enviat un enllaç a ${email}`}else toast('⚠️ '+(res.msg||'Error'))}
-async function onResentEmail(){if(!lastEmailSent)return;await sendMagicLink(lastEmailSent);toast('📧 Email reenviat!')}
+async function onSendOtp(){
+  const email=document.getElementById('login-email').value.trim();
+  const ev=V.email(email);if(!ev.ok||!email)return toast('⚠️ Posa un correu vàlid');
+  const btn=document.getElementById('login-btn');btn.disabled=true;btn.textContent='Enviant...';
+  const res=await sendOtp(email);
+  btn.disabled=false;btn.textContent='Enviar codi 🎵';
+  if(res.ok){
+    lastEmailSent=email;localStorage.setItem('cn:user-email',email);
+    document.getElementById('login-card-email').style.display='none';
+    document.getElementById('login-card-sent').style.display='block';
+    document.getElementById('login-sent-desc').textContent=`Hem enviat un codi de 6 dígits a ${email}. Caduca en 10 minuts.`;
+    setTimeout(()=>document.getElementById('login-otp-input')?.focus(),300);
+  }else toast('⚠️ '+(res.msg||'Error'));
+}
+async function onVerifyOtp(){
+  const otp=document.getElementById('login-otp-input').value.trim();
+  if(!otp||otp.length!==6)return toast('⚠️ El codi té 6 dígits');
+  const btn=document.getElementById('login-verify-btn');btn.disabled=true;btn.textContent='Verificant...';
+  const res=await verifyOtp(lastEmailSent,otp);
+  btn.disabled=false;btn.textContent='✅ Verificar codi';
+  if(res.ok){
+    toast('✅ Sessió iniciada!');
+    telTrackEvent('login',{lang:G.lang});
+    await loadUserProfile();
+  }else toast('⚠️ '+(res.msg||'Codi invàlid'));
+}
+async function onResentEmail(){if(!lastEmailSent)return;await sendOtp(lastEmailSent);toast('📧 Codi reenviat!');document.getElementById('login-otp-input').value='';}
 function resetLoginForm(){document.getElementById('login-card-email').style.display='block';document.getElementById('login-card-sent').style.display='none';document.getElementById('login-email').value=''}
 async function signOut(){Object.keys(localStorage).filter(k=>k.includes('auth-token')||k.includes('sb-')).forEach(k=>localStorage.removeItem(k));localStorage.removeItem('cn:user-email');G.nick='';G.zone='';go('s-modes');toast('👋 Sessió tancada')}
 async function trackArtist(nick,zona,lang,artist){if(!nick||!artist)return;const ex=await sbS('artist_stats',`nick=eq.${encodeURIComponent(nick)}&artist=eq.${encodeURIComponent(artist)}&lang=eq.${lang}`,'updated_at.desc',1);if(ex&&ex.length>0){try{await fetch(`${SB_URL}/rest/v1/artist_stats?nick=eq.${encodeURIComponent(nick)}&artist=eq.${encodeURIComponent(artist)}&lang=eq.${lang}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify({correct_count:ex[0].correct_count+1,updated_at:new Date().toISOString()})})}catch(e){}}else await sbI('artist_stats',{nick,zona,lang,artist,correct_count:1})}
 
 function hideTtl(t){return t.split('').map((c,i)=>{if(c===' ')return' ';if(i===0||i===t.length-1)return c;return i%2===0?c:'_'}).join('')}
 const T={
-ca:{appSub:'Endevina la cançó catalana',yourName:'El teu nom',namePH:'Com et dius?',yourZone:'La teva zona',playBtn:'Jugar! 🎵',seeRank:'🏆 Veure rànquing',hello:'Hola',dailyBtn:'📅 Cançó del dia',freeBtn:'🎮 Partida lliure',autorBtn:'🎸 Cançó d\'Autor',rankBtn:'🏆 Rànquing',suggestBtn:'💌 Bustia',infoBtn:'ℹ️ Informació',answerPH:'Escriu el títol...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Sortir',listenFull:'🎵 Cançó sencera',correct:'✅ Correcte!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escoltes:',playsLeft:'Restants:',noPlays:'No queden',playing:'♪ Reproduint...',hT:s=>`💡 Títol: ${hideTtl(s.t)}`,hL:s=>`💡 Lletra: "${s.t[0]}"`,hY:s=>`💡 Any: ${s.y}`,hG:s=>`💡 Gènere: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Paraules: ${s.t.split(' ').length}`,hD:s=>`💡 Dècada: ${s.dec}`,perfect:'Perfecte! 10/10!',vgood:'Molt bé!',ggame:'Bona partida!',guessed:'cançons encertades',allLvl:'🏆 Tots els nivells!',upToLvl:'Fins al nivell',shareBtn:'📤 Compartir',playAgain:'🔄 Tornar a jugar',mainMenu:'↩️ Menú',dailyPlayed:'✅ Ja has jugat avui!',dailyPlayedSub:'Torna demà.',noScores:'Cap puntuació encara.',levelBadge:{daily:'📅 Diari',free:'🎮 Lliure',autor:'🎸 Autor',challenge:'⚔️ Repte'},lvls:[{n:'Fragment fàcil',d:'Fragment clar i reconeixible'},{n:'Tornada',d:'Un tros de la tornada'},{n:'Introducció',d:'Primers segons'},{n:'Final',d:'Últims segons'},{n:'Fragment del mig',d:'Tros del centre'},{n:'Tornada difícil',d:'Fragment curt de tornada'},{n:'Fragment curt',d:'Pocs segons'},{n:'Mig difícil',d:'Fragment curt del centre'},{n:'Final difícil',d:'Fragment curt del final'},{n:'🔥 Repte final',d:'3 seg — tot o res!'}],zones:["Barcelona","Girona","Lleida","Tarragona","Terres de l'Ebre"]},
-es:{appSub:'Adivina la canción',yourName:'Tu nombre',namePH:'¿Cómo te llamas?',yourZone:'Tu zona',playBtn:'¡Jugar! 🎵',seeRank:'🏆 Ver ranking',hello:'Hola',dailyBtn:'📅 Canción del día',freeBtn:'🎮 Partida libre',autorBtn:'🎸 Canción de Autor',rankBtn:'🏆 Ranking',suggestBtn:'💌 Buzón',infoBtn:'ℹ️ Info',answerPH:'Título de la canción...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Salir',listenFull:'🎵 Canción entera',correct:'✅ ¡Correcto!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escuchas:',playsLeft:'Restantes:',noPlays:'No quedan',playing:'♪ Reproduciendo...',hT:s=>`💡 Título: ${hideTtl(s.t)}`,hL:s=>`💡 Letra: "${s.t[0]}"`,hY:s=>`💡 Año: ${s.y}`,hG:s=>`💡 Género: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Palabras: ${s.t.split(' ').length}`,hD:s=>`💡 Década: ${s.dec}`,perfect:'¡Perfecto!',vgood:'¡Muy bien!',ggame:'¡Buena partida!',guessed:'canciones',allLvl:'🏆 ¡Todos!',upToLvl:'Hasta nivel',shareBtn:'📤 Compartir',playAgain:'🔄 Otra vez',mainMenu:'↩️ Menú',dailyPlayed:'✅ ¡Ya jugaste hoy!',dailyPlayedSub:'Vuelve mañana.',noScores:'Sin puntuaciones.',levelBadge:{daily:'📅 Diario',free:'🎮 Libre',autor:'🎸 Autor',challenge:'⚔️ Reto'},lvls:[{n:'Fragmento fácil',d:'Claro'},{n:'Estribillo',d:'Trozo del estribillo'},{n:'Intro',d:'Primeros segundos'},{n:'Final',d:'Últimos segundos'},{n:'Medio',d:'Trozo central'},{n:'Estribillo difícil',d:'Corto'},{n:'Fragmento corto',d:'Pocos seg'},{n:'Medio difícil',d:'Centro corto'},{n:'Final difícil',d:'Final corto'},{n:'🔥 Reto final',d:'3s — ¡todo o nada!'}],zones:["Andalucía","Aragón","Asturias","Illes Balears","Canàries","Cantàbria","Castella i Lleó","Castella-la Manxa","Catalunya","Extremadura","Galícia","La Rioja","Madrid","Múrcia","Navarra","País Basc","País Valencià","Ceuta i Melilla"]},
-eu:{appSub:'Guess the European song',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'Easy',d:'Clear fragment'},{n:'Chorus',d:'Chorus piece'},{n:'Intro',d:'First seconds'},{n:'Ending',d:'Last seconds'},{n:'Middle',d:'Center piece'},{n:'Hard chorus',d:'Short'},{n:'Short',d:'Few seconds'},{n:'Hard middle',d:'Short center'},{n:'Hard ending',d:'Short end'},{n:'🔥 Final',d:'3s — all or nothing!'}],zones:["France","Germany","Italy","Portugal","Netherlands"]},
-int:{appSub:'Guess the hit',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'Easy',d:'Clear'},{n:'Chorus',d:'Chorus'},{n:'Intro',d:'First sec'},{n:'Ending',d:'Last sec'},{n:'Middle',d:'Center'},{n:'Hard chorus',d:'Short'},{n:'Short',d:'Few sec'},{n:'Hard middle',d:'Short'},{n:'Hard ending',d:'Short'},{n:'🔥 Final',d:'3s!'}],zones:["Americas","Asia","Africa","Oceania","Europe"]}
+ca:{appSub:'Endevina la cançó catalana',yourName:'El teu nom',namePH:'Com et dius?',yourZone:'La teva zona',playBtn:'Jugar! 🎵',seeRank:'🏆 Veure rànquing',hello:'Hola',dailyBtn:'📅 Cançó del dia',freeBtn:'🎮 Partida lliure',autorBtn:'🎸 Cançó d\'Autor',rankBtn:'🏆 Rànquing',suggestBtn:'💌 Bustia',infoBtn:'ℹ️ Informació',answerPH:'Escriu el títol...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Sortir',listenFull:'🎵 Cançó sencera',correct:'✅ Correcte!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escoltes:',playsLeft:'Restants:',noPlays:'No queden',playing:'♪ Reproduint...',hT:s=>`💡 Títol: ${hideTtl(s.t)}`,hL:s=>`💡 Lletra: "${s.t[0]}"`,hY:s=>`💡 Any: ${s.y}`,hG:s=>`💡 Gènere: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Paraules: ${s.t.split(' ').length}`,hD:s=>`💡 Dècada: ${s.dec}`,perfect:'Perfecte! 10/10!',vgood:'Molt bé!',ggame:'Bona partida!',guessed:'cançons encertades',allLvl:'🏆 Tots els nivells!',upToLvl:'Fins al nivell',shareBtn:'📤 Compartir',playAgain:'🔄 Tornar a jugar',mainMenu:'↩️ Menú',dailyPlayed:'✅ Ja has jugat avui!',dailyPlayedSub:'Torna demà.',noScores:'Cap puntuació encara.',levelBadge:{daily:'📅 Diari',free:'🎮 Lliure',autor:'🎸 Autor',challenge:'⚔️ Repte'},lvls:[{n:'10 segons',d:'Fragment llarg — fàcil'},{n:'8 segons',d:'Fragment mig'},{n:'6 segons',d:'Fragment curt'},{n:'5 segons',d:'Fragment curt'},{n:'4 segons',d:'Fragment molt curt'},{n:'3 segons',d:'Fragmentet'},{n:'5 segons',d:'Sense pistes'},{n:'4 segons',d:'Sense pistes'},{n:'Velocitat 0.5x',d:'Melodia a mig tempo'},{n:'🔥 Repte final',d:'Velocitat 1.75x + pista escrita'}],zones:["Barcelona","Girona","Lleida","Tarragona","Terres de l'Ebre"]},
+es:{appSub:'Adivina la canción',yourName:'Tu nombre',namePH:'¿Cómo te llamas?',yourZone:'Tu zona',playBtn:'¡Jugar! 🎵',seeRank:'🏆 Ver ranking',hello:'Hola',dailyBtn:'📅 Canción del día',freeBtn:'🎮 Partida libre',autorBtn:'🎸 Canción de Autor',rankBtn:'🏆 Ranking',suggestBtn:'💌 Buzón',infoBtn:'ℹ️ Info',answerPH:'Título de la canción...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Salir',listenFull:'🎵 Canción entera',correct:'✅ ¡Correcto!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escuchas:',playsLeft:'Restantes:',noPlays:'No quedan',playing:'♪ Reproduciendo...',hT:s=>`💡 Título: ${hideTtl(s.t)}`,hL:s=>`💡 Letra: "${s.t[0]}"`,hY:s=>`💡 Año: ${s.y}`,hG:s=>`💡 Género: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Palabras: ${s.t.split(' ').length}`,hD:s=>`💡 Década: ${s.dec}`,perfect:'¡Perfecto!',vgood:'¡Muy bien!',ggame:'¡Buena partida!',guessed:'canciones',allLvl:'🏆 ¡Todos!',upToLvl:'Hasta nivel',shareBtn:'📤 Compartir',playAgain:'🔄 Otra vez',mainMenu:'↩️ Menú',dailyPlayed:'✅ ¡Ya jugaste hoy!',dailyPlayedSub:'Vuelve mañana.',noScores:'Sin puntuaciones.',levelBadge:{daily:'📅 Diario',free:'🎮 Libre',autor:'🎸 Autor',challenge:'⚔️ Reto'},lvls:[{n:'10 segundos',d:'Fragmento largo — fácil'},{n:'8 segundos',d:'Fragmento medio'},{n:'6 segundos',d:'Fragmento corto'},{n:'5 segundos',d:'Fragmento corto'},{n:'4 segundos',d:'Fragmento muy corto'},{n:'3 segundos',d:'Fragmentito'},{n:'5 segundos',d:'Sin pistas'},{n:'4 segundos',d:'Sin pistas'},{n:'Velocidad 0.5x',d:'Melodía a medio tempo'},{n:'🔥 Reto final',d:'Velocidad 1.75x + pista escrita'}],zones:["Andalucía","Aragón","Asturias","Illes Balears","Canàries","Cantàbria","Castella i Lleó","Castella-la Manxa","Catalunya","Extremadura","Galícia","La Rioja","Madrid","Múrcia","Navarra","País Basc","País Valencià","Ceuta i Melilla"]},
+eu:{appSub:'Guess the European song',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'10 seconds',d:'Long fragment — easy'},{n:'8 seconds',d:'Medium fragment'},{n:'6 seconds',d:'Short fragment'},{n:'5 seconds',d:'Short fragment'},{n:'4 seconds',d:'Very short fragment'},{n:'3 seconds',d:'Tiny fragment'},{n:'5 seconds',d:'No hints'},{n:'4 seconds',d:'No hints'},{n:'Speed 0.5x',d:'Half tempo melody'},{n:'🔥 Final challenge',d:'Speed 1.75x + written clue'}],zones:["France","Germany","Italy","Portugal","Netherlands"]},
+int:{appSub:'Guess the hit',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'10 seconds',d:'Long — easy'},{n:'8 seconds',d:'Medium'},{n:'6 seconds',d:'Short'},{n:'5 seconds',d:'Short'},{n:'4 seconds',d:'Very short'},{n:'3 seconds',d:'Tiny'},{n:'5 seconds',d:'No hints'},{n:'4 seconds',d:'No hints'},{n:'Speed 0.5x',d:'Half tempo'},{n:'🔥 Final',d:'Speed 1.75x + clue'}],zones:["Americas","Asia","Africa","Oceania","Europe"]}
 };
 
 const SONGS_CA=[
@@ -477,16 +530,109 @@ const LEVELS=[{tl:55,dur:8,seg:"full",hk:'hT'},{tl:45,dur:6,seg:"chorus",hk:'hL'
 const G={nick:'',zone:'',mode:'free',lang:'ca',lvl:1,lives:3,score:0,song:null,songList:[],songIdx:0,tLeft:0,tMax:60,timerID:null,playing:false,active:false,results:[],playCount:0,maxPlays:3,answerMode:'write-title',answerIsBonus:false};
 let rTab='global',rZone='',selZone='',selGender='',selAge='',actx,ytStopTimer,splashDone=false,currentChallenge=null;
 
-function playSplashMusic(){try{const ctx=new(window.AudioContext||window.webkitAudioContext)();actx=ctx;[261.63,329.63,392,523.25,659.25].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*.22;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.05);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+.6)})}catch(e){}}
+
+// ═══════════════════════════════════════
+// SISTEMA DE SONS UI
+// ═══════════════════════════════════════
+function getACtxUI(){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}catch(e){return null}}
+
+function playNote(ctx,freq,start,dur,vol=0.18,type='sine',attack=0.01,decay=0.3){
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(0,start);
+  g.gain.linearRampToValueAtTime(vol,start+attack);
+  g.gain.exponentialRampToValueAtTime(0.001,start+dur);
+  o.connect(g);g.connect(ctx.destination);o.start(start);o.stop(start+dur+0.05);
+}
+
+function playSplashMusic(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();actx=ctx;
+    const t=ctx.currentTime;
+    // Jingle: acord ascendent estil "game show" amb harmonia
+    // Melodia principal (triangle - so més suau i musical)
+    const mel=[261.63,329.63,392,523.25,659.25,783.99,1046.5];
+    mel.forEach((f,i)=>{playNote(ctx,f,t+i*0.13,0.5,0.15,'triangle',0.02,0.5)});
+    // Baix de suport
+    [130.81,164.81,196,261.63].forEach((f,i)=>{playNote(ctx,f,t+i*0.26,0.7,0.08,'sine',0.05,0.65)});
+    // Nota final llarga i brillant
+    playNote(ctx,1046.5,t+0.9,1.2,0.2,'triangle',0.05,1.1);
+    playNote(ctx,523.25,t+0.9,1.2,0.1,'sine',0.05,1.1);
+    // Scintilleo final (harmonics alts)
+    [2093,2637].forEach((f,i)=>{playNote(ctx,f,t+0.92+i*0.08,0.4,0.04,'sine',0.01,0.35)});
+  }catch(e){}
+}
+
+function soundNav(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Whoosh suau: sweep de freqüència baixa a alta
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='sine';o.frequency.setValueAtTime(200,t);o.frequency.exponentialRampToValueAtTime(600,t+0.12);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.06,t+0.03);g.gain.exponentialRampToValueAtTime(0.001,t+0.13);
+  o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+0.15);
+}
+
+function soundCorrect(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Ding doble ascendent - victòria!
+  playNote(ctx,523.25,t,0.18,0.2,'triangle',0.01,0.15);
+  playNote(ctx,783.99,t+0.12,0.25,0.22,'triangle',0.01,0.22);
+  playNote(ctx,1046.5,t+0.26,0.35,0.18,'triangle',0.01,0.32);
+  // Shimmer
+  playNote(ctx,2093,t+0.26,0.3,0.05,'sine',0.01,0.28);
+}
+
+function soundWrong(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Buzz descendent - error
+  playNote(ctx,220,t,0.15,0.18,'sawtooth',0.01,0.12);
+  playNote(ctx,174.61,t+0.1,0.2,0.15,'sawtooth',0.01,0.17);
+  playNote(ctx,146.83,t+0.22,0.25,0.12,'square',0.01,0.22);
+}
+
+function soundLevelUp(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Fanfàrria ascendent curta
+  [392,523.25,659.25,783.99].forEach((f,i)=>{
+    playNote(ctx,f,t+i*0.1,0.25,0.15,'triangle',0.01,0.22);
+  });
+  playNote(ctx,1046.5,t+0.42,0.5,0.2,'triangle',0.02,0.45);
+}
+
+function soundBonus(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Coins / bonus - estil arcade
+  [1047,1319,1568,2093].forEach((f,i)=>{
+    playNote(ctx,f,t+i*0.08,0.15,0.12,'square',0.005,0.13);
+  });
+}
+
 function addFloatingNotes(){const el=document.getElementById('s-splash');['🎵','🎶','🎸','🎹','🎺'].forEach((e,i)=>{const d=document.createElement('div');d.className='float-note';d.textContent=e;d.style.cssText=`left:${10+i*18}%;bottom:15%;animation-delay:${i*.25+.5}s`;el.appendChild(d)})}
 function skipSplash(){if(splashDone)return;splashDone=true;document.getElementById('s-splash').classList.add('fadeout');setTimeout(()=>go('s-modes'),500)}
 function initSplash(){addFloatingNotes();document.getElementById('s-splash').addEventListener('click',()=>playSplashMusic(),{once:true});setTimeout(skipSplash,4000)}
 
-const WIP_DATA={relax:{title:'🎹 Mode Relax',sub:'Endevina la cançó escoltant-la en versió de piano.',features:['🎹 Versions de piano de cançons famoses','🌿 Visual suau i ambient relaxant','🧘 Ideal per desconnectar jugant','🎵 Catàleg complet en versió piano','📅 Partida diària i lliure','🎧 Àudio via YouTube (versions piano)'],note:"Per activar necessitem afegir YouTube IDs de versions piano a cada cançó. Suggereix-les per la bústia!"},familia:{title:'👨‍👩‍👧 Mode família',sub:'Crea un grup familiar!',features:['🔑 Codi de 6 lletres','👥 Fins a 8 jugadors','🏅 Rànquing familiar']},provinces:{title:'🏴 Repte per zones',sub:'Competeix per la teva zona!',features:['🏴 Comarques','🏆 Copa setmanal','⚔️ Derbis']},logros:{title:'🏅 Assoliments',sub:'Desbloqueja badges!',features:['🎸 Mestre de Sau','🔥 En ratxa','⚡ Llampec','👑 Campió']},realia:{title:'🤖 Real o IA?',sub:'Escolta un fragment i endevina si la cançó és real o generada per intel·ligència artificial!',features:['🎵 Fragments de cançons reals i generades amb IA','🧠 Posa a prova el teu oïda','📊 Estadístiques de encerts','🏆 Rànquing dels millors detectors']}};
+const WIP_DATA={emsona:{
+  title:'🎭 Em Sona — Plagi o Coincidència?',
+  sub:'Escolta dos fragments i decideix: és un plagi, una coincidència o un homenatge? Basat en casos reals de la història de la música.',
+  features:[
+    '🎵 Escolta dos fragments i compara',
+    '🔴 Plagi · 🟡 Coincidència · 🟢 Homenatge',
+    '⚖️ Basat en casos reals jutjats als tribunals',
+    '📚 Explicació del veredicte real al final',
+    '🌍 30+ casos icònics de la història del pop i rock',
+    '🇨🇦 Inclou casos catalans (El Pony Pisador, Rosalía, Waka Waka...)',
+  ],
+  note:'🔧 En preparació: verificant les cançons a Deezer i documentant els veredictes reals. Inspirat en la secció "Em Sona" de Flaixbac.'
+},relax:{title:'🎹 Mode Relax',sub:'Endevina la cançó escoltant-la en versió de piano.',features:['🎹 Versions de piano de cançons famoses','🌿 Visual suau i ambient relaxant','🧘 Ideal per desconnectar jugant','🎵 Catàleg complet en versió piano','📅 Partida diària i lliure','🎧 Àudio via YouTube (versions piano)'],note:"Per activar necessitem afegir YouTube IDs de versions piano a cada cançó. Suggereix-les per la bústia!"},familia:{title:'👨‍👩‍👧 Mode família',sub:'Crea un grup familiar!',features:['🔑 Codi de 6 lletres','👥 Fins a 8 jugadors','🏅 Rànquing familiar']},provinces:{title:'🏴 Repte per zones',sub:'Competeix per la teva zona!',features:['🏴 Comarques','🏆 Copa setmanal','⚔️ Derbis']},logros:{title:'🏅 Assoliments',sub:'Desbloqueja badges!',features:['🎸 Mestre de Sau','🔥 En ratxa','⚡ Llampec','👑 Campió']},realia:{title:'🤖 Real o IA?',sub:'Escolta un fragment i endevina si la cançó és real o generada per intel·ligència artificial!',features:['🎵 Fragments de cançons reals i generades amb IA','🧠 Posa a prova el teu oïda','📊 Estadístiques de encerts','🏆 Rànquing dels millors detectors']}};
 function showWip(type){const d=WIP_DATA[type]||{title:'En construcció',sub:'Aviat!',features:[]};document.getElementById('wip-title').textContent=d.title;document.getElementById('wip-sub').textContent=d.sub;document.getElementById('wip-features').innerHTML=d.features.map(f=>`<div>✦ ${esc(f)}</div>`).join('');const _ne=document.getElementById('wip-note');if(_ne){_ne.style.display=d.note?'block':'none';if(d.note)_ne.textContent=d.note;}document.getElementById('modal-wip').classList.remove('hide')}
 function closeWip(){document.getElementById('modal-wip').classList.add('hide')}
 
-function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id==='s-rankings')loadRankings();if(id==='s-bustia')loadBustia()}
+function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id!=='s-splash')soundNav();if(id==='s-rankings'){loadRankings();telTrackEvent('view_rankings',{lang:G.lang});}if(id==='s-bustia'){loadBustia();telTrackEvent('open_bustia',{lang:G.lang});}}
 
 function pickZone(btn){document.querySelectorAll('#zone-grid .zone-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selZone=btn.dataset.z}
 function pickGender(btn){document.querySelectorAll('[data-g]').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selGender=btn.dataset.g}
@@ -539,12 +685,12 @@ function renderRankWidget(){const prog=getRankProgress(G.lang),el=document.getEl
 const STYLES={ca:[{id:'all',emoji:'🎵',label:{ca:'Tots els estils',es:'Todos',eu:'All',int:'All'}},{id:'rock',emoji:'🎸',label:{ca:'Rock català',es:'Rock catalán',eu:'Catalan Rock',int:'Catalan Rock'}},{id:'pop',emoji:'🎤',label:{ca:'Pop català',es:'Pop catalán',eu:'Catalan Pop',int:'Catalan Pop'}},{id:'folk',emoji:'🌿',label:{ca:'Folk',es:'Folk',eu:'Folk',int:'Folk'}},{id:'festa',emoji:'💃',label:{ca:'Festa / Rumba',es:'Fiesta / Rumba',eu:'Festa / Rumba',int:'Festa / Rumba'}}],es:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop español',eu:'Spanish Pop',int:'Spanish Pop'}},{id:'balada',emoji:'❤️',label:{ca:'Balada',es:'Balada',eu:'Ballad',int:'Ballad'}},{id:'flamenco',emoji:'💃',label:{ca:'Flamenco',es:'Flamenco',eu:'Flamenco',int:'Flamenco'}}],eu:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop',eu:'Pop',int:'Pop'}},{id:'rock',emoji:'🎸',label:{ca:'Rock',es:'Rock',eu:'Rock',int:'Rock'}},{id:'dance',emoji:'🔊',label:{ca:'Dance',es:'Dance',eu:'Dance / Eurodance',int:'Dance / Eurodance'}}],int:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop',eu:'Pop',int:'Pop'}},{id:'rock',emoji:'🎸',label:{ca:'Rock',es:'Rock',eu:'Rock',int:'Rock'}},{id:'hiphop',emoji:'🎤',label:{ca:'Hip-hop',es:'Hip-hop',eu:'Hip-hop',int:'Hip-hop'}},{id:'funk',emoji:'🎷',label:{ca:'Funk / Soul',es:'Funk / Soul',eu:'Funk / Soul',int:'Funk / Soul'}},{id:'kpop',emoji:'🌸',label:{ca:'K-pop',es:'K-pop',eu:'K-pop',int:'K-pop'}}]};
 
 function seededShuffle(arr,seed){const r=[...arr];let s=seed>>>0;for(let i=r.length-1;i>0;i--){s=(s*1664525+1013904223)>>>0;const j=s%(i+1);[r[i],r[j]]=[r[j],r[i]]}return r}
-function onDaily(){const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}const ds=getDailyStyle(G.lang);const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const fl=pool.filter(s=>s.st===ds.id);G.mode='daily';G.style=ds.id;initGame(seededShuffle(fl.length>=5?fl:pool,today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily')}
+function onDaily(){const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}const ds=getDailyStyle(G.lang);const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const fl=pool.filter(s=>s.st===ds.id);telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});G.mode='daily';G.style=ds.id;initGame(seededShuffle(fl.length>=5?fl:pool,today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily')}
 function getDailyStyle(lang){const s=(STYLES[lang]||STYLES.ca).filter(x=>x.id!=='all');const t=new Date().toISOString().slice(0,10);return s[t.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%s.length]}
 function onFree(){const lang=G.lang,styles=(STYLES[lang]||STYLES.ca),t=T[lang];const grid=document.getElementById('sty-grid');document.getElementById('sty-sub').textContent=t.freeBtn||'Tria un estil';document.getElementById('sty-back-lbl').textContent=t.mainMenu||'Enrere';grid.innerHTML=styles.map(s=>`<button class="style-card" onclick="onStartWithStyle('${s.id}')"><div class="style-emoji">${s.emoji}</div><div class="style-label">${esc(s.label[lang]||s.label.ca)}</div></button>`).join('');go('s-style');}
-function onStartWithStyle(styleId){const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const f=styleId==='all'?pool:pool.filter(s=>s.st===styleId);G.mode='free';G.style=styleId==='all'?null:styleId;initGame(seededShuffle(f.length>=5?f:pool,Math.floor(Math.random()*999999)),'free');}
-function onAutor(){G.mode='autor';initGame(seededShuffle(AUTOR_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'autor')}
-function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];G.songList=list;G.songIdx=0;G.song=list[0];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel()}
+function onStartWithStyle(styleId){const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const f=styleId==='all'?pool:pool.filter(s=>s.st===styleId);telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});G.mode='free';G.style=styleId==='all'?null:styleId;initGame(seededShuffle(f.length>=5?f:pool,Math.floor(Math.random()*999999)),'free');}
+function onAutor(){telTrackEvent('start_game',{mode:'autor',lang:G.lang});G.mode='autor';initGame(seededShuffle(AUTOR_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'autor')}
+function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];telStartSession();G.songList=list;G.songIdx=0;G.song=list[0];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel()}
 
 function renderHUD(){document.getElementById('g-badge').textContent=`${G.lvl}/10`;document.getElementById('g-score').textContent=G.score;document.getElementById('g-lives').innerHTML=[1,2,3].map(i=>`<span class="heart${i>G.lives?' dead':''}">❤️</span>`).join('');document.getElementById('g-dots').innerHTML=LEVELS.map((_,i)=>{const r=G.results[i];const isB=(i+1)%3===0;const c=r==='ok'?'ok':r==='fail'||r==='skip'?'fail':i+1===G.lvl?'cur':'';return`<div class="dot ${c}${isB?' bonus':''}">${isB?'⭐':i+1}</div>`}).join('')}
 
@@ -594,10 +740,10 @@ function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f
 function onConfirm(){if(!G.active)return;const ans=document.getElementById('g-ans');if(!ans)return;const v=ans.value.trim();if(!v||v.length<2){toast('⚠️ Escriu primer');return}if(norm(v)===norm(G.song.t))onCorrect();else onWrong()}
 
 function stopAll(){clearInterval(G.timerID);ytStop(true);G.playing=false;setWave(false)}
-function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;toast(`${T[G.lang].correct} +${pts}`)}G.score+=pts;G.results[G.lvl-1]='ok';trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();setTimeout(()=>nextLvl(),1800)}
-function onWrong(){if(!G.active)return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='fail';toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
-function onSkip(){if(!G.active)return;if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
-function nextLvl(){if(G.lives<=0||G.lvl>=10){endGame();return}G.lvl++;G.songIdx=(G.songIdx+1)%G.songList.length;G.song=G.songList[G.songIdx];G.active=true;startLevel()}
+function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;soundBonus();telTrackEvent('bonus_correct',{level:G.lvl,song_id:G.song?.id,lang:G.lang});toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;soundCorrect();toast(`${T[G.lang].correct} +${pts}`)}G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();setTimeout(()=>nextLvl(),1800)}
+function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
+function onSkip(){if(!G.active)return;if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
+function nextLvl(){if(G.lives<=0||G.lvl>=10){endGame();return}soundLevelUp();G.lvl++;G.songIdx=(G.songIdx+1)%G.songList.length;G.song=G.songList[G.songIdx];G.active=true;startLevel()}
 function onExit(){
   // Modal propi en lloc de confirm() per compatibilitat mòbil
   const msgs={
@@ -624,17 +770,111 @@ function onExit(){
 
 function getStreak(){try{const today=new Date().toISOString().slice(0,10);const data=JSON.parse(localStorage.getItem('cn:streak')||'{"count":0,"last":""}');const yday=new Date(Date.now()-86400000).toISOString().slice(0,10);if(data.last===today)return data.count;if(data.last===yday){data.count++;data.last=today}else{data.count=1;data.last=today}localStorage.setItem('cn:streak',JSON.stringify(data));return data.count}catch(e){return 1}}
 
+
+// ═══════════════════════════════════════
+// TELEMETRIA — Fase A
+// ═══════════════════════════════════════
+let _sessionId = null;
+let _sessionStart = null;
+let _roundData = [];
+
+function telStartSession(){
+  _sessionId = 'ss_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+  _sessionStart = Date.now();
+  _roundData = [];
+}
+
+function telTrackRound(levelIdx, songId, result, timeSpent){
+  _roundData.push({
+    level: levelIdx + 1,
+    song_id: songId,
+    result: result,           // 'ok' | 'fail' | 'skip'
+    time_spent: timeSpent
+  });
+}
+
+async function telSaveSession(completed){
+  if(!_sessionId) return;
+  try{
+    const duration = Math.round((Date.now() - _sessionStart) / 1000);
+    const ok = G.results.filter(r=>r==='ok').length;
+    const row = {
+      session_id:     _sessionId,
+      nick:           G.nick ? G.nick.substring(0,20) : 'Anònim',
+      lang:           G.lang,
+      zona:           G.zone || '',
+      mode:           G.mode,
+      style:          G.style || null,
+      score:          G.score,
+      levels_reached: G.lvl,
+      correct_count:  ok,
+      completed:      completed,
+      abandoned_at_level: completed ? null : G.lvl,
+      duration_secs:  duration,
+      played_at:      new Date().toISOString()
+    };
+    await sbI('game_sessions', row);
+
+    // Desar rondes individuals
+    if(_roundData.length > 0){
+      const rounds = _roundData.map(r => ({
+        session_id: _sessionId,
+        nick:       G.nick ? G.nick.substring(0,20) : 'Anònim',
+        lang:       G.lang,
+        mode:       G.mode,
+        level:      r.level,
+        song_id:    r.song_id,
+        result:     r.result,
+        time_spent: r.time_spent
+      }));
+      for(const r of rounds){
+        await sbI('game_rounds', r);
+      }
+    }
+  }catch(e){ /* silenciós */ }
+  _sessionId = null;
+}
+
+async function telTrackEvent(type, extra={}){
+  try{
+    await sbI('user_events', {
+      nick:      G.nick ? G.nick.substring(0,20) : 'Anònim',
+      lang:      G.lang,
+      mode:      G.mode || null,
+      event_type: type,
+      extra:     JSON.stringify(extra),
+      created_at: new Date().toISOString()
+    });
+  }catch(e){ /* silenciós */ }
+}
+
+function checkStreakMilestone(){
+  const streak = getStreak();
+  if(streak > 0 && streak % 5 === 0){
+    telTrackEvent('streak_milestone', {streak, lang: G.lang});
+  }
+}
+
+function checkRankUp(prevScore){
+  const r1 = getRankProgress(G.lang);
+  const prevRank = (RANKS[G.lang]||RANKS.ca).filter(r=>r.min<=prevScore).pop();
+  const curRank = r1.rank;
+  if(prevRank && curRank.min > prevRank.min){
+    telTrackEvent('rank_up', {from: prevRank.short, to: curRank.short, lang: G.lang});
+    toast('🎉 Has pujat de rang: ' + curRank.name);
+  }
+}
 async function endGame(){
-  stopAll();G.active=false;
+  stopAll();G.active=false;telSaveSession(true);checkStreakMilestone();
   if(G.mode==='daily')localStorage.setItem(`cn:daily:${G.lang}:${new Date().toISOString().slice(0,10)}`,'1');
-  addTotalScore(G.score);await saveScore();
+  const _prevScore=getTotalScore();addTotalScore(G.score);checkRankUp(_prevScore);await saveScore();
   if(G.mode==='challenge'){if(currentChallenge?.isCreator)await saveChallengeCreator();else await saveChallengeRival();return}
   const t=T[G.lang],ok=G.results.filter(r=>r==='ok').length,gameNum=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),streak=getStreak();
   document.getElementById('go-emoji').textContent=ok>=9?'🏆':ok>=6?'🎵':'😅';document.getElementById('go-title').textContent=ok===10?t.perfect:ok>=7?t.vgood:t.ggame;document.getElementById('go-sub').textContent=`${ok}/10 ${t.guessed}`;document.getElementById('go-pts').textContent=G.score.toLocaleString();document.getElementById('go-lvltxt').textContent=ok===10?t.allLvl:`${t.upToLvl} ${G.lvl}/10`;
   document.getElementById('go-res').innerHTML=G.results.map((r,i)=>{const ico=r==='ok'?'✅':r==='skip'?'⏭️':'❌';const song=G.songList[i]||G.songList[G.songList.length-1];return`<div class="res-row"><span>${ico} ${i+1}. ${esc(t.lvls[i].n)}</span><span class="muted" style="font-size:.76rem">${esc(song.t)}</span></div>`}).join('');
   const _dzW=document.getElementById('go-deezer-wrap');if(_dzW&&G.mode==='free'){_dzW.style.display='block';const _ls=G.songList[G.songIdx]||G.song;if(_ls?.dzId&&_ls.dzId!==0)document.getElementById('go-deezer-link').href=`https://www.deezer.com/track/${_ls.dzId}`;document.getElementById('go-deezer-songs').innerHTML=G.songList.slice(0,10).filter(s=>s?.dzId&&s.dzId!==0).map(s=>`<a href="https://www.deezer.com/track/${s.dzId}" target="_blank" rel="noopener" style="color:#1ac37c;text-decoration:none;margin:2px 4px;display:inline-block">♪ ${esc(s.t)}</a>`).join('');}else if(_dzW)_dzW.style.display='none';document.getElementById('sh-date').textContent=`#${gameNum}`;document.getElementById('sh-dots').textContent=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join('');document.getElementById('sh-score').textContent=G.score.toLocaleString();document.getElementById('sh-zone').textContent=G.zone;if(document.getElementById('sh-rank'))document.getElementById('sh-rank').textContent=getRank(G.lang).short;document.getElementById('sh-streak').textContent=streak>1?`🔥${'🔥'.repeat(Math.min(streak,5))}`:'';document.getElementById('sh-mode').textContent=t.levelBadge[G.mode]||G.mode;document.getElementById('go-share-btn').textContent=t.shareBtn;document.getElementById('go-again-btn').textContent=t.playAgain;document.getElementById('go-menu-btn').textContent=t.mainMenu;document.getElementById('go-rank-btn').textContent=t.rankBtn;go('s-gameover')
 }
-function onShare(){const t=T[G.lang],gn=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),dots=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join(''),streak=getStreak(),sf='🔥'.repeat(Math.min(streak,5)),txt=`CançoNet #${gn}\n${dots}\n🏆 ${G.score.toLocaleString()} pts${sf?`\n${sf}`:''}\n📍 ${G.zone}\nhttps://kinblay.github.io/CancoNet/`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
+function onShare(){telTrackEvent('share',{score:G.score,mode:G.mode,lang:G.lang});const t=T[G.lang],gn=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),dots=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join(''),streak=getStreak(),sf='🔥'.repeat(Math.min(streak,5)),txt=`CançoNet #${gn}\n${dots}\n🏆 ${G.score.toLocaleString()} pts${sf?`\n${sf}`:''}\n📍 ${G.zone}\nhttps://kinblay.github.io/CancoNet/`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
 
 async function saveScore(){if(!canScore())return;const sv=V.score(G.score);if(!sv.ok)return;const row={nick:G.nick.substring(0,20),zona:G.zone,score:sv.val,mode:G.mode,lang:G.lang,gender:G.gender||null,age_range:G.age||null,data:new Date().toISOString().slice(0,10)};await sbI('scores',row)}
 
@@ -648,13 +888,13 @@ function onZoneChg(zone,btn){rZone=zone;document.querySelectorAll('.ztab').forEa
 function onBackRank(){go(G.nick?'s-menu':'s-welcome')}
 
 function getBustTip(){const s=document.querySelector('#bust-type-grp .sel');return s?s.dataset.v:'idea'}
-async function onBustiaEnviar(){if(!canBustia()){toast('⚠️ Espera una estona');return}const mv=V.msg(document.getElementById('bust-msg').value);if(!mv.ok)return toast('⚠️ '+mv.e);const ev=V.email(document.getElementById('bust-email').value);if(!ev.ok)return toast('⚠️ '+ev.e);await sbI('bustia',{tipus:getBustTip(),missatge:mv.val,email:ev.val,usuari:G.nick?G.nick.substring(0,20):'Anònim',data:new Date().toISOString().slice(0,10)});toast('✅ Enviat!');document.getElementById('bust-msg').value='';document.getElementById('bust-email').value='';loadBustia()}
+async function onBustiaEnviar(){if(!canBustia()){toast('⚠️ Espera una estona');return}const mv=V.msg(document.getElementById('bust-msg').value);if(!mv.ok)return toast('⚠️ '+mv.e);const ev=V.email(document.getElementById('bust-email').value);if(!ev.ok)return toast('⚠️ '+ev.e);telTrackEvent('send_suggestion',{tipus:getBustTip(),lang:G.lang});await sbI('bustia',{tipus:getBustTip(),missatge:mv.val,email:ev.val,usuari:G.nick?G.nick.substring(0,20):'Anònim',data:new Date().toISOString().slice(0,10)});toast('✅ Enviat!');document.getElementById('bust-msg').value='';document.getElementById('bust-email').value='';loadBustia()}
 async function loadBustia(){const el=document.getElementById('bust-list');const rows=await sbS('bustia','','created_at.desc',8);if(!rows||!rows.length){el.innerHTML='Cap suggeriment encara.';return}const ic={canco:'🎵',artista:'🎸',error:'🐛',idea:'💡',altre:'✏️'};el.innerHTML=rows.map(e=>`<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:var(--gold);font-size:.72rem">${ic[e.tipus]||'✏️'} ${esc(e.tipus||'')} · ${esc(e.data||'')} · ${esc(e.usuari||'')}</span><br><span>${esc((e.missatge||'').slice(0,100))}</span></div>`).join('')}
 
 // REPTES ASÍNCRONS
-function onChallengeStart(){if(!G.nick){toast('⚠️ Necessites nom');return}const seed=Date.now()%999999;currentChallenge={seed,isCreator:true,challengeId:null};G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],seed),'challenge')}
+function onChallengeStart(){if(!G.nick){toast('⚠️ Necessites nom');return}telTrackEvent('start_game',{mode:'challenge',lang:G.lang});telTrackEvent('start_game',{mode:'challenge',lang:G.lang});const seed=Date.now()%999999;currentChallenge={seed,isCreator:true,challengeId:null};G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],seed),'challenge')}
 async function saveChallengeCreator(){if(!currentChallenge?.isCreator)return;try{const r=await fetch(`${SB_URL}/rest/v1/challenges`,{method:'POST',headers:{...SBH,'Prefer':'return=representation'},body:JSON.stringify({creator_nick:G.nick,creator_zone:G.zone,creator_score:G.score,creator_results:JSON.stringify(G.results),song_seed:currentChallenge.seed,lang:G.lang,status:'pending'})});if(!r.ok){toast('⚠️ Error');return}const data=await r.json();const ch=Array.isArray(data)?data[0]:data;currentChallenge.challengeId=ch.id;const link=`${window.location.origin}${window.location.pathname}?challenge=${ch.id}`;document.getElementById('ch-creator-score').textContent=G.score.toLocaleString();document.getElementById('ch-link').textContent=link;currentChallenge.link=link;go('s-challenge-share')}catch(e){toast('⚠️ Error de connexió')}}
-function onChallengeShareLink(){if(!currentChallenge?.link)return;window.open(`https://wa.me/?text=${encodeURIComponent(`⚔️ T'he reptat a CançoNet!\n🏆 ${G.score} pts\n🎵 Pots superar-me?\n\n${currentChallenge.link}`)}`,'_blank')}
+function onChallengeShareLink(){if(!currentChallenge?.link)return;telTrackEvent('share_challenge',{score:G.score,lang:G.lang});window.open(`https://wa.me/?text=${encodeURIComponent(`⚔️ T'he reptat a CançoNet!\n🏆 ${G.score} pts\n🎵 Pots superar-me?\n\n${currentChallenge.link}`)}`,'_blank')}
 function onChallengeCopyLink(){if(!currentChallenge?.link)return;navigator.clipboard?.writeText(currentChallenge.link).then(()=>toast('📋 Copiat!'))}
 async function checkChallengeUrl(){const p=new URLSearchParams(window.location.search);const chId=p.get('challenge');if(!chId)return false;window.history.replaceState(null,'',window.location.pathname);try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${chId}`,{headers:SBH});if(!r.ok)return false;const data=await r.json();if(!data||!data.length){toast('⚠️ Repte no trobat');return false}const ch=data[0];if(ch.status==='completed'){showChallengeResult(ch);return true}currentChallenge={seed:ch.song_seed,isCreator:false,challengeId:ch.id,data:ch};G.lang=ch.lang||'ca';document.getElementById('ch-rival-name').textContent=ch.creator_nick;document.getElementById('ch-score-to-beat').textContent=(ch.creator_score||0).toLocaleString();go('s-challenge-accept');return true}catch(e){return false}}
 function onChallengeAccept(){if(!currentChallenge?.seed)return;if(!G.nick){toast('⚠️ Registra\'t primer!');go('s-login');return}G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],currentChallenge.seed),'challenge')}
@@ -713,5 +953,74 @@ async function appInit(){
 window.addEventListener('load',()=>setTimeout(appInit,100));
 document.addEventListener('DOMContentLoaded',()=>{document.getElementById('modal-wip').addEventListener('click',function(e){if(e.target===this)closeWip()})});
 </script>
+
+// ═══════════════════════════════════════
+// BACK BUTTON (Android + Browser)
+// ═══════════════════════════════════════
+const SCREEN_PARENT = {
+  's-zone':       null,          // sortir (primera pantalla)
+  's-login':      's-zone',
+  's-menu':       null,          // sortir (menú principal)
+  's-style':      's-menu',
+  's-game':       's-menu',
+  's-gameover':   's-menu',
+  's-rankings':   's-menu',
+  's-challenge-create': 's-menu',
+  's-challenge-play':   's-menu',
+  's-bustia':     's-menu',
+  's-profile':    's-menu',
+};
+
+function pushBackState(){
+  history.pushState({canconet:true},'','');
+}
+
+window.addEventListener('popstate', function(e){
+  // Find current visible screen
+  const cur = document.querySelector('.scr.on');
+  if(!cur) return;
+  const curId = cur.id;
+  const parent = SCREEN_PARENT[curId];
+
+  // If we're in-game, treat back as "abandon game" with confirmation
+  if(curId === 's-game'){
+    if(G.active){
+      if(confirm('Vols abandonar la partida?')){
+        telSaveSession(false);telTrackEvent('abandon',{level:G.lvl,mode:G.mode});
+        ytStop(true);
+        clearInterval(G.timerInt);
+        go('s-menu');
+        renderMenu();
+        pushBackState();
+      } else {
+        pushBackState(); // re-push so next back still works
+      }
+    } else {
+      go('s-menu');
+      renderMenu();
+      pushBackState();
+    }
+    return;
+  }
+
+  // Modals — close any open modal first
+  const openModal = document.querySelector('.modal.on');
+  if(openModal){
+    openModal.classList.remove('on');
+    pushBackState();
+    return;
+  }
+
+  if(parent){
+    go(parent);
+    if(parent === 's-menu') renderMenu();
+    pushBackState(); // keep the stack so back keeps working
+  }
+  // if parent === null → allow exit (default browser back)
+});
+
+// Push initial state so we can intercept first back press
+pushBackState();
+
 </body>
 </html>
