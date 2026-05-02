@@ -187,4 +187,1148 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="card">
     <div class="field"><label id="w-lbl-name"></label><input id="inp-nick" type="text" maxlength="20"></div>
     <div class="field"><label id="w-lbl-zone"></label><div class="zone-grid" id="zone-grid"></div></div>
-    <div class="field"><label>Gènere</label><div class="zone-grid" style="grid-template-columns:1fr 1fr 1fr"><button class="zone-btn" data-g="home" onclick="pickGender(this)">👨 Home</button><button class="zone-btn" data-g=
+    <div class="field"><label>Gènere</label><div class="zone-grid" style="grid-template-columns:1fr 1fr 1fr"><button class="zone-btn" data-g="home" onclick="pickGender(this)">👨 Home</button><button class="zone-btn" data-g="dona" onclick="pickGender(this)">👩 Dona</button><button class="zone-btn" data-g="altres" onclick="pickGender(this)">🏳️ Altres</button></div></div>
+    <div class="field"><label>Edat <span style="color:var(--muted);font-weight:400;font-size:.7rem">(opcional)</span></label><div style="background:rgba(255,255,255,.05);border-radius:12px;padding:14px 16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:.82rem;color:var(--muted)" id="age-label">Prefereixo no dir</span><span style="font-size:1.1rem;font-weight:700;color:var(--gold)" id="age-value">—</span></div><input type="range" id="inp-age" min="0" max="80" value="0" style="width:100%;accent-color:var(--gold);cursor:pointer" oninput="onAgeChange(this.value)"><div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:4px"><span>No dir</span><span>16</span><span>30</span><span>45</span><span>60+</span></div></div></div>
+    <button class="btn btn-gold" id="w-btn-play" onclick="onLogin()"></button>
+    <button class="btn btn-ghost" id="w-btn-rank" onclick="go('s-rankings')"></button>
+    <button class="btn btn-ghost" onclick="go('s-modes')" style="font-size:.8rem;padding:10px">← Canviar mode</button>
+  </div>
+</div>
+
+<div id="s-menu" class="scr">
+  <div class="logo">Cançó<b>Net</b></div><div class="sub" id="m-sub"></div>
+  <div class="card center">
+    <div id="sb-status" style="font-size:.72rem;margin-bottom:8px;color:var(--muted)">🔄 Verificant connexió...</div>
+    <div id="m-rank-widget" style="width:100%;background:rgba(212,160,23,.08);border:.5px solid rgba(212,160,23,.25);border-radius:12px;padding:10px 14px;margin-bottom:10px;text-align:left"></div>
+    <div class="big" id="m-hello"></div><div class="muted mt" id="m-zone" style="margin-bottom:14px"></div>
+    <div id="m-daily-info"></div>
+    <div id="m-daily-style" style="font-size:.72rem;font-weight:600;color:var(--gold);text-align:center;margin-bottom:4px;letter-spacing:.3px"></div>
+    <button class="btn btn-gold" id="m-btn-daily" onclick="onDaily()"></button>
+    <button class="btn btn-red" id="m-btn-free" onclick="onFree()"></button>
+    <button class="btn btn-purple" id="m-btn-autor" onclick="onAutor()"></button>
+    <button class="btn btn-ghost" id="m-btn-rank" onclick="go('s-rankings')"></button>
+    <button class="btn btn-ghost" id="m-btn-suggest" onclick="go('s-bustia')"></button>
+    <button class="btn btn-ghost" id="m-btn-info" onclick="go('s-info')"></button>
+    <button class="btn btn-ghost" onclick="signOut()" style="font-size:.78rem;padding:10px;opacity:.6">🚪 Tancar sessió</button>
+    <div class="sep"></div>
+    <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Pròximament</div>
+    <button class="btn btn-ghost" onclick="go('s-challenge-create');loadChallengeStats()">⚔️ Repte a un amic</button>
+    <button class="btn btn-ghost" onclick="showWip('emsona')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative">🎭 Em Sona — Plagi o Coincidència? <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
+    <button class="btn btn-ghost" onclick="showWip('relax')" style="opacity:.9;border:1.5px solid rgba(134,239,172,.35);background:rgba(134,239,172,.07);position:relative">🎹 Mode Relax <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#000;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
+    <button class="btn btn-ghost" onclick="go('s-sala-menu');renderSalaMenu()" style="border:1.5px solid rgba(212,160,23,.3);background:rgba(212,160,23,.07)">👨‍👩‍👧 Mode Família</button>
+    <button class="btn btn-ghost" onclick="showWip('provinces')" style="opacity:.7">🏴 Repte per zones</button>
+    <button class="btn btn-ghost" onclick="showWip('logros')" style="opacity:.7">🏅 Assoliments i badges</button>
+    <button class="btn btn-ghost" onclick="showWip('realia')" style="opacity:.7">🤖 Real o IA?</button>
+    <button class="btn btn-ghost" onclick="go('s-modes')" style="font-size:.78rem;padding:10px">← Canviar idioma</button>
+  </div>
+</div>
+
+<div id="s-game" class="scr">
+  <div style="width:100%;max-width:460px;text-align:center;margin-bottom:4px"><span class="mode-badge" id="g-mode-badge"></span><span class="lang-badge" id="g-lang-badge"></span></div>
+  <div class="hud"><div class="lvl-badge" id="g-badge">1/10</div><div class="lives" id="g-lives"></div><div class="score-disp" id="g-score">0</div></div>
+  <div class="dots" id="g-dots"></div>
+  <div class="t-wrap"><div class="t-track"><div class="t-fill" id="g-tbar" style="width:100%"></div></div><div class="t-num" id="g-tnum">60s</div></div>
+  <div class="lv-info"><div class="lv-name" id="g-lname"></div><div class="lv-desc" id="g-ldesc"></div></div>
+  <div id="g-bonus-badge" class="bonus-badge" style="display:none;margin:6px auto">⭐ BONUS — puntuació màxima!</div>
+  <div class="player-box"><button class="play-btn" id="g-pbtn" onclick="onPlay()">▶</button><div class="wave" id="g-wave"></div><div class="p-info" id="g-pinfo"></div></div>
+  <div class="hint-box" id="g-hint" style="display:none"><span id="g-hint-txt"></span></div>
+  <div id="g-lvl10-clue" style="display:none;width:100%;max-width:460px;background:rgba(212,160,23,.08);border:.5px solid rgba(212,160,23,.25);border-radius:10px;padding:10px 14px;margin:6px 0;text-align:left"></div>
+  <div id="g-answer-container" style="width:100%;max-width:460px;margin:7px 0"></div>
+  <div id="g-full-song-wrap" style="display:none;width:100%;max-width:460px"><button class="btn btn-green" id="g-full-btn" onclick="onListenFull()"></button></div>
+  <div class="w-full"><button class="btn btn-outline mt" id="g-skip-btn" onclick="onSkip()"></button><button class="btn btn-ghost" id="g-exit-btn" onclick="onExit()" style="font-size:.8rem;padding:10px"></button></div>
+</div>
+
+<div id="s-gameover" class="scr">
+  <div class="go-emoji" id="go-emoji">🎵</div><div class="go-title" id="go-title"></div><div class="go-sub" id="go-sub"></div>
+  <div class="card"><div class="card-ttl center">Puntuació final</div><div class="final-pts" id="go-pts">0</div><div class="center muted mt" id="go-lvltxt" style="margin-bottom:12px;font-size:.8rem"></div><div class="sep"></div><div id="go-res"></div></div>
+  <div id="go-deezer-wrap" style="display:none;width:100%;max-width:460px;margin-top:8px;text-align:center"><a id="go-deezer-link" href="#" target="_blank" rel="noopener" style="display:inline-block;background:rgba(26,195,136,.12);border:.5px solid rgba(26,195,136,.35);color:#1ac37c;font-size:.85rem;font-weight:600;padding:10px 20px;border-radius:10px;text-decoration:none">🎧 Escolta a Deezer</a><div id="go-deezer-songs" style="margin-top:8px;font-size:.75rem;color:var(--muted)"></div></div>
+  <div class="share-card"><div class="share-title">CançoNet · <span id="sh-date"></span></div><div class="share-dots" id="sh-dots"></div><div class="share-score">🏆 <span id="sh-score"></span> pts</div><div style="font-size:.72rem;color:var(--gold);margin-top:2px" id="sh-rank"></div><div class="share-zone">📍 <span id="sh-zone"></span></div><div style="font-size:.75rem;color:#a78bfa;margin-top:3px" id="sh-streak"></div><div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="sh-mode"></div></div>
+  <div class="w-full"><button class="btn btn-gold" id="go-share-btn" onclick="onShare()"></button><button class="btn btn-red" id="go-again-btn" onclick="telTrackEvent('play_again',{mode:G.mode,score:G.score});onFree()"></button><button class="btn btn-ghost" id="go-menu-btn" onclick="go('s-menu')"></button><button class="btn btn-ghost" id="go-rank-btn" onclick="go('s-rankings')"></button></div>
+</div>
+
+<div id="s-rankings" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">🏆 Rànquing</div>
+  <div class="tabs"><button class="tab on" onclick="onTabChg('global',this)">🌍 Global</button><button class="tab" onclick="onTabChg('zone',this)">📍 Zones</button><button class="tab" onclick="onTabChg('daily',this)">📅 Avui</button></div>
+  <div class="ztabs" id="ztabs" style="display:none"></div>
+  <div class="card" style="padding:0 16px 4px"><div id="rank-list"></div></div>
+  <div class="w-full"><button class="btn btn-ghost mt" onclick="onBackRank()">↩️ Enrere</button></div>
+</div>
+
+<div id="s-bustia" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">💌 Bustia</div><div class="sub">Ajuda'ns a millorar CançoNet</div>
+  <div class="card">
+    <div class="field"><label>Tipus</label><div class="radio-grp" id="bust-type-grp"><button class="radio-pill sel" data-v="canco" onclick="pickPill(this,'bust-type-grp')">🎵 Cançó</button><button class="radio-pill" data-v="artista" onclick="pickPill(this,'bust-type-grp')">🎸 Artista</button><button class="radio-pill" data-v="error" onclick="pickPill(this,'bust-type-grp')">🐛 Error</button><button class="radio-pill" data-v="idea" onclick="pickPill(this,'bust-type-grp')">💡 Idea</button><button class="radio-pill" data-v="altre" onclick="pickPill(this,'bust-type-grp')">✏️ Altre</button></div></div>
+    <div class="field"><label>Missatge</label><textarea id="bust-msg" placeholder="Escriu aquí..."></textarea></div>
+    <div class="field"><label>Correu (opcional)</label><input type="email" id="bust-email" placeholder="correu@exemple.com"></div>
+    <button class="btn btn-gold" onclick="onBustiaEnviar()">📤 Enviar</button><button class="btn btn-ghost" onclick="go('s-menu')">↩️ Enrere</button>
+  </div>
+  <div class="card"><div class="card-ttl">Suggeriments recents</div><div id="bust-list" style="font-size:.82rem;color:var(--muted)">Cap suggeriment encara.</div></div>
+</div>
+
+<div id="s-info" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">ℹ️ CançoNet</div>
+  <div class="card"><div class="card-ttl">Com jugar</div><div style="font-size:.85rem;color:var(--muted);line-height:2">🎵 Escolta · ✅ Respon · ❤️ 3 vides · ⏭️ Saltar · ⏱️ Compte enrere<br>📈 10 nivells creixents<br><br><strong style="color:var(--text)">Modes:</strong> ✏️ Escriu · 🎵 Tria títol · 🗓️ Any · 🎤 Autor<br>⭐ <strong style="color:var(--gold)">BONUS cada 3 nivells</strong><br>📅 Diari: 1/dia · 🎮 Lliure: sense límit</div></div>
+  <div class="card"><div class="card-ttl">Segueix-nos</div><div class="social-row"><a class="social-btn" href="https://instagram.com" target="_blank">📸 IG</a><a class="social-btn" href="https://tiktok.com" target="_blank">🎵 TikTok</a><a class="social-btn" href="https://twitter.com" target="_blank">🐦 X</a></div></div>
+  <div class="w-full"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+</div>
+
+
+<div id="s-style" class="scr">
+  <div style="font-size:1.5rem;font-weight:900;margin:8px 0 4px;text-align:center">🎮 Partida lliure</div>
+  <div class="sub" id="sty-sub" style="margin-bottom:16px;text-align:center"></div>
+  <div id="sty-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:460px;margin:0 0 12px"></div>
+  <button class="btn btn-ghost" onclick="go('s-menu')" style="width:100%;max-width:460px">↩️ <span id="sty-back-lbl">Enrere</span></button>
+</div>
+
+<div id="s-challenge-create" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">⚔️ Repte a un amic</div><div class="sub">Envia un repte i compara resultats!</div>
+  <div class="card center">
+    <div style="font-size:3rem;margin:10px 0">⚔️</div>
+    <div style="font-size:.9rem;color:var(--muted);line-height:1.8;margin-bottom:16px">Juga 10 nivells. Comparteix el link.<br>El teu amic juga les <strong style="color:var(--gold)">mateixes cançons</strong>.<br>Qui fa més punts, guanya! 🏆</div>
+    <div id="ch-my-stats" style="margin-bottom:14px"></div>
+    <button class="btn btn-gold" onclick="onChallengeStart()">🎵 Començar repte!</button>
+    <button class="btn btn-ghost" onclick="go('s-menu')">↩️ Enrere</button>
+  </div>
+  <div class="card"><div class="card-ttl">🏆 Millors reptadors</div><div id="ch-leaderboard" style="font-size:.82rem;color:var(--muted)">Carregant...</div></div>
+</div>
+
+<div id="s-challenge-share" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">⚔️ Repte creat!</div>
+  <div class="card center">
+    <div style="font-size:3rem;margin:10px 0">🎯</div><div class="go-sub">La teva puntuació:</div><div class="final-pts" id="ch-creator-score">0</div>
+    <div style="background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.3);border-radius:12px;padding:12px;margin:10px 0"><div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Link del repte</div><div id="ch-link" style="font-size:.78rem;color:var(--gold);word-break:break-all;margin-bottom:10px"></div><button class="btn btn-gold" onclick="onChallengeShareLink()" style="padding:12px">📤 Compartir per WhatsApp</button><button class="btn btn-ghost" onclick="onChallengeCopyLink()" style="padding:10px;font-size:.82rem">📋 Copiar link</button></div>
+  </div>
+  <div class="w-full"><button class="btn btn-ghost" onclick="go('s-menu')">↩️ Menú</button></div>
+</div>
+
+<div id="s-challenge-accept" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">⚔️ T'han reptat!</div>
+  <div class="card center">
+    <div style="font-size:3rem;margin:10px 0">🔥</div>
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:6px"><span id="ch-rival-name" style="color:var(--gold)"></span> et desafia!</div>
+    <div style="font-size:.85rem;color:var(--muted);line-height:1.8;margin-bottom:16px">Jugaràs les mateixes 10 cançons.<br>Qui fa més punts, guanya!</div>
+    <div style="background:rgba(193,18,31,.15);border-radius:12px;padding:14px;margin-bottom:14px"><div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Puntuació a superar</div><div style="font-size:2rem;font-weight:900;color:var(--red)" id="ch-score-to-beat">0</div></div>
+    <button class="btn btn-red" onclick="onChallengeAccept()">⚔️ Acceptar repte!</button>
+    <button class="btn btn-ghost" onclick="go('s-menu')">↩️ No, gràcies</button>
+  </div>
+</div>
+
+<div id="s-challenge-result" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">⚔️ Resultat</div>
+  <div class="card center">
+    <div style="font-size:3rem;margin:10px 0" id="ch-result-emoji">🏆</div>
+    <div style="font-size:1.3rem;font-weight:900;margin-bottom:4px" id="ch-result-title"></div>
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:16px" id="ch-result-sub"></div>
+    <div style="display:flex;align-items:center;gap:12px;justify-content:center;margin:14px 0"><div style="text-align:center;flex:1"><div style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Creador</div><div style="font-weight:700;margin:4px 0" id="ch-res-p1-name"></div><div style="font-size:1.8rem;font-weight:900;color:var(--gold)" id="ch-res-p1-score">0</div></div><div style="font-size:1.5rem;font-weight:900;color:var(--muted)">VS</div><div style="text-align:center;flex:1"><div style="font-size:.75rem;color:var(--muted);text-transform:uppercase">Rival</div><div style="font-weight:700;margin:4px 0" id="ch-res-p2-name"></div><div style="font-size:1.8rem;font-weight:900;color:var(--red)" id="ch-res-p2-score">0</div></div></div>
+    <div class="sep"></div><div id="ch-res-rounds" style="font-size:.82rem"></div>
+  </div>
+  <div class="share-card"><div class="share-title">⚔️ Repte CançoNet</div><div id="ch-res-share-dots" style="font-size:1rem;letter-spacing:2px;margin:6px 0"></div><div style="font-size:.75rem;color:var(--muted);margin-top:4px" id="ch-res-share-txt"></div></div>
+  <div class="w-full"><button class="btn btn-gold" onclick="onChallengeShareResult()">📤 Compartir</button><button class="btn btn-red" onclick="go('s-challenge-create')">⚔️ Nou repte</button><button class="btn btn-ghost" onclick="go('s-menu')">↩️ Menú</button></div>
+</div>
+
+<script>
+const SB_URL='https://ikfouhxdtkptafglthmd.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrZm91aHhkdGtwdGFmZ2x0aG1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMjY5MTksImV4cCI6MjA5MTYwMjkxOX0.j1GM0Ec2w_gDlRMHAoOk6LUdgX5YUYXpXp9ULX0kkJQ';
+const SBH={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+async function sbI(table,row){try{const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(row)});return r.ok}catch(e){return false}}
+async function sbS(table,f='',o='score.desc',l=20){try{const r=await fetch(`${SB_URL}/rest/v1/${table}?${f}&order=${o}&limit=${Math.min(l,100)}`,{headers:SBH});if(!r.ok)return null;return await r.json()}catch(e){return null}}
+
+const RL={_s:{},check(k,mx,ms){const n=Date.now();if(!this._s[k])this._s[k]=[];this._s[k]=this._s[k].filter(t=>n-t<ms);if(this._s[k].length>=mx)return false;this._s[k].push(n);return true}};
+const canScore=()=>RL.check('sc',3,10*60*1000);const canBustia=()=>RL.check('bu',5,60*60*1000);
+const V={nick(v){if(!v||typeof v!=='string')return{ok:false,e:'Nom obligatori'};const s=v.trim();if(s.length<1||s.length>20)return{ok:false,e:'1-20 caràcters'};if(!/^[\w\s\-àáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ·]+$/u.test(s))return{ok:false,e:'Caràcters no permesos'};return{ok:true,val:s}},msg(v){if(!v||typeof v!=='string')return{ok:false,e:'Missatge obligatori'};const s=v.trim();if(s.length<3||s.length>500)return{ok:false,e:'3-500 caràcters'};return{ok:true,val:s}},email(v){if(!v||v.trim()==='')return{ok:true,val:null};const s=v.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))return{ok:false,e:'Email invàlid'};return{ok:true,val:s}},score(v){const n=parseInt(v);if(isNaN(n)||n<0||n>99999)return{ok:false};return{ok:true,val:n}}};
+function esc(s){if(s==null)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+
+async function sendOtp(email){
+  try{
+    const r=await fetch(`${SB_URL}/auth/v1/otp`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY},
+      body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true})
+    });
+    if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}
+    return{ok:true}
+  }catch(e){return{ok:false,msg:'Error de connexió'}}
+}
+async function verifyOtp(email,token){
+  try{
+    const r=await fetch(`${SB_URL}/auth/v1/otp`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY},
+      body:JSON.stringify({email:email.trim().toLowerCase(),token:String(token).trim(),type:'email'})
+    });
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok)return{ok:false,msg:data.msg||data.message||data.error_description||'Codi invàlid o caducat'};
+    if(data.access_token){
+      const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;
+      localStorage.setItem(key,JSON.stringify({access_token:data.access_token,refresh_token:data.refresh_token,expires_at:Date.now()+2592000000}));
+      return{ok:true,session:data};
+    }
+    return{ok:false,msg:'Resposta inesperada'};
+  }catch(e){return{ok:false,msg:'Error de connexió'}}
+}
+async function handleAuthCallback(){const hash=window.location.hash;if(!hash.includes('access_token'))return false;try{const p=new URLSearchParams(hash.slice(1));const a=p.get('access_token'),rf=p.get('refresh_token');if(!a)return false;const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;localStorage.setItem(key,JSON.stringify({access_token:a,refresh_token:rf,expires_at:Date.now()+3600000}));window.history.replaceState(null,'',window.location.pathname);return true}catch(e){return false}}
+async function loadUserProfile(user){
+  // 1. Intenta carregar de Supabase (funciona entre dispositius)
+  try{
+    const r=await sbS('profiles',`email=eq.${encodeURIComponent(user.email)}`,'created_at.desc',1);
+    if(r&&r.length){const p=r[0];G.nick=p.nick;G.zone=p.zona||'';G.lang=p.lang||'ca';G.gender=p.gender||'';G.age=p.age_range||'';
+      // Actualitza localStorage com a cache local
+      localStorage.setItem(`cn:profile:${user.email}`,JSON.stringify({nick:p.nick,zone:p.zona,lang:p.lang,ts:Date.now()}));
+      return p}
+  }catch(e){}
+  // 2. Fallback: localStorage
+  try{const s=localStorage.getItem(`cn:profile:${user.email}`);if(s){const p=JSON.parse(s);G.nick=p.nick||'';G.zone=p.zone||'';G.lang=p.lang||'ca';return p}}catch(e){}
+  return null
+}
+
+function saveUserProfile(){
+  if(!G.nick)return;
+  const email=localStorage.getItem('cn:user-email');if(!email)return;
+  // Guarda a localStorage (cache ràpida)
+  localStorage.setItem(`cn:profile:${email}`,JSON.stringify({nick:G.nick,zone:G.zone,lang:G.lang,ts:Date.now()}));
+  // Guarda a Supabase (persisteix entre dispositius)
+  saveProfileToSupabase(email)
+}
+
+async function saveProfileToSupabase(email){
+  const row={email:email.toLowerCase(),nick:G.nick,zona:G.zone,lang:G.lang,gender:G.gender||null,age_range:G.age||null,updated_at:new Date().toISOString()};
+  // Intenta actualitzar primer
+  try{
+    const existing=await sbS('profiles',`email=eq.${encodeURIComponent(email.toLowerCase())}`,'created_at.desc',1);
+    if(existing&&existing.length){
+      await fetch(`${SB_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(email.toLowerCase())}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(row)})
+    }else{
+      await sbI('profiles',row)
+    }
+  }catch(e){console.log('[CançoNet] Profile save error:',e)}
+}
+
+let lastEmailSent='';
+async function onSendOtp(){
+  const email=document.getElementById('login-email').value.trim();
+  const ev=V.email(email);if(!ev.ok||!email)return toast('⚠️ Posa un correu vàlid');
+  const btn=document.getElementById('login-btn');btn.disabled=true;btn.textContent='Enviant...';
+  const res=await sendOtp(email);
+  btn.disabled=false;btn.textContent='Enviar codi 🎵';
+  if(res.ok){
+    lastEmailSent=email;localStorage.setItem('cn:user-email',email);
+    document.getElementById('login-card-email').style.display='none';
+    document.getElementById('login-card-sent').style.display='block';
+    document.getElementById('login-sent-desc').textContent=`Hem enviat un codi de 8 dígits a ${email}. Caduca en 10 minuts.`;
+    setTimeout(()=>document.getElementById('login-otp-input')?.focus(),300);
+  }else toast('⚠️ '+(res.msg||'Error'));
+}
+async function onVerifyOtp(){
+  const otp=document.getElementById('login-otp-input').value.trim();
+  if(!otp||otp.length!==8)return toast('⚠️ El codi té 8 dígits');
+  const btn=document.getElementById('login-verify-btn');btn.disabled=true;btn.textContent='Verificant...';
+  const res=await verifyOtp(lastEmailSent,otp);
+  btn.disabled=false;btn.textContent='✅ Verificar codi';
+  if(res.ok){
+    toast('✅ Sessió iniciada!');
+    telTrackEvent('login',{lang:G.lang});
+    const email=lastEmailSent;localStorage.setItem('cn:user-email',email);
+    const p=await loadUserProfile({email});
+    if(p&&p.nick&&p.zona){
+      G.lang=p.lang||'ca';renderMenu();go('s-menu');testSB();
+      toast(`👋 Benvingut, ${G.nick}!`);
+    }else{
+      G.lang=localStorage.getItem('cn:last-lang')||'ca';
+      go('s-welcome');renderWelcome();
+    }
+  }else toast('⚠️ '+(res.msg||'Codi invàlid'));
+}
+async function onResentEmail(){if(!lastEmailSent)return;await sendOtp(lastEmailSent);toast('📧 Codi reenviat!');document.getElementById('login-otp-input').value='';}
+function resetLoginForm(){document.getElementById('login-card-email').style.display='block';document.getElementById('login-card-sent').style.display='none';document.getElementById('login-email').value=''}
+async function signOut(){Object.keys(localStorage).filter(k=>k.includes('auth-token')||k.includes('sb-')).forEach(k=>localStorage.removeItem(k));localStorage.removeItem('cn:user-email');G.nick='';G.zone='';go('s-modes');toast('👋 Sessió tancada')}
+async function trackArtist(nick,zona,lang,artist){if(!nick||!artist)return;const ex=await sbS('artist_stats',`nick=eq.${encodeURIComponent(nick)}&artist=eq.${encodeURIComponent(artist)}&lang=eq.${lang}`,'updated_at.desc',1);if(ex&&ex.length>0){try{await fetch(`${SB_URL}/rest/v1/artist_stats?nick=eq.${encodeURIComponent(nick)}&artist=eq.${encodeURIComponent(artist)}&lang=eq.${lang}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify({correct_count:ex[0].correct_count+1,updated_at:new Date().toISOString()})})}catch(e){}}else await sbI('artist_stats',{nick,zona,lang,artist,correct_count:1})}
+
+function hideTtl(t){return t.split('').map((c,i)=>{if(c===' ')return' ';if(i===0||i===t.length-1)return c;return i%2===0?c:'_'}).join('')}
+const T={
+ca:{appSub:'Endevina la cançó catalana',yourName:'El teu nom',namePH:'Com et dius?',yourZone:'La teva zona',playBtn:'Jugar! 🎵',seeRank:'🏆 Veure rànquing',hello:'Hola',dailyBtn:'📅 Cançó del dia',freeBtn:'🎮 Partida lliure',autorBtn:'🎸 Cançó d\'Autor',rankBtn:'🏆 Rànquing',suggestBtn:'💌 Bustia',infoBtn:'ℹ️ Informació',answerPH:'Escriu el títol...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Sortir',listenFull:'🎵 Cançó sencera',correct:'✅ Correcte!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escoltes:',playsLeft:'Restants:',noPlays:'No queden',playing:'♪ Reproduint...',hT:s=>`💡 Títol: ${hideTtl(s.t)}`,hL:s=>`💡 Lletra: "${s.t[0]}"`,hY:s=>`💡 Any: ${s.y}`,hG:s=>`💡 Gènere: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Paraules: ${s.t.split(' ').length}`,hD:s=>`💡 Dècada: ${s.dec}`,perfect:'Perfecte! 10/10!',vgood:'Molt bé!',ggame:'Bona partida!',guessed:'cançons encertades',allLvl:'🏆 Tots els nivells!',upToLvl:'Fins al nivell',shareBtn:'📤 Compartir',playAgain:'🔄 Tornar a jugar',mainMenu:'↩️ Menú',dailyPlayed:'✅ Ja has jugat avui!',dailyPlayedSub:'Torna demà.',noScores:'Cap puntuació encara.',levelBadge:{daily:'📅 Diari',free:'🎮 Lliure',autor:'🎸 Autor',challenge:'⚔️ Repte'},lvls:[{n:'10 segons',d:'Fragment llarg — fàcil'},{n:'8 segons',d:'Fragment mig'},{n:'6 segons',d:'Fragment curt'},{n:'5 segons',d:'Fragment curt'},{n:'4 segons',d:'Fragment molt curt'},{n:'3 segons',d:'Fragmentet'},{n:'5 segons',d:'Sense pistes'},{n:'4 segons',d:'Sense pistes'},{n:'Velocitat 0.5x',d:'Melodia a mig tempo'},{n:'🔥 Repte final',d:'Velocitat 1.75x + pista escrita'}],zones:["Barcelona","Girona","Lleida","Tarragona","Terres de l'Ebre"]},
+es:{appSub:'Adivina la canción',yourName:'Tu nombre',namePH:'¿Cómo te llamas?',yourZone:'Tu zona',playBtn:'¡Jugar! 🎵',seeRank:'🏆 Ver ranking',hello:'Hola',dailyBtn:'📅 Canción del día',freeBtn:'🎮 Partida libre',autorBtn:'🎸 Canción de Autor',rankBtn:'🏆 Ranking',suggestBtn:'💌 Buzón',infoBtn:'ℹ️ Info',answerPH:'Título de la canción...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Salir',listenFull:'🎵 Canción entera',correct:'✅ ¡Correcto!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escuchas:',playsLeft:'Restantes:',noPlays:'No quedan',playing:'♪ Reproduciendo...',hT:s=>`💡 Título: ${hideTtl(s.t)}`,hL:s=>`💡 Letra: "${s.t[0]}"`,hY:s=>`💡 Año: ${s.y}`,hG:s=>`💡 Género: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Palabras: ${s.t.split(' ').length}`,hD:s=>`💡 Década: ${s.dec}`,perfect:'¡Perfecto!',vgood:'¡Muy bien!',ggame:'¡Buena partida!',guessed:'canciones',allLvl:'🏆 ¡Todos!',upToLvl:'Hasta nivel',shareBtn:'📤 Compartir',playAgain:'🔄 Otra vez',mainMenu:'↩️ Menú',dailyPlayed:'✅ ¡Ya jugaste hoy!',dailyPlayedSub:'Vuelve mañana.',noScores:'Sin puntuaciones.',levelBadge:{daily:'📅 Diario',free:'🎮 Libre',autor:'🎸 Autor',challenge:'⚔️ Reto'},lvls:[{n:'10 segundos',d:'Fragmento largo — fácil'},{n:'8 segundos',d:'Fragmento medio'},{n:'6 segundos',d:'Fragmento corto'},{n:'5 segundos',d:'Fragmento corto'},{n:'4 segundos',d:'Fragmento muy corto'},{n:'3 segundos',d:'Fragmentito'},{n:'5 segundos',d:'Sin pistas'},{n:'4 segundos',d:'Sin pistas'},{n:'Velocidad 0.5x',d:'Melodía a medio tempo'},{n:'🔥 Reto final',d:'Velocidad 1.75x + pista escrita'}],zones:["Andalucía","Aragón","Asturias","Illes Balears","Canàries","Cantàbria","Castella i Lleó","Castella-la Manxa","Catalunya","Extremadura","Galícia","La Rioja","Madrid","Múrcia","Navarra","País Basc","País Valencià","Ceuta i Melilla"]},
+eu:{appSub:'Guess the European song',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'10 seconds',d:'Long fragment — easy'},{n:'8 seconds',d:'Medium fragment'},{n:'6 seconds',d:'Short fragment'},{n:'5 seconds',d:'Short fragment'},{n:'4 seconds',d:'Very short fragment'},{n:'3 seconds',d:'Tiny fragment'},{n:'5 seconds',d:'No hints'},{n:'4 seconds',d:'No hints'},{n:'Speed 0.5x',d:'Half tempo melody'},{n:'🔥 Final challenge',d:'Speed 1.75x + written clue'}],zones:["France","Germany","Italy","Portugal","Netherlands"]},
+int:{appSub:'Guess the hit',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'10 seconds',d:'Long — easy'},{n:'8 seconds',d:'Medium'},{n:'6 seconds',d:'Short'},{n:'5 seconds',d:'Short'},{n:'4 seconds',d:'Very short'},{n:'3 seconds',d:'Tiny'},{n:'5 seconds',d:'No hints'},{n:'4 seconds',d:'No hints'},{n:'Speed 0.5x',d:'Half tempo'},{n:'🔥 Final',d:'Speed 1.75x + clue'}],zones:["Americas","Asia","Africa","Oceania","Europe"]}
+};
+
+const SONGS_CA=[
+{id:1,dzId:3238325401,t:"Boig per tu",a:"Sau",y:1990,g:"Rock català",ai:"S",dec:"anys 90",ytId:"qRFJ9K-iuHQ",seg:{full:{s:32,e:42},chorus:{s:70,e:75},intro:{s:0,e:8},end:{s:240,e:250},mid:{s:76,e:88}}},
+{id:2,dzId:2149463907,t:"COTI X COTI",a:"The Tyets",y:2023,g:"Pop català",ai:"T",dec:"anys 2020",ytId:"Kx73OzRj7qE",seg:{full:{s:9,e:15},chorus:{s:28,e:34},intro:{s:0,e:9},end:{s:122,e:138},mid:{s:64,e:76}}},
+{id:3,dzId:3234556431,t:"Una lluna a l'aigua",a:"Txarango",y:2017,g:"Mestissatge",ai:"T",dec:"anys 2010",ytId:"BeH2eH9iPw4",seg:{full:{s:8,e:12},chorus:{s:16,e:24},intro:{s:0,e:7},end:{s:193,e:205},mid:{s:29,e:36}}},
+{id:4,dzId:78944345,t:"L'Empordà",a:"Sopa de Cabra",y:1989,g:"Rock català",ai:"S",dec:"anys 80",ytId:"Gs17YhNfKtw",seg:{full:{s:13,e:27},chorus:{s:16,e:19},intro:{s:0,e:7},end:{s:124,e:132},mid:{s:24,e:28}}},
+{id:5,dzId:14966842,t:"Jenifer",a:"Els Catarres",y:2011,g:"Pop folk",ai:"E",dec:"anys 2010",ytId:"FhJR6OO1X8Y",seg:{full:{s:45,e:57},chorus:{s:60,e:64},intro:{s:8,e:23},end:{s:126,e:141},mid:{s:75,e:82}}},
+{id:6,dzId:98128702,t:"Sense tu",a:"Teràpia de Shock",y:2011,g:"Rock català",ai:"T",dec:"anys 2010",ytId:"x_Zd3KoEtRk",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:7,dzId:3238541641,t:"Pa amb oli i sal",a:"Blaumut",y:2012,g:"Pop català",ai:"B",dec:"anys 2010",ytId:"g8-TqoOK4ow",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:8,dzId:3868688081,t:"Camins",a:"Sopa de Cabra",y:1991,g:"Rock català",ai:"S",dec:"anys 90",ytId:"79foF5DoOxY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:9,dzId:681479,t:"Que tinguem sort",a:"Lluís Llach",y:1974,g:"Cançó d'autor",ai:"L",dec:"anys 70",ytId:"3yMS-c1nSF4",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:10,dzId:1376216,t:"La Flama",a:"Obrint Pas",y:2004,g:"Rock català",ai:"O",dec:"anys 2000",ytId:"gr1CUFsj-vs",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:11,dzId:10866248,t:"Bon dia",a:"Els Pets",y:1997,g:"Rock català",ai:"E",dec:"anys 90",ytId:"XgwnYX0flkk",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:12,dzId:3250714091,t:"In the Night",a:"Oques Grasses",y:2023,g:"Pop modern",ai:"O",dec:"anys 2020",ytId:"RCzT6jBcTB0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:13,dzId:3250733821,t:"Vull estar amb tu",a:"Els Catarres",y:2020,g:"Pop modern",ai:"E",dec:"anys 2020",ytId:"y0bx_PVZA8Y",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:14,dzId:11513142,t:"Al mar",a:"Manel",y:2013,g:"Pop modern",ai:"M",dec:"anys 2010",ytId:"lKtzww4RFDC",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:15,dzId:827411212,t:"Escriurem",a:"Miki Núñez",y:2019,g:"Pop modern",ai:"M",dec:"anys 2010",ytId:"PoGFiOjfQvY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:16,dzId:3264997071,t:"La Marina sta morena",a:"Figa Flawas",y:2024,g:"Pop viral",ai:"F",dec:"anys 2020",ytId:"WaKp1ODXiD0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:17,dzId:2915661041,t:"Connectats",a:"Buhos",y:2020,g:"Pop català",ai:"B",dec:"anys 2020",ytId:"OsN2M-zf6HE",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:18,dzId:2950758591,t:"Barcelona s'il·lumina",a:"Buhos",y:2021,g:"Pop català",ai:"B",dec:"anys 2020",ytId:"pQn4GfnQPrE",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:19,dzId:3250714231,t:"La dansa del vestit",a:"Txarango",y:2012,g:"Festa",ai:"T",dec:"anys 2010",ytId:"XqW8u2NUIAo",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:20,dzId:3687560,t:"Camals mullats",a:"La Gossa Sorda",y:2003,g:"Festa",ai:"L",dec:"anys 2000",ytId:"WGCevTm3nps",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}}
+];
+const SONGS_AUTOR_CA=[
+{id:101,t:"Sense tu",a:"Teràpia de Shock",y:2011,g:"Rock",ai:"T",dec:"anys 2010",ytId:"x_Zd3KoEtRk",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:102,t:"Pa amb oli i sal",a:"Blaumut",y:2012,g:"Pop",ai:"B",dec:"anys 2010",ytId:"g8-TqoOK4ow",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:103,t:"In the Night",a:"Oques Grasses",y:2023,g:"Pop",ai:"O",dec:"anys 2020",ytId:"RCzT6jBcTB0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:104,t:"La Marina sta morena",a:"Figa Flawas",y:2024,g:"Viral",ai:"F",dec:"anys 2020",ytId:"WaKp1ODXiD0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:105,t:"Escriurem",a:"Miki Núñez",y:2019,g:"Pop",ai:"M",dec:"anys 2010",ytId:"PoGFiOjfQvY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}}
+];
+const SONGS_ES=[
+{id:21,dzId:2270596,t:"Libre",a:"Nino Bravo",y:1972,g:"Balada",ai:"N",dec:"anys 70",ytId:"kY4ZhR1CpL4",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:22,dzId:3090782,t:"Mi gran noche",a:"Raphael",y:1971,g:"Pop",ai:"R",dec:"anys 70",ytId:"uKfhlqBOPIs",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:23,dzId:14393475,t:"Como yo te amo",a:"Rocío Jurado",y:1979,g:"Balada",ai:"R",dec:"anys 70",ytId:"pmQQybPiuAo",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:24,dzId:78909954,t:"19 días y 500 noches",a:"Joaquín Sabina",y:1999,g:"Cantautor",ai:"J",dec:"anys 90",ytId:"qahBeZB1g54",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:25,dzId:970057,t:"Mediterráneo",a:"Joan Manuel Serrat",y:1971,g:"Cantautor",ai:"J",dec:"anys 70",ytId:"Cx5ENAFTLZg",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:26,dzId:14496771,t:"Corazón partío",a:"Alejandro Sanz",y:1997,g:"Pop",ai:"A",dec:"anys 90",ytId:"YxFUwGaxKTo",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:27,dzId:1045123,t:"Vivir así es morir de amor",a:"Camilo Sesto",y:1980,g:"Balada",ai:"C",dec:"anys 80",ytId:"DQ4ZUdcmwk",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:28,dzId:836458,t:"Eres tú",a:"Mocedades",y:1973,g:"Balada",ai:"M",dec:"anys 70",ytId:"A5vajBQnmk9",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:29,dzId:75820479,t:"Soy un truhán, soy un señor",a:"Julio Iglesias",y:1981,g:"Pop",ai:"J",dec:"anys 80",ytId:"aA0Yg192J3g",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:30,dzId:13188142,t:"La Macarena",a:"Los del Río",y:1993,g:"Sevillanes",ai:"L",dec:"anys 90",ytId:"zWaymcVmj-A",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:31,dzId:476739462,t:"Aserejé",a:"Las Ketchup",y:2002,g:"Pop",ai:"L",dec:"anys 2000",ytId:"CCTZDXQnrm0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:32,dzId:2176729,t:"Ave María",a:"David Bisbal",y:2002,g:"Pop",ai:"D",dec:"anys 2000",ytId:"kH5cs1bnmKM",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:33,dzId:3370926,t:"A quién le importa",a:"Alaska y Dinarama",y:1986,g:"Pop",ai:"A",dec:"anys 80",ytId:"8U-G24P5K8g",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:34,dzId:10002837,t:"La chica de ayer",a:"Nacha Pop",y:1980,g:"Pop",ai:"N",dec:"anys 80",ytId:"6Hgz8dY4R0c",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:35,dzId:555188232,t:"Malamente",a:"Rosalía",y:2018,g:"Flamenco urbà",ai:"R",dec:"anys 2010",ytId:"f81VM8N2h6o",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}}
+];
+const SONGS_EU=[
+{id:36,dzId:76376889,t:"Waterloo",a:"ABBA",y:1974,g:"Pop",ai:"A",dec:"anys 70",ytId:"3FsVeMz1F5c",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:37,dzId:858371,t:"The Final Countdown",a:"Europe",y:1986,g:"Rock",ai:"E",dec:"anys 80",ytId:"9jK-NcRmVcw",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:38,dzId:664107,t:"Take On Me",a:"a-ha",y:1985,g:"Pop",ai:"A",dec:"anys 80",ytId:"djV11Xbc914",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:39,dzId:927900,t:"Wind of Change",a:"Scorpions",y:1991,g:"Rock",ai:"S",dec:"anys 90",ytId:"n4RjJKxsamQ",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:40,dzId:0,t:"99 Luftballons",a:"Nena",y:1983,g:"Pop",ai:"N",dec:"anys 80",ytId:"Fpu5a0Bl8eY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:41,dzId:14408104,t:"Never Gonna Give You Up",a:"Rick Astley",y:1987,g:"Pop",ai:"R",dec:"anys 80",ytId:"dQw4w9WgXcQ",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:42,dzId:6177415,t:"Freed from Desire",a:"Gala",y:1997,g:"Dance",ai:"G",dec:"anys 90",ytId:"YxvkvO_hGag",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:43,dzId:1411240392,t:"Dragostea Din Tei",a:"O-Zone",y:2003,g:"Dance",ai:"O",dec:"anys 2000",ytId:"jRx5PrAlUdY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:44,dzId:89629797,t:"Blue (Da Ba Dee)",a:"Eiffel 65",y:1998,g:"Dance",ai:"E",dec:"anys 90",ytId:"zA52uNzx7Y4",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:45,dzId:952788,t:"Zombie",a:"The Cranberries",y:1994,g:"Rock",ai:"T",dec:"anys 90",ytId:"6Ejga4kJUts",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:46,dzId:1184425,t:"Chasing Cars",a:"Snow Patrol",y:2006,g:"Rock",ai:"S",dec:"anys 2000",ytId:"GemKqzILV4w",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:47,dzId:2961498,t:"Pump Up The Jam",a:"Technotronic",y:1989,g:"Dance",ai:"T",dec:"anys 80",ytId:"9EcjWd-O4jI",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:48,dzId:134706074,t:"No Limit",a:"2 Unlimited",y:1993,g:"Dance",ai:"2",dec:"anys 90",ytId:"1shK-j_u0nw",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:49,dzId:884025,t:"Dancing Queen",a:"ABBA",y:1976,g:"Pop",ai:"A",dec:"anys 70",ytId:"xFrGuyw1V8s",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:50,dzId:910474,t:"Lovefool",a:"The Cardigans",y:1996,g:"Pop",ai:"T",dec:"anys 90",ytId:"NI6aOFI7hms",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}}
+];
+const SONGS_INT=[
+{id:51,dzId:4603408,t:"Billie Jean",a:"Michael Jackson",y:1982,g:"Pop",ai:"M",dec:"anys 80",ytId:"Zi_XLOBDo_Y",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:52,dzId:9997018,t:"Bohemian Rhapsody",a:"Queen",y:1975,g:"Rock",ai:"Q",dec:"anys 70",ytId:"fJ9rUzIMcZQ",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:53,dzId:7675403,t:"I Will Always Love You",a:"Whitney Houston",y:1992,g:"Balada",ai:"W",dec:"anys 90",ytId:"3JWTaaS7LdU",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:54,dzId:13791930,t:"Smells Like Teen Spirit",a:"Nirvana",y:1991,g:"Rock",ai:"N",dec:"anys 90",ytId:"hTWKbfoikeg",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:55,dzId:426703682,t:"Hotel California",a:"Eagles",y:1976,g:"Rock",ai:"E",dec:"anys 70",ytId:"EqPtz5qN7HM",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:56,dzId:14477354,t:"Like a Rolling Stone",a:"Bob Dylan",y:1965,g:"Rock",ai:"B",dec:"anys 60",ytId:"IwOfCgkyEj0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:57,dzId:88003859,t:"Stairway to Heaven",a:"Led Zeppelin",y:1971,g:"Rock",ai:"L",dec:"anys 70",ytId:"QkF3oxziUI4",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:58,dzId:7193834,t:"Imagine",a:"John Lennon",y:1971,g:"Pop",ai:"J",dec:"anys 70",ytId:"YkgkThdzX-8",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:59,dzId:461043312,t:"Heroes",a:"David Bowie",y:1977,g:"Rock",ai:"D",dec:"anys 70",ytId:"44XYEeD1A1U",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:60,dzId:14343282,t:"One",a:"U2",y:1991,g:"Rock",ai:"U",dec:"anys 90",ytId:"ftjEcrrf7r0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:61,dzId:116348632,t:"Hey Jude",a:"The Beatles",y:1968,g:"Pop",ai:"T",dec:"anys 60",ytId:"A_MjCqQoLLA",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:62,dzId:1109731,t:"Lose Yourself",a:"Eminem",y:2002,g:"Hip hop",ai:"E",dec:"anys 2000",ytId:"xFYQQPAOz7Y",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:63,dzId:141827557,t:"Shape of You",a:"Ed Sheeran",y:2017,g:"Pop",ai:"E",dec:"anys 2010",ytId:"JGwWNGJdvx8",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:64,dzId:92734438,t:"Uptown Funk",a:"Mark Ronson ft. Bruno Mars",y:2014,g:"Funk",ai:"M",dec:"anys 2010",ytId:"OPf0YbXqDm0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:65,dzId:60726278,t:"Gangnam Style",a:"PSY",y:2012,g:"K-pop",ai:"P",dec:"anys 2010",ytId:"9bZkp7q19f0",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}}
+];
+const SONGS_BY_LANG={ca:SONGS_CA,es:SONGS_ES,eu:SONGS_EU,int:SONGS_INT};
+const AUTOR_BY_LANG={ca:SONGS_AUTOR_CA,es:SONGS_ES.slice(0,5),eu:SONGS_EU.slice(0,5),int:SONGS_INT.slice(0,5)};
+const ALL_SONGS=[...SONGS_CA,...SONGS_AUTOR_CA,...SONGS_ES,...SONGS_EU,...SONGS_INT];
+
+const LEVELS=[{tl:55,dur:8,seg:"full",hk:'hT'},{tl:45,dur:6,seg:"chorus",hk:'hL'},{tl:40,dur:7,seg:"intro",hk:'hY'},{tl:35,dur:6,seg:"end",hk:'hG'},{tl:30,dur:6,seg:"mid",hk:'hA'},{tl:28,dur:4,seg:"chorus",hk:'hW'},{tl:24,dur:5,seg:"full",hk:'hD'},{tl:22,dur:5,seg:"mid",hk:null},{tl:20,dur:4,seg:"end",hk:null},{tl:18,dur:3,seg:"chorus",hk:null}];
+
+const G={nick:'',zone:'',mode:'free',lang:'ca',lvl:1,lives:3,score:0,song:null,songList:[],songIdx:0,tLeft:0,tMax:60,timerID:null,playing:false,active:false,results:[],playCount:0,maxPlays:3,answerMode:'write-title',answerIsBonus:false};
+let rTab='global',rZone='',selZone='',selGender='',selAge='',actx,ytStopTimer,splashDone=false,currentChallenge=null;
+
+
+// ═══════════════════════════════════════
+// SISTEMA DE SONS UI
+// ═══════════════════════════════════════
+function getACtxUI(){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}catch(e){return null}}
+
+function playNote(ctx,freq,start,dur,vol=0.18,type='sine',attack=0.01,decay=0.3){
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(0,start);
+  g.gain.linearRampToValueAtTime(vol,start+attack);
+  g.gain.exponentialRampToValueAtTime(0.001,start+dur);
+  o.connect(g);g.connect(ctx.destination);o.start(start);o.stop(start+dur+0.05);
+}
+
+function playSplashMusic(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();actx=ctx;
+    const t=ctx.currentTime;
+    // Jingle: acord ascendent estil "game show" amb harmonia
+    // Melodia principal (triangle - so més suau i musical)
+    const mel=[261.63,329.63,392,523.25,659.25,783.99,1046.5];
+    mel.forEach((f,i)=>{playNote(ctx,f,t+i*0.13,0.5,0.15,'triangle',0.02,0.5)});
+    // Baix de suport
+    [130.81,164.81,196,261.63].forEach((f,i)=>{playNote(ctx,f,t+i*0.26,0.7,0.08,'sine',0.05,0.65)});
+    // Nota final llarga i brillant
+    playNote(ctx,1046.5,t+0.9,1.2,0.2,'triangle',0.05,1.1);
+    playNote(ctx,523.25,t+0.9,1.2,0.1,'sine',0.05,1.1);
+    // Scintilleo final (harmonics alts)
+    [2093,2637].forEach((f,i)=>{playNote(ctx,f,t+0.92+i*0.08,0.4,0.04,'sine',0.01,0.35)});
+  }catch(e){}
+}
+
+function soundNav(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Whoosh suau: sweep de freqüència baixa a alta
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='sine';o.frequency.setValueAtTime(200,t);o.frequency.exponentialRampToValueAtTime(600,t+0.12);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.06,t+0.03);g.gain.exponentialRampToValueAtTime(0.001,t+0.13);
+  o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+0.15);
+}
+
+function soundCorrect(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Ding doble ascendent - victòria!
+  playNote(ctx,523.25,t,0.18,0.2,'triangle',0.01,0.15);
+  playNote(ctx,783.99,t+0.12,0.25,0.22,'triangle',0.01,0.22);
+  playNote(ctx,1046.5,t+0.26,0.35,0.18,'triangle',0.01,0.32);
+  // Shimmer
+  playNote(ctx,2093,t+0.26,0.3,0.05,'sine',0.01,0.28);
+}
+
+function soundWrong(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Buzz descendent - error
+  playNote(ctx,220,t,0.15,0.18,'sawtooth',0.01,0.12);
+  playNote(ctx,174.61,t+0.1,0.2,0.15,'sawtooth',0.01,0.17);
+  playNote(ctx,146.83,t+0.22,0.25,0.12,'square',0.01,0.22);
+}
+
+function soundLevelUp(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Fanfàrria ascendent curta
+  [392,523.25,659.25,783.99].forEach((f,i)=>{
+    playNote(ctx,f,t+i*0.1,0.25,0.15,'triangle',0.01,0.22);
+  });
+  playNote(ctx,1046.5,t+0.42,0.5,0.2,'triangle',0.02,0.45);
+}
+
+function soundBonus(){
+  const ctx=getACtxUI();if(!ctx)return;
+  const t=ctx.currentTime;
+  // Coins / bonus - estil arcade
+  [1047,1319,1568,2093].forEach((f,i)=>{
+    playNote(ctx,f,t+i*0.08,0.15,0.12,'square',0.005,0.13);
+  });
+}
+
+function addFloatingNotes(){const el=document.getElementById('s-splash');['🎵','🎶','🎸','🎹','🎺'].forEach((e,i)=>{const d=document.createElement('div');d.className='float-note';d.textContent=e;d.style.cssText=`left:${10+i*18}%;bottom:15%;animation-delay:${i*.25+.5}s`;el.appendChild(d)})}
+function skipSplash(){if(splashDone)return;splashDone=true;document.getElementById('s-splash').classList.add('fadeout');setTimeout(()=>go('s-modes'),500)}
+function initSplash(){addFloatingNotes();document.getElementById('s-splash').addEventListener('click',()=>playSplashMusic(),{once:true});setTimeout(skipSplash,4000)}
+
+const WIP_DATA={emsona:{
+  title:'🎭 Em Sona — Plagi o Coincidència?',
+  sub:'Escolta dos fragments i decideix: és un plagi, una coincidència o un homenatge? Basat en casos reals de la història de la música.',
+  features:[
+    '🎵 Escolta dos fragments i compara',
+    '🔴 Plagi · 🟡 Coincidència · 🟢 Homenatge',
+    '⚖️ Basat en casos reals jutjats als tribunals',
+    '📚 Explicació del veredicte real al final',
+    '🌍 30+ casos icònics de la història del pop i rock',
+    '🇨🇦 Inclou casos catalans (El Pony Pisador, Rosalía, Waka Waka...)',
+  ],
+  note:'🔧 En preparació: verificant les cançons a Deezer i documentant els veredictes reals. Inspirat en la secció "Em Sona" de Flaixbac.'
+},relax:{title:'🎹 Mode Relax',sub:'Endevina la cançó escoltant-la en versió de piano.',features:['🎹 Versions de piano de cançons famoses','🌿 Visual suau i ambient relaxant','🧘 Ideal per desconnectar jugant','🎵 Catàleg complet en versió piano','📅 Partida diària i lliure','🎧 Àudio via YouTube (versions piano)'],note:"Per activar necessitem afegir YouTube IDs de versions piano a cada cançó. Suggereix-les per la bústia!"},familia:{title:'👨‍👩‍👧 Mode família',sub:'Crea un grup familiar!',features:['🔑 Codi de 6 lletres','👥 Fins a 8 jugadors','🏅 Rànquing familiar']},provinces:{title:'🏴 Repte per zones',sub:'Competeix per la teva zona!',features:['🏴 Comarques','🏆 Copa setmanal','⚔️ Derbis']},logros:{title:'🏅 Assoliments',sub:'Desbloqueja badges!',features:['🎸 Mestre de Sau','🔥 En ratxa','⚡ Llampec','👑 Campió']},realia:{title:'🤖 Real o IA?',sub:'Escolta un fragment i endevina si la cançó és real o generada per intel·ligència artificial!',features:['🎵 Fragments de cançons reals i generades amb IA','🧠 Posa a prova el teu oïda','📊 Estadístiques de encerts','🏆 Rànquing dels millors detectors']}};
+function showWip(type){const d=WIP_DATA[type]||{title:'En construcció',sub:'Aviat!',features:[]};document.getElementById('wip-title').textContent=d.title;document.getElementById('wip-sub').textContent=d.sub;document.getElementById('wip-features').innerHTML=d.features.map(f=>`<div>✦ ${esc(f)}</div>`).join('');const _ne=document.getElementById('wip-note');if(_ne){_ne.style.display=d.note?'block':'none';if(d.note)_ne.textContent=d.note;}document.getElementById('modal-wip').classList.remove('hide')}
+function closeWip(){document.getElementById('modal-wip').classList.add('hide')}
+
+function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id!=='s-splash')soundNav();if(id==='s-rankings'){loadRankings();telTrackEvent('view_rankings',{lang:G.lang});}if(id==='s-bustia'){loadBustia();telTrackEvent('open_bustia',{lang:G.lang});}}
+
+function pickZone(btn){document.querySelectorAll('#zone-grid .zone-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selZone=btn.dataset.z}
+function pickGender(btn){document.querySelectorAll('[data-g]').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selGender=btn.dataset.g}
+function onAgeChange(v){const n=parseInt(v);if(n===0){document.getElementById('age-label').textContent='Prefereixo no dir';document.getElementById('age-value').textContent='—';selAge=''}else{const age=n+15;document.getElementById('age-label').textContent=age+' anys';document.getElementById('age-value').textContent=age;selAge=age<=20?'16-20':age<=30?'21-30':age<=45?'31-45':age<=60?'46-60':'60+'}}
+function pickPill(btn,grp){document.querySelectorAll(`#${grp} .radio-pill`).forEach(b=>b.classList.remove('sel'));btn.classList.add('sel')}
+function selectLang(lang){G.lang=lang;localStorage.setItem('cn:last-lang',lang);
+  // Comprova si ja té sessió guardada
+  const email=localStorage.getItem('cn:user-email');
+  if(email){const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();return}}
+  // Si no → login
+  go('s-login')
+}
+function loadUserProfileSync(email){try{const s=localStorage.getItem(`cn:profile:${email}`);if(s){const p=JSON.parse(s);return p}}catch(e){}return null}
+
+async function checkExistingSession(lang){
+  G.lang=lang;
+  const email=localStorage.getItem('cn:user-email');
+  if(email){const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();return}}
+  go('s-login')
+}
+function renderWelcome(){const t=T[G.lang];document.getElementById('w-sub').textContent=t.appSub;document.getElementById('w-lbl-name').textContent=t.yourName;document.getElementById('inp-nick').placeholder=t.namePH;document.getElementById('w-lbl-zone').textContent=t.yourZone;document.getElementById('w-btn-play').textContent=t.playBtn;document.getElementById('w-btn-rank').textContent=t.seeRank;const zg=document.getElementById('zone-grid');zg.innerHTML='';selZone='';
+  if(t.zones.length>8){
+    // Moltes zones → select dropdown amb scroll
+    zg.style.display='block';
+    const sel=document.createElement('select');sel.style.cssText='width:100%;padding:14px;border-radius:12px;background:rgba(255,255,255,.07);color:var(--text);border:2px solid transparent;font-size:.9rem;cursor:pointer';
+    sel.innerHTML='<option value="">— Selecciona —</option>'+t.zones.map(z=>`<option value="${z}">${z}</option>`).join('');
+    sel.addEventListener('change',()=>{selZone=sel.value});
+    zg.appendChild(sel);
+  }else{
+    // Poques zones → botons grid
+    zg.style.display='grid';
+    t.zones.forEach((z,i)=>{const b=document.createElement('button');b.className='zone-btn'+(i===t.zones.length-1&&t.zones.length%2!==0?' wide':'');b.dataset.z=z;b.textContent=z;b.onclick=()=>pickZone(b);zg.appendChild(b)});
+  }
+}
+function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;renderRankWidget();const _ds2=getDailyStyle(G.lang);const _db=document.getElementById('m-daily-style');if(_db)_db.textContent=`${_ds2.emoji} ${_ds2.label[G.lang]||_ds2.label.ca}`;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
+function onLogin(){const nv=V.nick(document.getElementById('inp-nick').value);if(!nv.ok)return toast('⚠️ '+nv.e);if(!selZone)return toast('⚠️ Selecciona zona!');if(!selGender)return toast('⚠️ Selecciona gènere!');G.nick=nv.val;G.zone=selZone;G.gender=selGender;G.age=selAge;saveUserProfile();renderMenu();go('s-menu');testSB()}
+async function testSB(){const el=document.getElementById('sb-status');const r=await sbS('scores','','score.desc',1);if(r===null){el.textContent='❌ Sense connexió';el.style.color='var(--err)'}else{el.textContent='✅ Connectat';el.style.color='var(--ok)'}checkSalaUrlParam();}
+
+const DZ_SEGS=[{start:8,dur:10,rate:1.0},{start:8,dur:8,rate:1.0},{start:10,dur:6,rate:1.0},{start:10,dur:5,rate:1.0},{start:12,dur:4,rate:1.0},{start:12,dur:3,rate:1.0},{start:8,dur:5,rate:1.0},{start:12,dur:4,rate:1.0},{start:14,dur:3,rate:0.5},{start:14,dur:2,rate:1.75}];
+const dzPrevCache={};
+function getDzPreview(dzId){return new Promise(resolve=>{if(dzPrevCache[dzId]){resolve(dzPrevCache[dzId]);return}const cb='dzcb_'+dzId+'_'+Date.now();window[cb]=(data)=>{delete window[cb];document.getElementById('dz_sc_'+dzId)?.remove();const url=data?.preview||null;if(url)dzPrevCache[dzId]=url;resolve(url);};const s=document.createElement('script');s.id='dz_sc_'+dzId;s.src=`https://api.deezer.com/track/${dzId}?output=jsonp&callback=${cb}`;s.onerror=()=>{delete window[cb];resolve(null)};document.head.appendChild(s);})}
+async function dzPlay(song,lvIdx){const audio=document.getElementById('dz-audio');if(!audio||!song?.dzId||song.dzId===0)return false;const seg=DZ_SEGS[lvIdx]||DZ_SEGS[0];const url=await getDzPreview(song.dzId);if(!url)return false;audio.pause();audio.src=url;audio.playbackRate=seg.rate||1;audio.load();const play=()=>{try{audio.currentTime=seg.start}catch(e){}audio.play().catch(()=>{});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>{audio.pause();onSegEnd()},seg.dur*1000*(1/seg.rate)+400);};if(audio.readyState>=2)play();else audio.addEventListener('canplay',play,{once:true});return true}
+function dzStop(){const a=document.getElementById('dz-audio');if(a){a.pause();a.src=''}}
+const RANKS={ca:[{min:0,name:'🌱 Aprenent',short:'Aprenent'},{min:500,name:'🎵 Curiós',short:'Curiós'},{min:1500,name:'📻 Aficionat',short:'Aficionat'},{min:3000,name:'🎸 Melòman',short:'Melòman'},{min:6000,name:'🎤 Veu del Poble',short:'Veu del Poble'},{min:10000,name:'🎼 Trobador',short:'Trobador'},{min:16000,name:'📜 Cronista',short:'Cronista'},{min:25000,name:'🌟 Mestre',short:'Mestre'},{min:40000,name:'👑 Erudit',short:'Erudit'},{min:60000,name:'🏛️ Llegenda',short:'Llegenda'}],es:[{min:0,name:'🌱 Novato',short:'Novato'},{min:500,name:'🎵 Curioso',short:'Curioso'},{min:1500,name:'📻 Aficionado',short:'Aficionado'},{min:3000,name:'🎸 Melómano',short:'Melómano'},{min:6000,name:'🎤 Voz del pueblo',short:'Voz del pueblo'},{min:10000,name:'🎼 Trovador',short:'Trovador'},{min:16000,name:'📜 Cronista',short:'Cronista'},{min:25000,name:'🌟 Maestro',short:'Maestro'},{min:40000,name:'👑 Erudito',short:'Erudito'},{min:60000,name:'🏛️ Leyenda',short:'Leyenda'}],eu:[{min:0,name:'🌱 Newcomer',short:'Newcomer'},{min:500,name:'🎵 Curious',short:'Curious'},{min:1500,name:'📻 Fan',short:'Fan'},{min:3000,name:'🎸 Music lover',short:'Music lover'},{min:6000,name:'🎤 Voice',short:'Voice'},{min:10000,name:'🎼 Troubadour',short:'Troubadour'},{min:16000,name:'📜 Chronicler',short:'Chronicler'},{min:25000,name:'🌟 Master',short:'Master'},{min:40000,name:'👑 Scholar',short:'Scholar'},{min:60000,name:'🏛️ Legend',short:'Legend'}],int:[{min:0,name:'🌱 Newcomer',short:'Newcomer'},{min:500,name:'🎵 Curious',short:'Curious'},{min:1500,name:'📻 Fan',short:'Fan'},{min:3000,name:'🎸 Music lover',short:'Music lover'},{min:6000,name:'🎤 Voice',short:'Voice'},{min:10000,name:'🎼 Troubadour',short:'Troubadour'},{min:16000,name:'📜 Chronicler',short:'Chronicler'},{min:25000,name:'🌟 Master',short:'Master'},{min:40000,name:'👑 Scholar',short:'Scholar'},{min:60000,name:'🏛️ Legend',short:'Legend'}]};
+function getTotalScore(){try{return parseInt(localStorage.getItem('cn:total_score')||'0')}catch(e){return 0}}
+function addTotalScore(pts){try{localStorage.setItem('cn:total_score',String(getTotalScore()+pts))}catch(e){}}
+function getRank(lang){const r=RANKS[lang]||RANKS.ca,p=getTotalScore();let rk=r[0];for(const x of r)if(p>=x.min)rk=x;return rk}
+function getRankProgress(lang){const r=RANKS[lang]||RANKS.ca,p=getTotalScore();let i=0;for(let j=0;j<r.length;j++)if(p>=r[j].min)i=j;const cur=r[i],nxt=r[i+1];if(!nxt)return{rank:cur,pct:100,pts:p,next:null,needed:0};return{rank:cur,pct:Math.round(((p-cur.min)/(nxt.min-cur.min))*100),pts:p,next:nxt,needed:nxt.min-p}}
+function renderRankWidget(){const prog=getRankProgress(G.lang),el=document.getElementById('m-rank-widget');if(!el)return;const nxt=prog.next?`<span style="font-size:.7rem;color:var(--muted)">${prog.needed.toLocaleString()} pts → ${prog.next.short}</span>`:`<span style="font-size:.7rem;color:var(--gold)">Rang màxim!</span>`;el.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><span style="font-size:.95rem;font-weight:700;color:var(--gold)">${prog.rank.name}</span><span style="font-size:.75rem;color:var(--muted)">${prog.pts.toLocaleString()} pts</span></div><div style="background:rgba(255,255,255,.1);border-radius:99px;height:6px;overflow:hidden;margin-bottom:3px"><div style="height:100%;width:${prog.pct}%;background:linear-gradient(90deg,var(--gold),#f59e0b);border-radius:99px;transition:width .5s"></div></div>${nxt}`}
+const STYLES={ca:[{id:'all',emoji:'🎵',label:{ca:'Tots els estils',es:'Todos',eu:'All',int:'All'}},{id:'rock',emoji:'🎸',label:{ca:'Rock català',es:'Rock catalán',eu:'Catalan Rock',int:'Catalan Rock'}},{id:'pop',emoji:'🎤',label:{ca:'Pop català',es:'Pop catalán',eu:'Catalan Pop',int:'Catalan Pop'}},{id:'folk',emoji:'🌿',label:{ca:'Folk',es:'Folk',eu:'Folk',int:'Folk'}},{id:'festa',emoji:'💃',label:{ca:'Festa / Rumba',es:'Fiesta / Rumba',eu:'Festa / Rumba',int:'Festa / Rumba'}}],es:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop español',eu:'Spanish Pop',int:'Spanish Pop'}},{id:'balada',emoji:'❤️',label:{ca:'Balada',es:'Balada',eu:'Ballad',int:'Ballad'}},{id:'flamenco',emoji:'💃',label:{ca:'Flamenco',es:'Flamenco',eu:'Flamenco',int:'Flamenco'}}],eu:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop',eu:'Pop',int:'Pop'}},{id:'rock',emoji:'🎸',label:{ca:'Rock',es:'Rock',eu:'Rock',int:'Rock'}},{id:'dance',emoji:'🔊',label:{ca:'Dance',es:'Dance',eu:'Dance / Eurodance',int:'Dance / Eurodance'}}],int:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop',eu:'Pop',int:'Pop'}},{id:'rock',emoji:'🎸',label:{ca:'Rock',es:'Rock',eu:'Rock',int:'Rock'}},{id:'hiphop',emoji:'🎤',label:{ca:'Hip-hop',es:'Hip-hop',eu:'Hip-hop',int:'Hip-hop'}},{id:'funk',emoji:'🎷',label:{ca:'Funk / Soul',es:'Funk / Soul',eu:'Funk / Soul',int:'Funk / Soul'}},{id:'kpop',emoji:'🌸',label:{ca:'K-pop',es:'K-pop',eu:'K-pop',int:'K-pop'}}]};
+
+function seededShuffle(arr,seed){const r=[...arr];let s=seed>>>0;for(let i=r.length-1;i>0;i--){s=(s*1664525+1013904223)>>>0;const j=s%(i+1);[r[i],r[j]]=[r[j],r[i]]}return r}
+function onDaily(){const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}const ds=getDailyStyle(G.lang);const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const fl=pool.filter(s=>s.st===ds.id);telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});G.mode='daily';G.style=ds.id;initGame(seededShuffle(fl.length>=5?fl:pool,today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily')}
+function getDailyStyle(lang){const s=(STYLES[lang]||STYLES.ca).filter(x=>x.id!=='all');const t=new Date().toISOString().slice(0,10);return s[t.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%s.length]}
+function onFree(){const lang=G.lang,styles=(STYLES[lang]||STYLES.ca),t=T[lang];const grid=document.getElementById('sty-grid');document.getElementById('sty-sub').textContent=t.freeBtn||'Tria un estil';document.getElementById('sty-back-lbl').textContent=t.mainMenu||'Enrere';grid.innerHTML=styles.map(s=>`<button class="style-card" onclick="onStartWithStyle('${s.id}')"><div class="style-emoji">${s.emoji}</div><div class="style-label">${esc(s.label[lang]||s.label.ca)}</div></button>`).join('');go('s-style');}
+function onStartWithStyle(styleId){const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const f=styleId==='all'?pool:pool.filter(s=>s.st===styleId);telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});G.mode='free';G.style=styleId==='all'?null:styleId;initGame(seededShuffle(f.length>=5?f:pool,Math.floor(Math.random()*999999)),'free');}
+function onAutor(){telTrackEvent('start_game',{mode:'autor',lang:G.lang});G.mode='autor';initGame(seededShuffle(AUTOR_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'autor')}
+function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];telStartSession();G.songList=list;G.songIdx=0;G.song=list[0];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel()}
+
+function renderHUD(){document.getElementById('g-badge').textContent=`${G.lvl}/10`;document.getElementById('g-score').textContent=G.score;document.getElementById('g-lives').innerHTML=[1,2,3].map(i=>`<span class="heart${i>G.lives?' dead':''}">❤️</span>`).join('');document.getElementById('g-dots').innerHTML=LEVELS.map((_,i)=>{const r=G.results[i];const isB=(i+1)%3===0;const c=r==='ok'?'ok':r==='fail'||r==='skip'?'fail':i+1===G.lvl?'cur':'';return`<div class="dot ${c}${isB?' bonus':''}">${isB?'⭐':i+1}</div>`}).join('')}
+
+function startLevel(){ytStop(true);const _cl=document.getElementById('g-lvl10-clue');if(_cl){if(G.lvl===10&&G.song){const _tl=T[G.lang];_cl.style.display='block';_cl.innerHTML='<span style="font-size:.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.5px">💡 '+(_tl.clueLabel||'Pista final:')+'</span><br><span style="font-size:.88rem;color:var(--text);line-height:1.5">'+esc(G.song.pista6||_tl.clueDefault||'Cançó molt popular al seu gènere')+'</span>';}else _cl.style.display='none';}const lv=LEVELS[G.lvl-1],t=T[G.lang],lvT=t.lvls[G.lvl-1];G.playCount=0;G.maxPlays=G.lvl<=3?3:G.lvl<=6?2:1;G.playing=false;document.getElementById('g-lname').textContent=lvT.n;document.getElementById('g-ldesc').textContent=lvT.d;const pool=G.mode==='autor'?AUTOR_BY_LANG[G.lang]:SONGS_BY_LANG[G.lang];setupAnswerMode(G.lvl,G.song,pool);document.getElementById('g-bonus-badge').style.display=G.answerIsBonus?'block':'none';const mRT=(G.answerMode==='guess-year'&&(lv.hk==='hY'||lv.hk==='hD'))||(G.answerMode==='guess-author'&&(lv.hk==='hA'||lv.hk==='hL'))||(G.answerMode==='choose-title'&&(lv.hk==='hT'||lv.hk==='hL'))||(G.answerMode==='write-title'&&lv.hk==='hT');const showH=lv.hk&&t[lv.hk]&&!G.answerIsBonus&&!mRT;const hEl=document.getElementById('g-hint');if(showH){hEl.style.display='';document.getElementById('g-hint-txt').textContent=t[lv.hk](G.song)}else hEl.style.display='none';const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;document.getElementById('g-pinfo').textContent=`${t.plays} ${G.maxPlays}`;setWave(false);clearInterval(G.timerID);G.tLeft=lv.tl;G.tMax=lv.tl;updTimer();G.timerID=setInterval(()=>{G.tLeft--;updTimer();if(G.tLeft<=0){clearInterval(G.timerID);onWrong()}},1000);renderHUD()}
+function updTimer(){const bar=document.getElementById('g-tbar');bar.style.width=((G.tLeft/G.tMax)*100)+'%';bar.classList.toggle('hot',G.tLeft<=10);document.getElementById('g-tnum').textContent=G.tLeft+'s'}
+
+function getACtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}
+function playDemo(songId,dur){const ctx=getACtx(),notes=[261.63,293.66,329.63,349.23,392,440,493.88,523.25],n=Math.ceil(dur*2.5),nd=dur/n,base=songId*7;const mel=[...Array(n)].map((_,i)=>notes[(base+i*3)%notes.length]);const m=ctx.createGain();m.gain.setValueAtTime(0,ctx.currentTime);m.gain.linearRampToValueAtTime(.14,ctx.currentTime+.08);m.gain.linearRampToValueAtTime(0,ctx.currentTime+dur-.05);m.connect(ctx.destination);mel.forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*nd;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.4,t+.02);g.gain.linearRampToValueAtTime(0,t+nd-.02);o.connect(g);g.connect(m);o.start(t);o.stop(t+nd)});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>onSegEnd(),dur*1000+200)}
+function getSegBounds(song,lv){const raw=song.seg?.[lv.seg]||song.seg?.full||{s:0,e:8};const s=Number(raw.s)||0,e=Math.max(s+1,Number(raw.e)||s+lv.dur);const want=Math.max(1,lv.dur),avail=e-s;if(avail<=want)return{start:s,end:e};if(lv.seg==='end')return{start:e-want,end:e};return{start:s,end:s+want}}
+function buildEmbed(ytId,bounds){return`https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&start=${Math.max(0,Math.floor(bounds.start))}&end=${Math.ceil(bounds.end)+1}`}
+const IS_SANDBOX=(()=>{try{return window.self!==window.top||location.protocol==='about:'||location.hostname==='claude.ai'}catch(e){return true}})();
+async function ytPlay(song,lvIdx){if(song?.dzId&&song.dzId!==0){const ok=await dzPlay(song,lvIdx);if(ok)return true}return false}
+function ytStop(silent){clearTimeout(ytStopTimer);dzStop();if(!silent)onSegEnd()}
+function playAudio(song,lvIdx){if(!IS_SANDBOX&&song.ytId&&song.ytId!=='DEMO')ytPlay(song,lvIdx);else playDemo(song.id,LEVELS[lvIdx].dur)}
+function onSegEnd(){if(!G.playing)return;G.playing=false;const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;setWave(false);const rem=Math.max(0,G.maxPlays-G.playCount),t=T[G.lang];document.getElementById('g-pinfo').textContent=rem>0?`${t.playsLeft} ${rem}`:t.noPlays}
+function setWave(on){document.getElementById('g-wave').innerHTML=[...Array(18)].map((_,i)=>`<div class="wb${on?' a':''}" style="${on?`animation-delay:${i*.055}s;height:${4+Math.sin(i*.7)*14+8}px`:'height:4px'}"></div>`).join('')}
+function onPlay(){if(G.playing)return;if(G.playCount>=G.maxPlays){toast(T[G.lang].noPlays);return}G.playCount++;G.playing=true;const pb=document.getElementById('g-pbtn');pb.textContent='■';pb.classList.add('on');pb.disabled=true;document.getElementById('g-pinfo').textContent=`${T[G.lang].playing} (${G.playCount}/${G.maxPlays})`;setWave(true);playAudio(G.song,G.lvl-1)}
+function onListenFull(){if(!G.song)return;if(!IS_SANDBOX&&G.song.dzId&&G.song.dzId!==0){const a=document.getElementById('dz-audio');getDzPreview(G.song.dzId).then(url=>{if(url){a.pause();a.src=url;a.playbackRate=1;a.load();a.addEventListener('canplay',()=>{a.currentTime=0;a.play().catch(()=>{})},{once:true});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>a.pause(),31000)}});toast(T[G.lang].listenFull)}else{playDemo(G.song.id,15);toast(T[G.lang].listenFull)}}
+
+const ANS_MODES=['write-title','choose-title','guess-year','guess-author'];
+function getAnswerMode(lvl){return{mode:ANS_MODES[(lvl-1)%4],isBonus:lvl%3===0}}
+function getWrongTitles(c,pool){return seededShuffle(pool.filter(s=>norm(s.t)!==norm(c.t)),Math.floor(Math.random()*9999)).slice(0,2).map(s=>s.t)}
+function getWrongYears(y,lvl){const d=lvl>=7?3:lvl>=4?6:12;const o=new Set([y]);let tries=0;while(o.size<3&&tries<50){tries++;const off=Math.floor(Math.random()*d+1)*(Math.random()<.5?1:-1);const yr=y+off;if(yr>1960&&yr<=2025)o.add(yr)}return[...o].sort(()=>Math.random()-.5)}
+function getWrongAuthors(a,pool){const ca=a.split(/[&/,]|feat\./i).map(x=>x.trim().toLowerCase());return seededShuffle(pool.filter(s=>!s.a.split(/[&/,]|feat\./i).map(x=>x.trim().toLowerCase()).some(x=>ca.includes(x))),Math.floor(Math.random()*9999)).slice(0,2).map(s=>s.a)}
+
+function setupAnswerMode(lvl,song,pool){
+  const{mode,isBonus}=getAnswerMode(lvl);G.answerMode=mode;G.answerIsBonus=isBonus;
+  const c=document.getElementById('g-answer-container');if(!c)return;c.innerHTML='';
+  const t=T[G.lang]||T.ca;
+  const bH=isBonus?'<div class="ans-mode-label" style="color:#a78bfa;font-size:.8rem">⭐ BONUS — puntuació màxima!</div>':'';
+  if(mode==='write-title'){
+    c.innerHTML=`${bH}<div class="ans-mode-label">✏️ Escriu el títol</div><input id="g-ans" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="${esc(t.answerPH)}" style="margin-bottom:6px"><div id="g-sugg"></div><button class="btn btn-gold mt" onclick="onConfirm()">${esc(t.confirmBtn)}</button>`;
+    const ans=document.getElementById('g-ans');if(ans){ans.addEventListener('input',onAnsInput);ans.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();onConfirm()}})}return}
+  let lbl='',opts=[];
+  if(mode==='choose-title'){lbl='🎵 Quin títol?';const w=getWrongTitles(song,pool);opts=[song.t,...w].sort(()=>Math.random()-.5);c.innerHTML=`${bH}<div class="ans-mode-label">${lbl}</div><div class="choice-grid">${opts.map(o=>`<button class="choice-btn" data-type="title" data-val="${esc(o)}">${esc(o)}</button>`).join('')}</div>`}
+  else if(mode==='guess-year'){lbl='🗓️ De quin any?';opts=getWrongYears(song.y,lvl);c.innerHTML=`${bH}<div class="ans-mode-label">${lbl}</div><div class="choice-grid">${opts.map(o=>`<button class="choice-btn" data-type="year" data-val="${o}">${o}</button>`).join('')}</div>`}
+  else if(mode==='guess-author'){lbl='🎤 Qui és l\'autor/a?';const w=getWrongAuthors(song.a,pool);opts=[song.a,...w].sort(()=>Math.random()-.5);c.innerHTML=`${bH}<div class="ans-mode-label">${lbl}</div><div class="choice-grid">${opts.map(o=>`<button class="choice-btn" data-type="author" data-val="${esc(o)}">${esc(o)}</button>`).join('')}</div>`}
+  c.querySelectorAll('.choice-btn').forEach(btn=>{btn.addEventListener('click',function(){onChoicePick(this,this.dataset.val,this.dataset.type)})})
+}
+
+function onAnsInput(){if(!G.active)return;const v=this.value.trim(),sugg=document.getElementById('g-sugg');if(!v||v.length<2){if(sugg)sugg.innerHTML='';return}const nv=norm(v),pool=G.mode==='autor'?AUTOR_BY_LANG[G.lang]:SONGS_BY_LANG[G.lang];const matches=pool.filter(s=>norm(s.t).includes(nv)||norm(s.a).includes(nv)).slice(0,5);if(sugg)sugg.innerHTML=matches.map(m=>`<div class="sugg-item" data-id="${m.id}">${esc(m.t)} <span class="sugg-art">— ${esc(m.a)}</span></div>`).join('');if(sugg)sugg.querySelectorAll('.sugg-item').forEach(el=>{el.addEventListener('click',()=>{const f=ALL_SONGS.find(s=>s.id===parseInt(el.dataset.id));if(f){const a=document.getElementById('g-ans');if(a)a.value=f.t;sugg.innerHTML=''}})})}
+
+function onChoicePick(btn,value,type){if(!G.active)return;document.querySelectorAll('.choice-btn').forEach(b=>{b.disabled=true;b.style.pointerEvents='none'});let ok=false;if(type==='title')ok=norm(String(value))===norm(G.song.t);else if(type==='year')ok=parseInt(value)===G.song.y;else if(type==='author'){const ca=G.song.a.split(/[&/,]|feat\./i).map(a=>a.trim().toLowerCase());ok=ca.some(a=>String(value).toLowerCase().includes(a)||a.includes(String(value).toLowerCase()))}
+btn.classList.add(ok?'correct':'wrong');if(!ok)document.querySelectorAll('.choice-btn').forEach(b=>{const bv=b.dataset.val;if(type==='title'&&norm(bv)===norm(G.song.t))b.classList.add('correct');if(type==='year'&&parseInt(bv)===G.song.y)b.classList.add('correct');if(type==='author'){const ca=G.song.a.split(/[&/,]|feat\./i).map(a=>a.trim().toLowerCase());if(ca.some(a=>bv.toLowerCase().includes(a)||a.includes(bv.toLowerCase())))b.classList.add('correct')}});setTimeout(()=>{if(ok)onCorrect();else onWrong()},900)}
+
+function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/['\u2018\u2019`]/g,' ').replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,' ')}
+function onConfirm(){if(!G.active)return;const ans=document.getElementById('g-ans');if(!ans)return;const v=ans.value.trim();if(!v||v.length<2){toast('⚠️ Escriu primer');return}if(norm(v)===norm(G.song.t))onCorrect();else onWrong()}
+
+function stopAll(){clearInterval(G.timerID);ytStop(true);G.playing=false;setWave(false)}
+function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;soundBonus();telTrackEvent('bonus_correct',{level:G.lvl,song_id:G.song?.id,lang:G.lang});toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;soundCorrect();toast(`${T[G.lang].correct} +${pts}`)}G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();setTimeout(()=>nextLvl(),1800)}
+function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
+function onSkip(){if(!G.active)return;if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
+function nextLvl(){if(G.lives<=0||G.lvl>=10){endGame();return}soundLevelUp();G.lvl++;G.songIdx=(G.songIdx+1)%G.songList.length;G.song=G.songList[G.songIdx];G.active=true;startLevel()}
+function onExit(){
+  // Modal propi en lloc de confirm() per compatibilitat mòbil
+  const msgs={
+    ca:{title:'Sortir de la partida?',body:'Perdràs el progrés actual.',yes:'Sí, sortir',no:'Continuar jugant'},
+    es:{title:'¿Salir de la partida?',body:'Perderás el progreso actual.',yes:'Sí, salir',no:'Seguir jugando'},
+    eu:{title:'Quit the game?',body:'You will lose your current progress.',yes:'Yes, quit',no:'Keep playing'},
+    int:{title:'Quit the game?',body:'You will lose your current progress.',yes:'Yes, quit',no:'Keep playing'}
+  };
+  const m=msgs[G.lang]||msgs.ca;
+  const overlay=document.createElement('div');
+  overlay.className='modal-overlay';
+  overlay.innerHTML=`<div class="modal-box">
+    <div class="modal-emoji">🚪</div>
+    <div class="modal-title">${m.title}</div>
+    <div class="modal-sub">${m.body}</div>
+    <button class="btn btn-red" id="exit-yes" style="margin-bottom:8px">${m.yes}</button>
+    <button class="btn btn-ghost" id="exit-no">${m.no}</button>
+  </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('exit-yes').addEventListener('click',()=>{overlay.remove();stopAll();go('s-menu')});
+  document.getElementById('exit-no').addEventListener('click',()=>{overlay.remove()});
+  overlay.addEventListener('click',(e)=>{if(e.target===overlay)overlay.remove()});
+}
+
+function getStreak(){try{const today=new Date().toISOString().slice(0,10);const data=JSON.parse(localStorage.getItem('cn:streak')||'{"count":0,"last":""}');const yday=new Date(Date.now()-86400000).toISOString().slice(0,10);if(data.last===today)return data.count;if(data.last===yday){data.count++;data.last=today}else{data.count=1;data.last=today}localStorage.setItem('cn:streak',JSON.stringify(data));return data.count}catch(e){return 1}}
+
+
+// ═══════════════════════════════════════
+// TELEMETRIA — Fase A
+// ═══════════════════════════════════════
+let _sessionId = null;
+let _sessionStart = null;
+let _roundData = [];
+
+function telStartSession(){
+  _sessionId = 'ss_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+  _sessionStart = Date.now();
+  _roundData = [];
+}
+
+function telTrackRound(levelIdx, songId, result, timeSpent){
+  _roundData.push({
+    level: levelIdx + 1,
+    song_id: songId,
+    result: result,           // 'ok' | 'fail' | 'skip'
+    time_spent: timeSpent
+  });
+}
+
+async function telSaveSession(completed){
+  if(!_sessionId) return;
+  try{
+    const duration = Math.round((Date.now() - _sessionStart) / 1000);
+    const ok = G.results.filter(r=>r==='ok').length;
+    const row = {
+      session_id:     _sessionId,
+      nick:           G.nick ? G.nick.substring(0,20) : 'Anònim',
+      lang:           G.lang,
+      zona:           G.zone || '',
+      mode:           G.mode,
+      style:          G.style || null,
+      score:          G.score,
+      levels_reached: G.lvl,
+      correct_count:  ok,
+      completed:      completed,
+      abandoned_at_level: completed ? null : G.lvl,
+      duration_secs:  duration,
+      played_at:      new Date().toISOString()
+    };
+    await sbI('game_sessions', row);
+
+    // Desar rondes individuals
+    if(_roundData.length > 0){
+      const rounds = _roundData.map(r => ({
+        session_id: _sessionId,
+        nick:       G.nick ? G.nick.substring(0,20) : 'Anònim',
+        lang:       G.lang,
+        mode:       G.mode,
+        level:      r.level,
+        song_id:    r.song_id,
+        result:     r.result,
+        time_spent: r.time_spent
+      }));
+      for(const r of rounds){
+        await sbI('game_rounds', r);
+      }
+    }
+  }catch(e){ /* silenciós */ }
+  _sessionId = null;
+}
+
+async function telTrackEvent(type, extra={}){
+  try{
+    await sbI('user_events', {
+      nick:      G.nick ? G.nick.substring(0,20) : 'Anònim',
+      lang:      G.lang,
+      mode:      G.mode || null,
+      event_type: type,
+      extra:     JSON.stringify(extra),
+      created_at: new Date().toISOString()
+    });
+  }catch(e){ /* silenciós */ }
+}
+
+function checkStreakMilestone(){
+  const streak = getStreak();
+  if(streak > 0 && streak % 5 === 0){
+    telTrackEvent('streak_milestone', {streak, lang: G.lang});
+  }
+}
+
+function checkRankUp(prevScore){
+  const r1 = getRankProgress(G.lang);
+  const prevRank = (RANKS[G.lang]||RANKS.ca).filter(r=>r.min<=prevScore).pop();
+  const curRank = r1.rank;
+  if(prevRank && curRank.min > prevRank.min){
+    telTrackEvent('rank_up', {from: prevRank.short, to: curRank.short, lang: G.lang});
+    toast('🎉 Has pujat de rang: ' + curRank.name);
+  }
+}
+async function endGame(){
+  stopAll();G.active=false;telSaveSession(true);checkStreakMilestone();
+  if(G.mode==='sala') saveSalaScore(G.score);
+  if(G.mode==='daily')localStorage.setItem(`cn:daily:${G.lang}:${new Date().toISOString().slice(0,10)}`,'1');
+  const _prevScore=getTotalScore();addTotalScore(G.score);checkRankUp(_prevScore);await saveScore();
+  if(G.mode==='challenge'){if(currentChallenge?.isCreator)await saveChallengeCreator();else await saveChallengeRival();return}
+  const t=T[G.lang],ok=G.results.filter(r=>r==='ok').length,gameNum=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),streak=getStreak();
+  document.getElementById('go-emoji').textContent=ok>=9?'🏆':ok>=6?'🎵':'😅';document.getElementById('go-title').textContent=ok===10?t.perfect:ok>=7?t.vgood:t.ggame;document.getElementById('go-sub').textContent=`${ok}/10 ${t.guessed}`;document.getElementById('go-pts').textContent=G.score.toLocaleString();document.getElementById('go-lvltxt').textContent=ok===10?t.allLvl:`${t.upToLvl} ${G.lvl}/10`;
+  document.getElementById('go-res').innerHTML=G.results.map((r,i)=>{const ico=r==='ok'?'✅':r==='skip'?'⏭️':'❌';const song=G.songList[i]||G.songList[G.songList.length-1];return`<div class="res-row"><span>${ico} ${i+1}. ${esc(t.lvls[i].n)}</span><span class="muted" style="font-size:.76rem">${esc(song.t)}</span></div>`}).join('');
+  const _dzW=document.getElementById('go-deezer-wrap');if(_dzW&&G.mode==='free'){_dzW.style.display='block';const _ls=G.songList[G.songIdx]||G.song;if(_ls?.dzId&&_ls.dzId!==0)document.getElementById('go-deezer-link').href=`https://www.deezer.com/track/${_ls.dzId}`;document.getElementById('go-deezer-songs').innerHTML=G.songList.slice(0,10).filter(s=>s?.dzId&&s.dzId!==0).map(s=>`<a href="https://www.deezer.com/track/${s.dzId}" target="_blank" rel="noopener" style="color:#1ac37c;text-decoration:none;margin:2px 4px;display:inline-block">♪ ${esc(s.t)}</a>`).join('');}else if(_dzW)_dzW.style.display='none';document.getElementById('sh-date').textContent=`#${gameNum}`;document.getElementById('sh-dots').textContent=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join('');document.getElementById('sh-score').textContent=G.score.toLocaleString();document.getElementById('sh-zone').textContent=G.zone;if(document.getElementById('sh-rank'))document.getElementById('sh-rank').textContent=getRank(G.lang).short;document.getElementById('sh-streak').textContent=streak>1?`🔥${'🔥'.repeat(Math.min(streak,5))}`:'';document.getElementById('sh-mode').textContent=t.levelBadge[G.mode]||G.mode;document.getElementById('go-share-btn').textContent=t.shareBtn;document.getElementById('go-again-btn').textContent=t.playAgain;document.getElementById('go-menu-btn').textContent=t.mainMenu;document.getElementById('go-rank-btn').textContent=t.rankBtn;go('s-gameover')
+}
+function onShare(){telTrackEvent('share',{score:G.score,mode:G.mode,lang:G.lang});const t=T[G.lang],gn=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),dots=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join(''),streak=getStreak(),sf='🔥'.repeat(Math.min(streak,5)),txt=`CançoNet #${gn}\n${dots}\n🏆 ${G.score.toLocaleString()} pts${sf?`\n${sf}`:''}\n📍 ${G.zone}\nhttps://kinblay.github.io/CancoNet/`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
+
+async function saveScore(){if(!canScore())return;const sv=V.score(G.score);if(!sv.ok)return;const row={nick:G.nick.substring(0,20),zona:G.zone,score:sv.val,mode:G.mode,lang:G.lang,gender:G.gender||null,age_range:G.age||null,data:new Date().toISOString().slice(0,10)};await sbI('scores',row)}
+
+function saveRankPositions(rows,tab,zone,lang){localStorage.setItem(`cn:rank:${lang}:${tab}:${zone||'all'}`,JSON.stringify({positions:Object.fromEntries(rows.map((r,i)=>[r.nick,i+1])),ts:Date.now()}))}
+function loadPrevPositions(tab,zone,lang){try{const raw=localStorage.getItem(`cn:rank:${lang}:${tab}:${zone||'all'}`);if(!raw)return null;const d=JSON.parse(raw);if(Date.now()-d.ts>24*60*60*1000)return null;return d.positions}catch(e){return null}}
+function posChangeHtml(nick,pos,prev,isMe){if(!prev||!(nick in prev))return isMe?'<span class="pos-new">NOU</span>':'';const d=prev[nick]-pos;if(d>0)return`<span class="pos-up">▲+${d}</span>`;if(d<0)return`<span class="pos-down">▼${d}</span>`;return''}
+
+async function loadRankings(){const el=document.getElementById('rank-list');el.innerHTML='<div class="center muted" style="padding:20px">Carregant...</div>';const zones=T[G.lang]?.zones||T.ca.zones;if(!rZone)rZone=zones[0];document.getElementById('ztabs').innerHTML=zones.map(z=>`<button class="ztab${z===rZone?' on':''}" onclick="onZoneChg('${esc(z)}',this)">${esc(z)}</button>`).join('');const today=new Date().toISOString().slice(0,10);let f=`lang=eq.${G.lang||'ca'}`;if(rTab==='zone')f+=`&zona=eq.${encodeURIComponent(rZone)}`;if(rTab==='daily')f+=`&data=eq.${today}`;const rows=await sbS('scores',f,'score.desc',20);const t=T[G.lang]||T.ca;if(!rows||!rows.length){el.innerHTML=`<div class="center muted" style="padding:24px">${esc(t.noScores)}</div>`;return}const prev=loadPrevPositions(rTab,rZone,G.lang);saveRankPositions(rows,rTab,rZone,G.lang);const med=['🥇','🥈','🥉'];el.innerHTML=rows.map((e,i)=>{const isMe=G.nick&&e.nick===G.nick;return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}${posChangeHtml(e.nick,i+1,prev,isMe)}</div><div class="rzone">📍 ${esc(e.zona)} · ${esc(e.data)}</div></div><div class="rscore">${(e.score||0).toLocaleString()}</div></div>`}).join('')}
+function onTabChg(tab,btn){rTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');document.getElementById('ztabs').style.display=tab==='zone'?'flex':'none';loadRankings()}
+function onZoneChg(zone,btn){rZone=zone;document.querySelectorAll('.ztab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');loadRankings()}
+function onBackRank(){go(G.nick?'s-menu':'s-welcome')}
+
+function getBustTip(){const s=document.querySelector('#bust-type-grp .sel');return s?s.dataset.v:'idea'}
+async function onBustiaEnviar(){if(!canBustia()){toast('⚠️ Espera una estona');return}const mv=V.msg(document.getElementById('bust-msg').value);if(!mv.ok)return toast('⚠️ '+mv.e);const ev=V.email(document.getElementById('bust-email').value);if(!ev.ok)return toast('⚠️ '+ev.e);telTrackEvent('send_suggestion',{tipus:getBustTip(),lang:G.lang});await sbI('bustia',{tipus:getBustTip(),missatge:mv.val,email:ev.val,usuari:G.nick?G.nick.substring(0,20):'Anònim',data:new Date().toISOString().slice(0,10)});toast('✅ Enviat!');document.getElementById('bust-msg').value='';document.getElementById('bust-email').value='';loadBustia()}
+async function loadBustia(){const el=document.getElementById('bust-list');const rows=await sbS('bustia','','created_at.desc',8);if(!rows||!rows.length){el.innerHTML='Cap suggeriment encara.';return}const ic={canco:'🎵',artista:'🎸',error:'🐛',idea:'💡',altre:'✏️'};el.innerHTML=rows.map(e=>`<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:var(--gold);font-size:.72rem">${ic[e.tipus]||'✏️'} ${esc(e.tipus||'')} · ${esc(e.data||'')} · ${esc(e.usuari||'')}</span><br><span>${esc((e.missatge||'').slice(0,100))}</span></div>`).join('')}
+
+// REPTES ASÍNCRONS
+function onChallengeStart(){if(!G.nick){toast('⚠️ Necessites nom');return}telTrackEvent('start_game',{mode:'challenge',lang:G.lang});telTrackEvent('start_game',{mode:'challenge',lang:G.lang});const seed=Date.now()%999999;currentChallenge={seed,isCreator:true,challengeId:null};G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],seed),'challenge')}
+async function saveChallengeCreator(){if(!currentChallenge?.isCreator)return;try{const r=await fetch(`${SB_URL}/rest/v1/challenges`,{method:'POST',headers:{...SBH,'Prefer':'return=representation'},body:JSON.stringify({creator_nick:G.nick,creator_zone:G.zone,creator_score:G.score,creator_results:JSON.stringify(G.results),song_seed:currentChallenge.seed,lang:G.lang,status:'pending'})});if(!r.ok){toast('⚠️ Error');return}const data=await r.json();const ch=Array.isArray(data)?data[0]:data;currentChallenge.challengeId=ch.id;const link=`${window.location.origin}${window.location.pathname}?challenge=${ch.id}`;document.getElementById('ch-creator-score').textContent=G.score.toLocaleString();document.getElementById('ch-link').textContent=link;currentChallenge.link=link;go('s-challenge-share')}catch(e){toast('⚠️ Error de connexió')}}
+function onChallengeShareLink(){if(!currentChallenge?.link)return;telTrackEvent('share_challenge',{score:G.score,lang:G.lang});window.open(`https://wa.me/?text=${encodeURIComponent(`⚔️ T'he reptat a CançoNet!\n🏆 ${G.score} pts\n🎵 Pots superar-me?\n\n${currentChallenge.link}`)}`,'_blank')}
+function onChallengeCopyLink(){if(!currentChallenge?.link)return;navigator.clipboard?.writeText(currentChallenge.link).then(()=>toast('📋 Copiat!'))}
+async function checkChallengeUrl(){const p=new URLSearchParams(window.location.search);const chId=p.get('challenge');if(!chId)return false;window.history.replaceState(null,'',window.location.pathname);try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${chId}`,{headers:SBH});if(!r.ok)return false;const data=await r.json();if(!data||!data.length){toast('⚠️ Repte no trobat');return false}const ch=data[0];if(ch.status==='completed'){showChallengeResult(ch);return true}currentChallenge={seed:ch.song_seed,isCreator:false,challengeId:ch.id,data:ch};G.lang=ch.lang||'ca';document.getElementById('ch-rival-name').textContent=ch.creator_nick;document.getElementById('ch-score-to-beat').textContent=(ch.creator_score||0).toLocaleString();go('s-challenge-accept');return true}catch(e){return false}}
+function onChallengeAccept(){if(!currentChallenge?.seed)return;if(!G.nick){toast('⚠️ Registra\'t primer!');go('s-login');return}G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],currentChallenge.seed),'challenge')}
+async function saveChallengeRival(){if(!currentChallenge||currentChallenge.isCreator||!currentChallenge.challengeId)return;try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${currentChallenge.challengeId}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=representation'},body:JSON.stringify({rival_nick:G.nick,rival_zone:G.zone,rival_score:G.score,rival_results:JSON.stringify(G.results),status:'completed',completed_at:new Date().toISOString()})});if(!r.ok)return;const data=await r.json();const ch=Array.isArray(data)?data[0]:data;await updateChallengeStats(ch);showChallengeResult(ch)}catch(e){}}
+async function updateChallengeStats(ch){const winner=ch.creator_score>ch.rival_score?ch.creator_nick:ch.rival_score>ch.creator_score?ch.rival_nick:null;for(const nick of[ch.creator_nick,ch.rival_nick]){const isWin=nick===winner,isDraw=winner===null;const ex=await sbS('challenge_stats',`nick=eq.${encodeURIComponent(nick)}&lang=eq.${ch.lang||'ca'}`,'updated_at.desc',1);if(ex&&ex.length>0){const s=ex[0],ns=isWin?s.streak+1:0;await fetch(`${SB_URL}/rest/v1/challenge_stats?nick=eq.${encodeURIComponent(nick)}&lang=eq.${ch.lang||'ca'}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify({wins:s.wins+(isWin?1:0),losses:s.losses+(!isWin&&!isDraw?1:0),draws:s.draws+(isDraw?1:0),streak:ns,best_streak:Math.max(s.best_streak,ns),total_challenges:s.total_challenges+1,updated_at:new Date().toISOString()})})}else await sbI('challenge_stats',{nick,lang:ch.lang||'ca',wins:isWin?1:0,losses:!isWin&&!isDraw?1:0,draws:isDraw?1:0,streak:isWin?1:0,best_streak:isWin?1:0,total_challenges:1})}}
+function showChallengeResult(ch){const isC=G.nick===ch.creator_nick;const my=isC?ch.creator_score:ch.rival_score;const their=isC?ch.rival_score:ch.creator_score;const theirN=isC?ch.rival_nick:ch.creator_nick;const won=my>their,draw=my===their;document.getElementById('ch-result-emoji').textContent=won?'🏆':draw?'🤝':'😤';document.getElementById('ch-result-title').textContent=won?'Has guanyat!':draw?'Empat!':'Has perdut!';document.getElementById('ch-result-sub').textContent=won?`Superat ${esc(theirN)} per ${my-their} pts!`:draw?'Mateixa puntuació!':`${esc(theirN)} t'ha superat per ${their-my} pts`;document.getElementById('ch-res-p1-name').textContent=ch.creator_nick;document.getElementById('ch-res-p1-score').textContent=(ch.creator_score||0).toLocaleString();document.getElementById('ch-res-p2-name').textContent=ch.rival_nick||'???';document.getElementById('ch-res-p2-score').textContent=(ch.rival_score||0).toLocaleString();let cr,rr;try{cr=JSON.parse(ch.creator_results||'[]')}catch(e){cr=[]}try{rr=JSON.parse(ch.rival_results||'[]')}catch(e){rr=[]}document.getElementById('ch-res-rounds').innerHTML=cr.map((c,i)=>{const r=rr[i]||'-';return`<div class="res-row"><span>${i+1}. ${esc(ch.creator_nick)}: ${c==='ok'?'✅':'❌'}</span><span>${esc(ch.rival_nick||'???')}: ${r==='ok'?'✅':r==='-'?'⬜':'❌'}</span></div>`}).join('');document.getElementById('ch-res-share-dots').innerHTML=`${esc(ch.creator_nick)}: ${cr.map(r=>r==='ok'?'🟩':'🟥').join('')}<br>${esc(ch.rival_nick||'???')}: ${rr.map(r=>r==='ok'?'🟩':r==='-'?'⬜':'🟥').join('')}`;document.getElementById('ch-res-share-txt').textContent=`${ch.creator_score} vs ${ch.rival_score||'?'} pts`;go('s-challenge-result')}
+function onChallengeShareResult(){const p1=document.getElementById('ch-res-p1-name')?.textContent||'';const s1=document.getElementById('ch-res-p1-score')?.textContent||'0';const p2=document.getElementById('ch-res-p2-name')?.textContent||'';const s2=document.getElementById('ch-res-p2-score')?.textContent||'0';const txt=`⚔️ Repte CançoNet!\n${p1}: ${s1} pts\n${p2}: ${s2} pts\n🎵 https://kinblay.github.io/CancoNet/`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
+async function loadChallengeStats(){const el=document.getElementById('ch-my-stats');if(G.nick){const stats=await sbS('challenge_stats',`nick=eq.${encodeURIComponent(G.nick)}&lang=eq.${G.lang||'ca'}`,'updated_at.desc',1);if(stats&&stats.length){const s=stats[0];el.innerHTML=`<div style="display:flex;gap:12px;justify-content:center;margin:8px 0"><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--ok)">${s.wins}</div><div style="font-size:.65rem;color:var(--muted)">VICTÒRIES</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--err)">${s.losses}</div><div style="font-size:.65rem;color:var(--muted)">DERROTES</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--gold)">${s.streak}🔥</div><div style="font-size:.65rem;color:var(--muted)">RATXA</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:#a78bfa">${s.best_streak}</div><div style="font-size:.65rem;color:var(--muted)">MILLOR</div></div></div>`}else el.innerHTML='<div style="font-size:.82rem;color:var(--muted)">Encara no has fet cap repte!</div>'}const lb=document.getElementById('ch-leaderboard');const top=await sbS('challenge_stats',`lang=eq.${G.lang||'ca'}`,'wins.desc',10);if(!top||!top.length){lb.innerHTML='Cap reptador encara.';return}const med=['🥇','🥈','🥉'];lb.innerHTML=top.map((e,i)=>{const isMe=G.nick&&e.nick===G.nick;return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}</div><div class="rzone">${e.wins}W ${e.losses}L · 🔥${e.best_streak}</div></div><div class="rscore">${e.total_challenges}</div></div>`}).join('')}
+
+let tTimer;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');clearTimeout(tTimer);tTimer=setTimeout(()=>el.classList.remove('on'),2500)}
+
+// ═══════════════════════════════════════
+// INIT — comprova auth ABANS del splash
+// ═══════════════════════════════════════
+async function appInit(){
+  // 1. Comprova si és un link de repte
+  const isChallenge=await checkChallengeUrl();
+  if(isChallenge)return;
+
+  // 2. Comprova si ve del magic link (token a la URL)
+  const fromML=await handleAuthCallback();
+  if(fromML){
+    const email=localStorage.getItem('cn:user-email');
+    if(email){
+      const p=await loadUserProfile({email});
+      if(p&&p.nick&&p.zone){
+        G.lang=p.lang||'ca';
+        renderMenu();go('s-menu');testSB();
+        toast(`👋 Benvingut, ${G.nick}!`);
+        return;
+      }
+    }
+    // Té auth però no perfil → welcome
+    G.lang=localStorage.getItem('cn:last-lang')||'ca';
+    go('s-welcome');renderWelcome();
+    return;
+  }
+
+  // 3. Comprova sessió existent (usuari que torna)
+  const email=localStorage.getItem('cn:user-email');
+  if(email){
+    const p=await loadUserProfile({email});
+    if(p&&p.nick&&p.zone){
+      G.lang=p.lang||'ca';
+      renderMenu();go('s-menu');testSB();
+      toast(`👋 Hola, ${G.nick}!`);
+      return;
+    }
+  }
+
+  // 4. Usuari nou → splash normal
+  initSplash();
+}
+
+window.addEventListener('load',()=>setTimeout(appInit,100));
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('modal-wip').addEventListener('click',function(e){if(e.target===this)closeWip()})});
+</script>
+
+// ═══════════════════════════════════════
+// BACK BUTTON (Android + Browser)
+// ═══════════════════════════════════════
+const SCREEN_PARENT = {
+  's-zone':       null,          // sortir (primera pantalla)
+  's-login':      's-zone',
+  's-menu':       null,          // sortir (menú principal)
+  's-style':      's-menu',
+  's-game':       's-menu',
+  's-gameover':   's-menu',
+  's-rankings':   's-menu',
+  's-challenge-create': 's-menu',
+  's-challenge-play':   's-menu',
+  's-bustia':     's-menu',
+  's-profile':    's-menu',
+};
+
+function pushBackState(){
+  history.pushState({canconet:true},'','');
+}
+
+window.addEventListener('popstate', function(e){
+  // Find current visible screen
+  const cur = document.querySelector('.scr.on');
+  if(!cur) return;
+  const curId = cur.id;
+  const parent = SCREEN_PARENT[curId];
+
+  // If we're in-game, treat back as "abandon game" with confirmation
+  if(curId === 's-game'){
+    if(G.active){
+      if(confirm('Vols abandonar la partida?')){
+        telSaveSession(false);telTrackEvent('abandon',{level:G.lvl,mode:G.mode});
+        ytStop(true);
+        clearInterval(G.timerInt);
+        go('s-menu');
+        renderMenu();
+        pushBackState();
+      } else {
+        pushBackState(); // re-push so next back still works
+      }
+    } else {
+      go('s-menu');
+      renderMenu();
+      pushBackState();
+    }
+    return;
+  }
+
+  // Modals — close any open modal first
+  const openModal = document.querySelector('.modal.on');
+  if(openModal){
+    openModal.classList.remove('on');
+    pushBackState();
+    return;
+  }
+
+  if(parent){
+    go(parent);
+    if(parent === 's-menu') renderMenu();
+    pushBackState(); // keep the stack so back keeps working
+  }
+  // if parent === null → allow exit (default browser back)
+});
+
+// Push initial state so we can intercept first back press
+pushBackState();
+
+<!-- ═══ SALA FAMILIAR ═══ -->
+<div id="s-sala-menu" class="scr">
+  <div class="logo" style="font-size:2.5rem">👨‍👩‍👧</div>
+  <div style="font-weight:900;font-size:1.4rem;margin-bottom:4px">Mode Família</div>
+  <div class="sub">Juga les mateixes cançons amb la teva gent</div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl">Crear una sala nova</div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:12px;line-height:1.6">Genera un codi de 6 lletres i comparteix-lo per WhatsApp. Tots jugaran les mateixes cançons!</div>
+    <button class="btn btn-gold" onclick="onCreateSala()">🏠 Crear sala</button>
+  </div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl">Unir-se a una sala</div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:12px">Introdueix el codi de 6 lletres que t'han enviat:</div>
+    <input type="text" id="sala-join-code" maxlength="6" placeholder="FAMILIA" autocomplete="off" style="text-transform:uppercase;font-size:1.4rem;font-weight:900;letter-spacing:8px;text-align:center">
+    <button class="btn btn-ghost" onclick="onJoinSala()" style="margin-top:10px">🚪 Unir-se</button>
+  </div>
+
+  <div class="card" id="sala-meves-wrap" style="width:100%;max-width:460px;display:none">
+    <div class="card-ttl">Les meves sales</div>
+    <div id="sala-meves-list"></div>
+  </div>
+
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+</div>
+
+<div id="s-sala" class="scr">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;width:100%;max-width:460px">
+    <div style="font-size:1.8rem">👨‍👩‍👧</div>
+    <div>
+      <div id="sala-name-display" style="font-size:1.2rem;font-weight:900;color:var(--gold)"></div>
+      <div id="sala-code-display" style="font-size:.72rem;color:var(--muted);letter-spacing:2px"></div>
+    </div>
+    <button id="sala-edit-btn" onclick="onEditSalaName()" style="margin-left:auto;background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.3);border-radius:8px;padding:6px 12px;color:var(--gold);font-size:.75rem;cursor:pointer">✏️ Editar</button>
+  </div>
+
+  <div class="card" style="width:100%;max-width:460px;background:rgba(212,160,23,.06);border:1.5px solid rgba(212,160,23,.25)">
+    <div class="card-ttl">🎵 Cançó d'avui</div>
+    <div style="font-size:.82rem;color:var(--muted);margin-bottom:12px" id="sala-today-status"></div>
+    <button class="btn btn-gold" id="sala-play-btn" onclick="onSalaPlay()">▶️ Jugar avui!</button>
+  </div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl">🏆 Rànquing d'avui</div>
+    <div id="sala-rank-today"></div>
+  </div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl">📈 Historial de la sala</div>
+    <div id="sala-history" style="font-size:.8rem;color:var(--muted)"></div>
+  </div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl" style="display:flex;justify-content:space-between;align-items:center">
+      <span>👥 Membres</span>
+      <button onclick="onSalaShare()" style="background:transparent;border:none;color:var(--gold);font-size:.78rem;cursor:pointer">📤 Convidar</button>
+    </div>
+    <div id="sala-members-list"></div>
+    <div id="sala-remove-wrap" style="display:none;margin-top:8px">
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:6px">👑 Eliminar membre (només creador):</div>
+      <div id="sala-remove-list"></div>
+    </div>
+  </div>
+
+  <div id="sala-delete-wrap" style="display:none;width:100%;max-width:460px;margin-top:8px">
+    <button class="btn btn-outline" onclick="onDeleteSala()" style="border-color:var(--err);color:var(--err);font-size:.8rem;padding:10px">🗑️ Eliminar sala</button>
+  </div>
+
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+</div>
+
+<script>
+// ═══ SALA FAMILIAR — Lògica ═══
+let G_SALA = null; // sala activa
+let salaPollingTimer = null;
+
+function genSalaCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ';let c='';for(let i=0;i<6;i++)c+=chars[Math.floor(Math.random()*chars.length)];return c}
+
+async function onCreateSala(){
+  const code = genSalaCode();
+  const name = `Sala de ${G.nick}`;
+  const row = {code, name, creator_nick: G.nick, lang: G.lang, created_at: new Date().toISOString()};
+  const ok = await sbI('salas', row);
+  if(!ok) return toast('❌ Error creant la sala');
+  await sbI('sala_members', {sala_code: code, nick: G.nick, joined_at: new Date().toISOString()});
+  const salas = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
+  salas.unshift(code);
+  localStorage.setItem('cn:my_salas', JSON.stringify(salas.slice(0,5)));
+  G_SALA = {code, name, creator_nick: G.nick, lang: G.lang};
+  toast('✅ Sala creada!');
+  go('s-sala');
+  await renderSalaRoom();
+}
+
+async function onJoinSala(){
+  const code = document.getElementById('sala-join-code').value.trim().toUpperCase();
+  if(code.length !== 6) return toast('⚠️ El codi té 6 lletres');
+  const res = await sbS('salas', `code=eq.${code}`, '', 1);
+  if(!res || !res.length) return toast('❌ Sala no trobada');
+  const sala = res[0];
+  const existing = await sbS('sala_members', `sala_code=eq.${code}&nick=eq.${encodeURIComponent(G.nick)}`, '', 1);
+  if(!existing || !existing.length){
+    await sbI('sala_members', {sala_code: code, nick: G.nick, joined_at: new Date().toISOString()});
+  }
+  const salas = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
+  if(!salas.includes(code)) salas.unshift(code);
+  localStorage.setItem('cn:my_salas', JSON.stringify(salas.slice(0,5)));
+  G_SALA = sala;
+  toast(`✅ Entrat a "${sala.name}"!`);
+  go('s-sala');
+  await renderSalaRoom();
+}
+
+async function renderSalaMenu(){
+  const codes = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
+  if(!codes.length){ document.getElementById('sala-meves-wrap').style.display='none'; return; }
+  document.getElementById('sala-meves-wrap').style.display='block';
+  const list = document.getElementById('sala-meves-list');
+  list.innerHTML = '<div style="font-size:.78rem;color:var(--muted)">Carregant...</div>';
+  const items = [];
+  for(const code of codes){
+    const res = await sbS('salas', `code=eq.${code}`, '', 1);
+    if(res && res.length) items.push(res[0]);
+  }
+  if(!items.length){ document.getElementById('sala-meves-wrap').style.display='none'; return; }
+  list.innerHTML = items.map(s=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <div><div style="font-weight:700;font-size:.92rem">${esc(s.name)}</div><div style="font-size:.7rem;color:var(--muted);letter-spacing:2px">${s.code}</div></div>
+      <button onclick="onEnterSala('${s.code}')" style="background:var(--gold);color:#000;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:.82rem;cursor:pointer">Entrar</button>
+    </div>`).join('');
+}
+
+async function onEnterSala(code){
+  const res = await sbS('salas', `code=eq.${code}`, '', 1);
+  if(!res || !res.length) return toast('❌ Sala no trobada');
+  G_SALA = res[0];
+  go('s-sala');
+  await renderSalaRoom();
+}
+
+async function renderSalaRoom(){
+  if(!G_SALA) return;
+  const today = new Date().toISOString().slice(0,10);
+  const isCreator = G_SALA.creator_nick === G.nick;
+
+  document.getElementById('sala-name-display').textContent = G_SALA.name;
+  document.getElementById('sala-code-display').textContent = `Codi: ${G_SALA.code}`;
+  document.getElementById('sala-edit-btn').style.display = isCreator ? 'block' : 'none';
+  document.getElementById('sala-delete-wrap').style.display = isCreator ? 'block' : 'none';
+
+  // Estat d'avui
+  const myScore = await sbS('sala_scores', `sala_code=eq.${G_SALA.code}&nick=eq.${encodeURIComponent(G.nick)}&game_date=eq.${today}`, 'score.desc', 1);
+  const played = myScore && myScore.length > 0;
+  document.getElementById('sala-today-status').textContent = played ? `✅ Ja has jugat avui! Puntuació: ${myScore[0].score} pts` : '⏳ Encara no has jugat avui';
+  document.getElementById('sala-play-btn').textContent = played ? '🔄 Jugar de nou' : '▶️ Jugar avui!';
+
+  // Rànquing avui
+  const todayScores = await sbS('sala_scores', `sala_code=eq.${G_SALA.code}&game_date=eq.${today}`, 'score.desc', 50);
+  const rankEl = document.getElementById('sala-rank-today');
+  if(!todayScores || !todayScores.length){
+    rankEl.innerHTML = '<div style="font-size:.82rem;color:var(--muted);padding:8px 0">Cap partida avui encara. Sigues el primer!</div>';
+  } else {
+    rankEl.innerHTML = todayScores.map((s,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="width:24px;font-size:.82rem;color:var(--muted);font-weight:700;text-align:center">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+        <div style="flex:1;font-size:.9rem;font-weight:${s.nick===G.nick?'900':'600'};color:${s.nick===G.nick?'var(--gold)':'var(--text)'}">${esc(s.nick)}</div>
+        <div style="font-size:.9rem;font-weight:900;color:var(--gold)">${s.score.toLocaleString()} pts</div>
+      </div>`).join('');
+  }
+
+  // Historial (últims 7 dies)
+  const history = await sbS('sala_scores', `sala_code=eq.${G_SALA.code}`, 'game_date.desc,score.desc', 200);
+  const histEl = document.getElementById('sala-history');
+  if(!history || !history.length){
+    histEl.innerHTML = '<div style="padding:6px 0">Cap historial encara.</div>';
+  } else {
+    const byDate = {};
+    history.forEach(s => { if(!byDate[s.game_date]) byDate[s.game_date]=[];  byDate[s.game_date].push(s); });
+    const days = Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).slice(0,7);
+    histEl.innerHTML = days.map(d=>{
+      const winner = byDate[d][0];
+      const count = byDate[d].length;
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div><div style="font-size:.82rem;color:var(--text)">${d.slice(5).replace('-','/')}</div><div style="font-size:.7rem;color:var(--muted)">${count} ${count===1?'jugador':'jugadors'}</div></div>
+        <div style="text-align:right"><div style="font-size:.82rem;font-weight:700;color:var(--gold)">🏆 ${esc(winner.nick)}</div><div style="font-size:.7rem;color:var(--muted)">${winner.score.toLocaleString()} pts</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Membres
+  const members = await sbS('sala_members', `sala_code=eq.${G_SALA.code}`, 'joined_at.asc', 50);
+  const memEl = document.getElementById('sala-members-list');
+  memEl.innerHTML = (members||[]).map(m=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <div style="font-size:.88rem;flex:1;color:${m.nick===G_SALA.creator_nick?'var(--gold)':'var(--text)'};font-weight:${m.nick===G_SALA.creator_nick?700:400}">${esc(m.nick)}${m.nick===G_SALA.creator_nick?' 👑':''}</div>
+    </div>`).join('');
+
+  // Eliminar membres (només creador)
+  const removeWrap = document.getElementById('sala-remove-wrap');
+  if(isCreator && members && members.length > 1){
+    removeWrap.style.display = 'block';
+    document.getElementById('sala-remove-list').innerHTML = members
+      .filter(m => m.nick !== G.nick)
+      .map(m=>`<button onclick="onRemoveMember('${m.nick}')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:5px 12px;color:#ef4444;font-size:.75rem;cursor:pointer;margin:3px">✕ ${esc(m.nick)}</button>`).join('');
+  } else {
+    removeWrap.style.display = 'none';
+  }
+
+  // Polling automàtic cada 15s
+  clearInterval(salaPollingTimer);
+  salaPollingTimer = setInterval(()=>{
+    if(document.getElementById('s-sala').classList.contains('on')) renderSalaRoom();
+    else clearInterval(salaPollingTimer);
+  }, 15000);
+}
+
+function onSalaPlay(){
+  if(!G_SALA) return;
+  const today = new Date().toISOString().slice(0,10);
+  const seed = G_SALA.code.split('').reduce((a,c)=>a+c.charCodeAt(0),0) + today.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const pool = (SONGS_BY_LANG[G_SALA.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);
+  G.mode = 'sala';
+  G.style = null;
+  G.lang = G_SALA.lang;
+  telTrackEvent('start_game',{mode:'sala',lang:G.lang,sala:G_SALA.code});
+  initGame(seededShuffle(pool, seed), 'sala');
+}
+
+async function onSalaShare(){
+  if(!G_SALA) return;
+  const url = `${location.origin}${location.pathname}?sala=${G_SALA.code}`;
+  const text = `🎵 Juga CançoNet amb mi!\nSala: *${G_SALA.name}*\nCodi: *${G_SALA.code}*\nEntra aquí: ${url}`;
+  if(navigator.share){navigator.share({title:'CançoNet — Mode Família',text,url})}
+  else{const wa=`https://wa.me/?text=${encodeURIComponent(text)}`;window.open(wa,'_blank')}
+}
+
+async function onEditSalaName(){
+  const nom = prompt('Nou nom de la sala (màx. 30 caràcters):', G_SALA.name);
+  if(!nom || nom.trim().length < 2) return;
+  const newName = nom.trim().slice(0,30);
+  const ok = await fetch(`${SB_URL}/rest/v1/salas?code=eq.${G_SALA.code}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify({name:newName})});
+  G_SALA.name = newName;
+  document.getElementById('sala-name-display').textContent = newName;
+  toast('✅ Nom actualitzat!');
+}
+
+async function onRemoveMember(nick){
+  if(!confirm(`Eliminar ${nick} de la sala?`)) return;
+  await fetch(`${SB_URL}/rest/v1/sala_members?sala_code=eq.${G_SALA.code}&nick=eq.${encodeURIComponent(nick)}`,{method:'DELETE',headers:SBH});
+  toast(`✅ ${nick} eliminat`);
+  renderSalaRoom();
+}
+
+async function onDeleteSala(){
+  if(!confirm(`Eliminar la sala "${G_SALA.name}"? Aquesta acció no es pot desfer.`)) return;
+  await fetch(`${SB_URL}/rest/v1/sala_scores?sala_code=eq.${G_SALA.code}`,{method:'DELETE',headers:SBH});
+  await fetch(`${SB_URL}/rest/v1/sala_members?sala_code=eq.${G_SALA.code}`,{method:'DELETE',headers:SBH});
+  await fetch(`${SB_URL}/rest/v1/salas?code=eq.${G_SALA.code}`,{method:'DELETE',headers:SBH});
+  const salas = JSON.parse(localStorage.getItem('cn:my_salas')||'[]').filter(c=>c!==G_SALA.code);
+  localStorage.setItem('cn:my_salas', JSON.stringify(salas));
+  G_SALA = null;
+  toast('🗑️ Sala eliminada');
+  go('s-menu');
+}
+
+// Guardar puntuació a la sala quan s'acaba una partida de mode 'sala'
+async function saveSalaScore(score){
+  if(!G_SALA) return;
+  const today = new Date().toISOString().slice(0,10);
+  await sbI('sala_scores',{sala_code:G_SALA.code,nick:G.nick,score,game_date:today,played_at:new Date().toISOString()});
+}
+
+// Detectar codi de sala a la URL (per links d'invitació)
+function checkSalaUrlParam(){
+  const params = new URLSearchParams(location.search);
+  const code = params.get('sala');
+  if(code && G.nick) {
+    setTimeout(()=>onJoinSala_fromUrl(code), 500);
+  }
+}
+async function onJoinSala_fromUrl(code){
+  const res = await sbS('salas', `code=eq.${code.toUpperCase()}`, '', 1);
+  if(!res || !res.length) return;
+  const sala = res[0];
+  const existing = await sbS('sala_members', `sala_code=eq.${code}&nick=eq.${encodeURIComponent(G.nick)}`, '', 1);
+  if(!existing || !existing.length) await sbI('sala_members',{sala_code:code,nick:G.nick,joined_at:new Date().toISOString()});
+  const salas = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
+  if(!salas.includes(code)) salas.unshift(code);
+  localStorage.setItem('cn:my_salas', JSON.stringify(salas.slice(0,5)));
+  G_SALA = sala;
+  toast(`👨‍👩‍👧 Entrat a "${sala.name}"!`);
+  go('s-sala');
+  renderSalaRoom();
+}
+</script>
+
+</body>
+</html>
