@@ -154,6 +154,9 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div class="field"><label id="login-lbl-email">Correu electrònic</label><input id="login-email" type="email" placeholder="correu@exemple.com" autocomplete="email"></div>
     <button class="btn btn-gold" id="login-btn" onclick="onSendOtp()">Enviar codi 🎵</button>
     <div style="text-align:center;margin-top:10px"><span style="font-size:.75rem;color:var(--muted)" id="login-privacy">En entrar acceptes les condicions d'ús</span></div>
+    <div id="debug-reset-btn" style="display:none;margin-top:16px;text-align:center">
+      <button onclick="debugResetSession()" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:8px 16px;color:#ef4444;font-size:.75rem;cursor:pointer">🛠️ Reset sessió (debug)</button>
+    </div>
   </div>
   <div class="card" id="login-card-sent" style="display:none;text-align:center">
     <div style="font-size:2.5rem;margin-bottom:12px">📧</div>
@@ -537,6 +540,27 @@ async function onVerifyOtp(){
 }
 async function onResentEmail(){if(!lastEmailSent)return;await sendOtp(lastEmailSent);toast('📧 Codi reenviat!');document.getElementById('login-otp-input').value='';}
 function resetLoginForm(){document.getElementById('login-card-email').style.display='block';document.getElementById('login-card-sent').style.display='none';document.getElementById('login-email').value=''}
+
+// ═══ DEBUG MODE ═══
+function initDebugMode(){
+  const params=new URLSearchParams(location.search);
+  if(params.get('debug')==='1'){
+    document.getElementById('debug-reset-btn').style.display='block';
+    // Toast discret per confirmar que el mode debug està actiu
+    setTimeout(()=>toast('🛠️ Mode debug actiu'),500);
+  }
+}
+function debugResetSession(){
+  if(!confirm('🛠️ Esborrar tota la sessió local?\n\nAixò et permetrà fer login de nou amb el mateix email com si fos la primera vegada.'))return;
+  // Esborrar tot el relacionat amb auth i perfil
+  Object.keys(localStorage).filter(k=>
+    k.includes('auth-token')||k.includes('sb-')||
+    k.startsWith('cn:')||k.includes('supabase')
+  ).forEach(k=>localStorage.removeItem(k));
+  sessionStorage.clear();
+  toast('✅ Sessió esborrada. Recarregant...');
+  setTimeout(()=>location.href=location.pathname+'?debug=1',1000);
+}
 async function signOut(){Object.keys(localStorage).filter(k=>k.includes('auth-token')||k.includes('sb-')).forEach(k=>localStorage.removeItem(k));localStorage.removeItem('cn:user-email');G.nick='';G.zone='';go('s-modes');toast('👋 Sessió tancada')}
 async function trackArtist(nick,zona,lang,artist){if(!nick||!artist)return;const ex=await sbS('artist_stats',`nick=eq.${encodeURIComponent(nick)}&artist=eq.${encodeURIComponent(artist)}&lang=eq.${lang}`,'updated_at.desc',1);if(ex&&ex.length>0){try{await fetch(`${SB_URL}/rest/v1/artist_stats?nick=eq.${encodeURIComponent(nick)}&artist=eq.${encodeURIComponent(artist)}&lang=eq.${lang}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify({correct_count:ex[0].correct_count+1,updated_at:new Date().toISOString()})})}catch(e){}}else await sbI('artist_stats',{nick,zona,lang,artist,correct_count:1})}
 
@@ -1000,7 +1024,22 @@ function saveRankPositions(rows,tab,zone,lang){localStorage.setItem(`cn:rank:${l
 function loadPrevPositions(tab,zone,lang){try{const raw=localStorage.getItem(`cn:rank:${lang}:${tab}:${zone||'all'}`);if(!raw)return null;const d=JSON.parse(raw);if(Date.now()-d.ts>24*60*60*1000)return null;return d.positions}catch(e){return null}}
 function posChangeHtml(nick,pos,prev,isMe){if(!prev||!(nick in prev))return isMe?'<span class="pos-new">NOU</span>':'';const d=prev[nick]-pos;if(d>0)return`<span class="pos-up">▲+${d}</span>`;if(d<0)return`<span class="pos-down">▼${d}</span>`;return''}
 
-async function loadRankings(){const el=document.getElementById('rank-list');el.innerHTML='<div class="center muted" style="padding:20px">Carregant...</div>';const zones=T[G.lang]?.zones||T.ca.zones;if(!rZone)rZone=zones[0];document.getElementById('ztabs').innerHTML=zones.map(z=>`<button class="ztab${z===rZone?' on':''}" onclick="onZoneChg('${esc(z)}',this)">${esc(z)}</button>`).join('');const today=new Date().toISOString().slice(0,10);let f=`lang=eq.${G.lang||'ca'}`;if(rTab==='zone')f+=`&zona=eq.${encodeURIComponent(rZone)}`;if(rTab==='daily')f+=`&data=eq.${today}`;const rows=await sbS('scores',f,'score.desc',20);const t=T[G.lang]||T.ca;if(!rows||!rows.length){el.innerHTML=`<div class="center muted" style="padding:24px">${esc(t.noScores)}</div>`;return}const prev=loadPrevPositions(rTab,rZone,G.lang);saveRankPositions(rows,rTab,rZone,G.lang);const med=['🥇','🥈','🥉'];el.innerHTML=rows.map((e,i)=>{const isMe=G.nick&&e.nick===G.nick;return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}${posChangeHtml(e.nick,i+1,prev,isMe)}</div><div class="rzone">📍 ${esc(e.zona)} · ${esc(e.data)}</div></div><div class="rscore">${(e.score||0).toLocaleString()}</div></div>`}).join('')}
+async function loadRankings(){const el=document.getElementById('rank-list');el.innerHTML='<div class="center muted" style="padding:20px">Carregant...</div>';const zones=T[G.lang]?.zones||T.ca.zones;if(!rZone)rZone=zones[0];document.getElementById('ztabs').innerHTML=zones.map(z=>`<button class="ztab${z===rZone?' on':''}" onclick="onZoneChg('${esc(z)}',this)">${esc(z)}</button>`).join('');const today=new Date().toISOString().slice(0,10);
+
+  // Triar vista: diari vs global
+  const isDaily = rTab==='daily';
+  const table = isDaily ? 'rank_daily' : 'rank_global';
+  let f=`lang=eq.${G.lang||'ca'}`;
+  if(rTab==='zone') f+=`&zona=eq.${encodeURIComponent(rZone)}`;
+  if(isDaily) f+=`&data=eq.${today}`;
+
+  const rows=await sbS(table,f,'score.desc',20);
+  const t=T[G.lang]||T.ca;
+  if(!rows||!rows.length){el.innerHTML=`<div class="center muted" style="padding:24px">${esc(t.noScores)}</div>`;return}
+  const prev=loadPrevPositions(rTab,rZone,G.lang);saveRankPositions(rows,rTab,rZone,G.lang);
+  const med=['🥇','🥈','🥉'];
+  el.innerHTML=rows.map((e,i)=>{const isMe=G.nick&&e.nick===G.nick;return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}${posChangeHtml(e.nick,i+1,prev,isMe)}</div><div class="rzone">📍 ${esc(e.zona)} · ${isDaily?e.data:e.partides+' partides'}</div></div><div class="rscore">${(e.score||0).toLocaleString()}</div></div>`}).join('')
+}
 function onTabChg(tab,btn){rTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');document.getElementById('ztabs').style.display=tab==='zone'?'flex':'none';loadRankings()}
 function onZoneChg(zone,btn){rZone=zone;document.querySelectorAll('.ztab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');loadRankings()}
 function onBackRank(){go(G.nick?'s-menu':'s-welcome')}
@@ -1069,24 +1108,46 @@ async function appInit(){
 }
 
 window.addEventListener('load',()=>setTimeout(appInit,100));
-document.addEventListener('DOMContentLoaded',()=>{document.getElementById('modal-wip').addEventListener('click',function(e){if(e.target===this)closeWip()})});
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('modal-wip').addEventListener('click',function(e){if(e.target===this)closeWip()});
+  initDebugMode();
+});
 </script>
 
+<script>
 // ═══════════════════════════════════════
 // BACK BUTTON (Android + Browser)
 // ═══════════════════════════════════════
 const SCREEN_PARENT = {
-  's-zone':       null,          // sortir (primera pantalla)
-  's-login':      's-zone',
-  's-menu':       null,          // sortir (menú principal)
-  's-style':      's-menu',
-  's-game':       's-menu',
-  's-gameover':   's-menu',
-  's-rankings':   's-menu',
+  // Pantalles d'entrada — sortir de l'app (amb confirmació)
+  's-zone':             null,
+  's-login':            's-zone',
+  's-welcome':          's-zone',
+  's-consent':          's-zone',   // no pot tornar enrere sense acceptar
+
+  // Menú principal — sortir de l'app (amb confirmació)
+  's-menu':             null,
+
+  // Pantalles de joc
+  's-style':            's-menu',
+  's-game':             's-menu',
+  's-gameover':         's-menu',
+
+  // Pantalles del menú
+  's-rankings':         's-menu',
   's-challenge-create': 's-menu',
   's-challenge-play':   's-menu',
-  's-bustia':     's-menu',
-  's-profile':    's-menu',
+  's-bustia':           's-menu',
+  's-profile':          's-menu',
+  's-missions':         's-menu',
+
+  // Legals
+  's-privacy':          's-menu',
+  's-terms':            's-menu',
+
+  // Sala familiar
+  's-sala-menu':        's-menu',
+  's-sala':             's-sala-menu',
 };
 
 function pushBackState(){
@@ -1094,34 +1155,36 @@ function pushBackState(){
 }
 
 window.addEventListener('popstate', function(e){
-  // Find current visible screen
   const cur = document.querySelector('.scr.on');
   if(!cur) return;
   const curId = cur.id;
   const parent = SCREEN_PARENT[curId];
 
-  // If we're in-game, treat back as "abandon game" with confirmation
+  // Partida activa → confirmació d'abandonar
   if(curId === 's-game'){
     if(G.active){
       if(confirm('Vols abandonar la partida?')){
         telSaveSession(false);telTrackEvent('abandon',{level:G.lvl,mode:G.mode});
         ytStop(true);
         clearInterval(G.timerInt);
-        go('s-menu');
-        renderMenu();
-        pushBackState();
+        go('s-menu');renderMenu();pushBackState();
       } else {
-        pushBackState(); // re-push so next back still works
+        pushBackState();
       }
     } else {
-      go('s-menu');
-      renderMenu();
-      pushBackState();
+      go('s-menu');renderMenu();pushBackState();
     }
     return;
   }
 
-  // Modals — close any open modal first
+  // Consentiment → no es pot sortir amb enrere sense acceptar
+  if(curId === 's-consent'){
+    pushBackState(); // bloqueja
+    toast('⚠️ Has d\'acceptar els termes per continuar');
+    return;
+  }
+
+  // Modals oberts → tancar primer
   const openModal = document.querySelector('.modal.on');
   if(openModal){
     openModal.classList.remove('on');
@@ -1129,16 +1192,27 @@ window.addEventListener('popstate', function(e){
     return;
   }
 
-  if(parent){
-    go(parent);
-    if(parent === 's-menu') renderMenu();
-    pushBackState(); // keep the stack so back keeps working
+  // Sortir de l'app (parent === null) → confirmació
+  if(parent === null){
+    if(confirm('Vols sortir de CançoNet?')){
+      // Deixem que el navegador surti (no fem pushBackState)
+      return;
+    } else {
+      pushBackState();
+      return;
+    }
   }
-  // if parent === null → allow exit (default browser back)
+
+  // Navegació normal enrere
+  go(parent);
+  if(parent === 's-menu') renderMenu();
+  if(parent === 's-sala-menu') renderSalaMenu();
+  pushBackState();
 });
 
 // Push initial state so we can intercept first back press
 pushBackState();
+</script>
 
 <!-- ═══ CONSENTIMENT RGPD ═══ -->
 <div id="s-consent" class="scr">
