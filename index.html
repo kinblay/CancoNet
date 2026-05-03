@@ -1025,7 +1025,21 @@ async function endGame(){
   document.getElementById('go-res').innerHTML=G.results.map((r,i)=>{const ico=r==='ok'?'✅':r==='skip'?'⏭️':'❌';const song=G.songList[i]||G.songList[G.songList.length-1];return`<div class="res-row"><span>${ico} ${i+1}. ${esc(t.lvls[i].n)}</span><span class="muted" style="font-size:.76rem">${esc(song.t)}</span></div>`}).join('');
   const _dzW=document.getElementById('go-deezer-wrap');if(_dzW&&G.mode==='free'){_dzW.style.display='block';const _ls=G.songList[G.songIdx]||G.song;if(_ls?.dzId&&_ls.dzId!==0)document.getElementById('go-deezer-link').href=`https://www.deezer.com/track/${_ls.dzId}`;document.getElementById('go-deezer-songs').innerHTML=G.songList.slice(0,10).filter(s=>s?.dzId&&s.dzId!==0).map(s=>`<a href="https://www.deezer.com/track/${s.dzId}" target="_blank" rel="noopener" style="color:#1ac37c;text-decoration:none;margin:2px 4px;display:inline-block">♪ ${esc(s.t)}</a>`).join('');}else if(_dzW)_dzW.style.display='none';document.getElementById('sh-date').textContent=`#${gameNum}`;document.getElementById('sh-dots').textContent=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join('');document.getElementById('sh-score').textContent=G.score.toLocaleString();document.getElementById('sh-zone').textContent=G.zone;if(document.getElementById('sh-rank'))document.getElementById('sh-rank').textContent=getRank(G.lang).short;document.getElementById('sh-streak').textContent=streak>1?`🔥${'🔥'.repeat(Math.min(streak,5))}`:'';document.getElementById('sh-mode').textContent=t.levelBadge[G.mode]||G.mode;document.getElementById('go-share-btn').textContent=t.shareBtn;document.getElementById('go-again-btn').textContent=t.playAgain;document.getElementById('go-menu-btn').textContent=t.mainMenu;document.getElementById('go-rank-btn').textContent=t.rankBtn;go('s-gameover')
 }
-function onShare(){telTrackEvent('share',{score:G.score,mode:G.mode,lang:G.lang});const t=T[G.lang],gn=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),dots=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join(''),streak=getStreak(),sf='🔥'.repeat(Math.min(streak,5)),txt=`CançoNet #${gn}\n${dots}\n🏆 ${G.score.toLocaleString()} pts${sf?`\n${sf}`:''}\n📍 ${G.zone}\nhttps://kinblay.github.io/CancoNet/`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
+function onShare(){
+  telTrackEvent('share',{score:G.score,mode:G.mode,lang:G.lang});
+  const t=T[G.lang];
+  const gn=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24));
+  const palette=getEquippedItem('wordle');
+  let okE='🟩',skipE='🟨',failE='🟥';
+  if(palette==='wordle_senyera'){okE='🟨';skipE='🟥';failE='⬛'}
+  else if(palette==='wordle_neon'){okE='🟦';skipE='🟪';failE='🟧'}
+  const dots=G.results.map(r=>r==='ok'?okE:r==='skip'?skipE:failE).join('');
+  const streak=getStreak();
+  const sf='🔥'.repeat(Math.min(streak,5));
+  const txt=`CançoNet #${gn}\n${dots}\n🏆 ${G.score.toLocaleString()} pts${sf?`\n${sf}`:''}\n📍 ${G.zone}\nhttps://kinblay.github.io/CancoNet/`;
+  if(navigator.share)navigator.share({text:txt}).catch(()=>{});
+  else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'));
+}
 
 async function saveScore(){if(!canScore())return;const sv=V.score(G.score);if(!sv.ok)return;const row={nick:G.nick.substring(0,20),zona:G.zone,score:sv.val,mode:G.mode,lang:G.lang,gender:G.gender||null,age_range:G.age||null,data:new Date().toISOString().slice(0,10)};await sbI('scores',row)}
 
@@ -1515,6 +1529,10 @@ const SHOP_ITEMS = [
   {id:'wordle_senyera',cat:'cosmetics',name:'Targeta senyera',desc:'Quadradets vermells i grocs en lloc de verds',icon:'🟥🟨',cost:30,slot:'wordle'},
   {id:'wordle_neon',cat:'cosmetics',name:'Targeta neón',desc:'Colors fluorescents per a Instagram',icon:'🌈',cost:30,slot:'wordle'},
   {id:'vinyl_anim',cat:'cosmetics',name:'Vinil animat',desc:'Una nota gira al menú principal',icon:'💿',cost:80,slot:'vinyl'},
+  // Sala Família VIP — accions úniques per sala
+  {id:'sala_emoji',cat:'cosmetics',name:'Logo de sala',desc:'Posa una emoji al nom de la sala (ex: 🐕 Família Garcia). Aplicable a una sala creada per tu.',icon:'🎨',cost:100,salaAction:'emoji'},
+  {id:'sala_history',cat:'cosmetics',name:'Historial complet',desc:'Veure +30 dies d\'historial a la sala (per defecte 7). Aplicable a una sala creada per tu.',icon:'📈',cost:80,salaAction:'history'},
+  {id:'sala_msg',cat:'cosmetics',name:'Missatge VIP de sala',desc:'Mostra un missatge personalitzat als membres de la sala. Aplicable a una sala creada per tu.',icon:'💬',cost:50,salaAction:'msg'},
   // Ajudes consumibles (cada compra = 1 ús)
   {id:'aid_extra_life',cat:'aids',name:'Vida extra',desc:'Recupera 1 vida durant la partida (mode lliure, 1 cop)',icon:'❤️',cost:25,consumable:true,gameAid:'extra_life'},
   {id:'aid_free_skip',cat:'aids',name:'Saltar sense penalització',desc:'Salta una cançó sense perdre vida (mode lliure, 1 cop)',icon:'⏭️',cost:20,consumable:true,gameAid:'free_skip'},
@@ -1556,7 +1574,11 @@ function renderShop(){
     const reqMet=!it.req||it.req();
     const canAfford=getNotes()>=it.cost;
     let btnHtml='';
-    if(it.consumable){
+    if(it.salaAction){
+      // Sempre comprable — cada compra aplica a una sala
+      const canBuy=canAfford&&reqMet;
+      btnHtml=`<button class="btn btn-gold" style="padding:8px 14px;font-size:.8rem;${canBuy?'':'opacity:.4;cursor:not-allowed'}" ${canBuy?`onclick="onShopBuy('${it.id}')"`:'disabled'}>${canBuy?`Aplicar 🎵${it.cost}`:(canAfford?'Bloquejat':'Sense Notes')}</button>`;
+    } else if(it.consumable){
       // Consumibles — sempre comprar (s'aplica només la pròxima partida)
       const canBuy=canAfford&&reqMet;
       btnHtml=`<button class="btn btn-gold" style="padding:8px 14px;font-size:.8rem;${canBuy?'':'opacity:.4;cursor:not-allowed'}" ${canBuy?`onclick="onShopBuy('${it.id}')"`:'disabled'}>${canBuy?`Comprar 🎵${it.cost}`:(canAfford?'Bloquejat':'Sense Notes')}</button>`;
@@ -1588,8 +1610,13 @@ function onShopBuy(id){
   if(getNotes()<it.cost){toast(`⚠️ Et falten ${it.cost-getNotes()} Notes`);return}
   if(it.req&&!it.req()){toast('⚠️ '+(it.reqMsg||'Bloquejat'));return}
 
+  // Acció especial: aplica funció VIP a una sala creada per l'usuari
+  if(it.salaAction){
+    onShopBuySalaVip(it);
+    return;
+  }
+
   if(it.consumable){
-    // Activar per la pròxima partida
     if(!confirm(`Comprar "${it.name}" per ${it.cost} 🎵?\n\nS'activarà a la propera partida en Mode Lliure.`))return;
     spendNotes(it.cost);
     addPendingAid(it.gameAid);
@@ -1602,6 +1629,54 @@ function onShopBuy(id){
     toast(`🎉 ${it.name} comprat!`);
     if(it.slot)applyCosmetics();
   }
+  renderShop();
+}
+
+async function onShopBuySalaVip(it){
+  // Buscar sales creades per l'usuari
+  const codes=JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
+  if(!codes.length){toast('⚠️ Has de crear una sala primer (Mode Família)');return}
+  const myOwn=[];
+  for(const code of codes){
+    const r=await sbS('salas',`code=eq.${code}`,'',1);
+    if(r&&r.length&&r[0].creator_nick===G.nick)myOwn.push(r[0]);
+  }
+  if(!myOwn.length){toast('⚠️ Has de ser creador d\'una sala');return}
+
+  // Triar sala (si en té més d'una)
+  let sala=myOwn[0];
+  if(myOwn.length>1){
+    const list=myOwn.map((s,i)=>`${i+1}. ${s.name} (${s.code})`).join('\n');
+    const idx=parseInt(prompt(`Quina sala vols millorar?\n\n${list}\n\nEscriu el número:`,'1'));
+    if(!idx||idx<1||idx>myOwn.length)return;
+    sala=myOwn[idx-1];
+  }
+
+  let extra={};
+  if(it.salaAction==='emoji'){
+    const e=prompt(`Quina emoji vols afegir a la sala "${sala.name}"?\n(Ex: 🐕 🌻 ⚽ 🍕)`,'🎉');
+    if(!e||!e.trim())return;
+    extra={emoji:e.trim().slice(0,4)};
+  } else if(it.salaAction==='msg'){
+    const m=prompt(`Quin missatge vols mostrar als membres de "${sala.name}"?\n(Màx. 100 caràcters)`,'Visca la família!');
+    if(!m||m.trim().length<2)return;
+    extra={vip_msg:m.trim().slice(0,100)};
+  } else if(it.salaAction==='history'){
+    if(sala.is_vip&&!confirm(`Aquesta sala ja té funcions VIP. Vols renovar?`))return;
+    extra={};
+  }
+
+  if(!confirm(`Aplicar "${it.name}" a la sala "${sala.name}" per ${it.cost} 🎵?`))return;
+
+  // Update Supabase
+  const row={is_vip:true,vip_at:new Date().toISOString(),...extra};
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/salas?code=eq.${sala.code}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(row)});
+    if(!r.ok){toast('❌ Error aplicant');return}
+  }catch(e){toast('❌ Error de connexió');return}
+
+  spendNotes(it.cost);
+  toast(`🎉 ${it.name} aplicat a "${sala.name}"!`);
   renderShop();
 }
 
@@ -1856,10 +1931,29 @@ async function renderSalaRoom(){
   const today = new Date().toISOString().slice(0,10);
   const isCreator = G_SALA.creator_nick === G.nick;
 
-  document.getElementById('sala-name-display').textContent = G_SALA.name;
+  // VIP — emoji al nom + missatge VIP
+  const isVip = !!G_SALA.is_vip;
+  const emoji = G_SALA.emoji || '';
+  const displayName = emoji ? `${emoji} ${G_SALA.name}` : G_SALA.name;
+  document.getElementById('sala-name-display').innerHTML = esc(displayName) + (isVip ? ' <span style="font-size:.65rem;background:linear-gradient(90deg,#a855f7,#c084fc);color:#fff;padding:2px 7px;border-radius:99px;letter-spacing:1px;vertical-align:middle">VIP</span>' : '');
   document.getElementById('sala-code-display').textContent = `Codi: ${G_SALA.code}`;
   document.getElementById('sala-edit-btn').style.display = isCreator ? 'block' : 'none';
   document.getElementById('sala-delete-wrap').style.display = isCreator ? 'block' : 'none';
+
+  // Missatge VIP del creador (visible per tots els membres)
+  let vipMsgEl = document.getElementById('sala-vip-msg');
+  if(G_SALA.vip_msg){
+    if(!vipMsgEl){
+      vipMsgEl = document.createElement('div');
+      vipMsgEl.id = 'sala-vip-msg';
+      vipMsgEl.style.cssText = 'width:100%;max-width:460px;background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(212,160,23,.08));border:1.5px solid rgba(168,85,247,.3);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:.88rem;color:#c084fc;font-style:italic;text-align:center';
+      document.querySelector('#s-sala .card').parentNode.insertBefore(vipMsgEl, document.querySelector('#s-sala .card').nextSibling);
+    }
+    vipMsgEl.innerHTML = '💬 ' + esc(G_SALA.vip_msg);
+    vipMsgEl.style.display = 'block';
+  } else if(vipMsgEl){
+    vipMsgEl.style.display = 'none';
+  }
 
   // Estat d'avui
   const myScore = await sbS('sala_scores', `sala_code=eq.${G_SALA.code}&nick=eq.${encodeURIComponent(G.nick)}&game_date=eq.${today}`, 'score.desc', 1);
@@ -1881,16 +1975,17 @@ async function renderSalaRoom(){
       </div>`).join('');
   }
 
-  // Historial (últims 7 dies)
-  const history = await sbS('sala_scores', `sala_code=eq.${G_SALA.code}`, 'game_date.desc,score.desc', 200);
+  // Historial — 7 dies o 30 si VIP
+  const histLimit = isVip ? 30 : 7;
+  const history = await sbS('sala_scores', `sala_code=eq.${G_SALA.code}`, 'game_date.desc,score.desc', 500);
   const histEl = document.getElementById('sala-history');
   if(!history || !history.length){
     histEl.innerHTML = '<div style="padding:6px 0">Cap historial encara.</div>';
   } else {
     const byDate = {};
     history.forEach(s => { if(!byDate[s.game_date]) byDate[s.game_date]=[];  byDate[s.game_date].push(s); });
-    const days = Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).slice(0,7);
-    histEl.innerHTML = days.map(d=>{
+    const days = Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).slice(0,histLimit);
+    let histHtml = days.map(d=>{
       const winner = byDate[d][0];
       const count = byDate[d].length;
       return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">
@@ -1898,6 +1993,10 @@ async function renderSalaRoom(){
         <div style="text-align:right"><div style="font-size:.82rem;font-weight:700;color:var(--gold)">🏆 ${esc(winner.nick)}</div><div style="font-size:.7rem;color:var(--muted)">${winner.score.toLocaleString()} pts</div></div>
       </div>`;
     }).join('');
+    if(!isVip && Object.keys(byDate).length > 7){
+      histHtml += `<div style="text-align:center;padding:10px;font-size:.78rem;color:var(--muted);border-top:1px dashed rgba(255,255,255,.1);margin-top:6px">🔒 Compra <strong style="color:#c084fc">Historial complet</strong> a la botiga per veure +30 dies</div>`;
+    }
+    histEl.innerHTML = histHtml;
   }
 
   // Membres
