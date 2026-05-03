@@ -1285,31 +1285,149 @@ async function onRemoveMod(id){
 function onChallengeFinishMods(){
   go('s-challenge-share');
 }
-function onChallengeShareLink(){if(!currentChallenge?.link)return;telTrackEvent('share_challenge',{score:G.score,lang:G.lang});trackChallengeSent();window.open(`https://wa.me/?text=${encodeURIComponent(`⚔️ T'he reptat a CançoNet!\n🏆 ${G.score} pts\n🎵 Pots superar-me?\n\n${currentChallenge.link}`)}`,'_blank')}
+function onChallengeShareLink(){
+  if(!currentChallenge?.link)return;
+  telTrackEvent('share_challenge',{score:G.score,lang:G.lang});
+  trackChallengeSent();
+  const mods=currentChallenge.appliedMods||[];
+  const hasSab=mods.some(m=>m.id.startsWith('sab_'));
+  const hasGift=mods.some(m=>m.id.startsWith('gift_'));
+  let extra='';
+  if(hasSab)extra+='\n\uD83D\uDE08 He afegit sabotatges...';
+  if(hasGift)extra+='\n\uD83C\uDF81 T\'he fet un regal!';
+  const text=
+    '\u2694\uFE0F T\'he reptat a Can\u00E7oNet!\n'+
+    '\uD83C\uDFC6 '+G.score.toLocaleString()+' pts\n'+
+    '\uD83C\uDFB5 Pots superar-me?'+
+    extra+'\n\n'+
+    currentChallenge.link;
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+}
 function onChallengeCopyLink(){if(!currentChallenge?.link)return;navigator.clipboard?.writeText(currentChallenge.link).then(()=>toast('📋 Copiat!'))}
 async function checkChallengeUrl(){const p=new URLSearchParams(window.location.search);const chId=p.get('challenge');if(!chId)return false;window.history.replaceState(null,'',window.location.pathname);try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${chId}`,{headers:SBH});if(!r.ok)return false;const data=await r.json();if(!data||!data.length){toast('⚠️ Repte no trobat');return false}const ch=data[0];if(ch.status==='completed'){showChallengeResult(ch);return true}currentChallenge={seed:ch.song_seed,isCreator:false,challengeId:ch.id,data:ch,modifiers:ch.modifiers||[]};G.lang=ch.lang||'ca';document.getElementById('ch-rival-name').textContent=ch.creator_nick;document.getElementById('ch-score-to-beat').textContent=(ch.creator_score||0).toLocaleString();renderChallengeReveal(ch);go('s-challenge-accept');return true}catch(e){return false}}
 
 function renderChallengeReveal(ch){
   const box=document.getElementById('ch-modifiers-box');
   const mods=ch.modifiers||[];
-  const giftMsg=ch.gift_msg;const giftSticker=ch.gift_sticker;
-  if(!mods.length&&!giftMsg&&!giftSticker){box.style.display='none';return}
+  const giftMsg=ch.gift_msg;
+  const giftSticker=ch.gift_sticker;
+  const gifts=mods.filter(m=>{const def=CHALLENGE_MODS.find(x=>x.id===m.id);return def&&def.cat==='gift'});
+  const sabotages=mods.filter(m=>{const def=CHALLENGE_MODS.find(x=>x.id===m.id);return def&&def.cat==='sabotage'});
+
+  const hasGift=gifts.length>0||giftMsg||giftSticker;
+
+  // Si hi ha regal → mostrar overlay animat primer
+  if(hasGift){
+    showGiftOverlay(ch,gifts,giftMsg,giftSticker,sabotages);
+    box.style.display='none';
+    return;
+  }
+
+  // Sense regal → mostrar directament (sabotatges o res)
+  if(!sabotages.length){box.style.display='none';return}
   box.style.display='block';
   let html='<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:12px;margin-top:6px">';
-  if(giftSticker)html+=`<div style="font-size:3rem;text-align:center;margin:6px 0;animation:floatUp 2s ease-in-out infinite alternate">${giftSticker}</div>`;
-  if(giftMsg)html+=`<div style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:10px;padding:10px;margin:8px 0;font-size:.88rem;color:#c084fc;font-style:italic;text-align:center">💌 "${esc(giftMsg)}"</div>`;
-  const sabotages=mods.filter(m=>{const def=CHALLENGE_MODS.find(x=>x.id===m.id);return def&&def.cat==='sabotage'});
-  const gifts=mods.filter(m=>{const def=CHALLENGE_MODS.find(x=>x.id===m.id);return def&&def.cat==='gift'&&!['gift_msg','gift_sticker'].includes(m.id)});
-  if(sabotages.length){
-    html+='<div style="font-size:.7rem;color:var(--err);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">😈 Sabotatges</div>';
-    sabotages.forEach(s=>{const m=CHALLENGE_MODS.find(x=>x.id===s.id);html+=`<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:8px;margin-bottom:5px;font-size:.82rem">${m.icon} ${m.name}</div>`});
-  }
-  if(gifts.length){
-    html+='<div style="font-size:.7rem;color:#22c55e;text-transform:uppercase;letter-spacing:1.5px;margin:10px 0 6px">🎁 Regals</div>';
-    gifts.forEach(g=>{const m=CHALLENGE_MODS.find(x=>x.id===g.id);const valStr=g.value!==null?` (${esc(String(g.value))})`:'';html+=`<div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:8px;margin-bottom:5px;font-size:.82rem">${m.icon} ${m.name}${valStr}</div>`});
-  }
+  html+='<div style="font-size:.7rem;color:var(--err);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">😈 Sabotatges</div>';
+  sabotages.forEach(s=>{const m=CHALLENGE_MODS.find(x=>x.id===s.id);html+=`<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:8px;margin-bottom:5px;font-size:.82rem">${m.icon} ${m.name}</div>`});
   html+='</div>';
   box.innerHTML=html;
+}
+
+function showGiftOverlay(ch,gifts,giftMsg,giftSticker,sabotages){
+  // Construir contingut del regal per al reveal
+  let giftLines=[];
+  if(giftSticker)giftLines.push(`<div style="font-size:3.5rem;margin:8px 0">${giftSticker}</div>`);
+  if(giftMsg)giftLines.push(`<div style="font-size:.95rem;color:rgba(255,255,255,.85);font-style:italic;margin:8px 0;padding:10px 16px;border:1px solid rgba(212,160,23,.4);border-radius:10px;max-width:280px">💌 "${esc(giftMsg)}"</div>`);
+  gifts.forEach(g=>{
+    const m=CHALLENGE_MODS.find(x=>x.id===g.id);
+    if(!m||['gift_msg','gift_sticker'].includes(m.id))return;
+    const valStr=g.value!==null?` (${esc(String(g.value))})`:'';
+    giftLines.push(`<div style="font-size:.9rem;color:#22c55e;margin:4px 0">${m.icon} ${m.name}${valStr}</div>`);
+  });
+
+  let sabWarn='';
+  if(sabotages.length)sabWarn=`<div style="margin-top:14px;padding:10px 14px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:10px;font-size:.82rem;color:#ef4444;max-width:280px">😈 Però compte... també hi ha ${sabotages.length} sabotatge${sabotages.length>1?'s':''}!</div>`;
+
+  const overlay=document.createElement('div');
+  overlay.id='gift-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(10,10,20,.93);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px';
+  overlay.innerHTML=`
+    <style>
+      @keyframes giftIn{0%{transform:scale(0) rotate(-10deg);opacity:0}60%{transform:scale(1.15) rotate(3deg)}80%{transform:scale(.95)}100%{transform:scale(1);opacity:1}}
+      @keyframes lidFly{to{transform:translateY(-150px) rotate(-30deg) scale(.8);opacity:0}}
+      @keyframes confettiDrop{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+      @keyframes revealIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+      #gift-box-el{animation:giftIn .6s cubic-bezier(.34,1.56,.64,1) forwards}
+      #gift-lid-el.flying{animation:lidFly .5s ease-out forwards}
+      #gift-reveal-el{display:none}
+      #gift-reveal-el.show{display:flex;flex-direction:column;align-items:center;animation:revealIn .5s cubic-bezier(.34,1.56,.64,1) forwards}
+    </style>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase">${esc(ch.creator_nick)} t'ha fet un regal!</div>
+
+    <div id="gift-box-el" style="cursor:pointer;text-align:center" onclick="doOpenGift()">
+      <div id="gift-lid-el" style="position:relative">
+        <div style="width:110px;height:30px;background:#C1121F;border-radius:7px 7px 0 0;margin:0 auto;display:flex;align-items:center;justify-content:center">
+          <div style="width:18px;height:30px;background:#D4A017;border-radius:4px"></div>
+        </div>
+        <div style="position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:32px;height:32px;border:7px solid #D4A017;border-radius:50%"></div>
+      </div>
+      <div style="width:110px;height:90px;background:#C1121F;border-radius:0 0 10px 10px;display:flex;align-items:center;justify-content:center">
+        <div style="width:18px;height:90px;background:#D4A017"></div>
+      </div>
+      <div style="margin-top:14px;font-size:.85rem;color:rgba(255,255,255,.6)">Toca per obrir 🎁</div>
+    </div>
+
+    <div id="gift-confetti" style="position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10000"></div>
+
+    <div id="gift-reveal-el">
+      <div style="font-size:1.6rem;font-weight:700;color:#D4A017;margin-bottom:12px">Quin regal!</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:16px">
+        ${giftLines.join('')}
+      </div>
+      ${sabWarn}
+      <button onclick="closeGiftOverlay()" style="margin-top:22px;background:#D4A017;color:#000;border:none;border-radius:12px;padding:14px 32px;font-size:1rem;font-weight:900;cursor:pointer">⚔️ Acceptar el repte!</button>
+    </div>`;
+
+  document.body.appendChild(overlay);
+}
+
+function doOpenGift(){
+  const lid=document.getElementById('gift-lid-el');
+  const box=document.getElementById('gift-box-el');
+  const reveal=document.getElementById('gift-reveal-el');
+  const confetti=document.getElementById('gift-confetti');
+  if(!lid)return;
+  lid.classList.add('flying');
+  // Confeti
+  const colors=['#D4A017','#C1121F','#ffffff','#f59e0b','#a855f7','#22c55e'];
+  confetti.innerHTML='';
+  for(let i=0;i<50;i++){
+    const el=document.createElement('div');
+    el.style.cssText=`position:absolute;width:${6+Math.random()*10}px;height:${6+Math.random()*10}px;border-radius:${Math.random()>.5?'50%':'3px'};background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}%;top:-20px;animation:confettiDrop ${1.2+Math.random()*.8}s ${Math.random()*.6}s ease-in forwards`;
+    confetti.appendChild(el);
+  }
+  setTimeout(()=>{
+    box.style.display='none';
+    reveal.classList.add('show');
+  },450);
+}
+
+function closeGiftOverlay(){
+  const overlay=document.getElementById('gift-overlay');
+  if(overlay)overlay.remove();
+  // Mostrar sabotatges a la pantalla d'acceptació si n'hi ha
+  const ch=currentChallenge?.data;
+  if(!ch)return;
+  const sabotages=(ch.modifiers||[]).filter(m=>{const def=CHALLENGE_MODS.find(x=>x.id===m.id);return def&&def.cat==='sabotage'});
+  const box=document.getElementById('ch-modifiers-box');
+  if(sabotages.length&&box){
+    box.style.display='block';
+    let html='<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:12px;margin-top:6px">';
+    html+='<div style="font-size:.7rem;color:var(--err);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">😈 Sabotatges</div>';
+    sabotages.forEach(s=>{const m=CHALLENGE_MODS.find(x=>x.id===s.id);html+=`<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:8px;margin-bottom:5px;font-size:.82rem">${m.icon} ${m.name}</div>`});
+    html+='</div>';
+    box.innerHTML=html;
+  }
 }
 function onChallengeAccept(){
   if(!currentChallenge?.seed)return;
