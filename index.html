@@ -200,6 +200,10 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="card center">
     <div id="sb-status" style="font-size:.72rem;margin-bottom:8px;color:var(--muted)">🔄 Verificant connexió...</div>
     <div id="m-rank-widget" style="width:100%;background:rgba(212,160,23,.08);border:.5px solid rgba(212,160,23,.25);border-radius:12px;padding:10px 14px;margin-bottom:10px;text-align:left"></div>
+    <div id="m-notes-widget" style="width:100%;background:rgba(168,85,247,.08);border:.5px solid rgba(168,85,247,.25);border-radius:12px;padding:8px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="go('s-missions');renderMissions()">
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.2rem">🎵</span><span style="font-size:.9rem;font-weight:700;color:#c084fc" id="m-notes-count">0 Notes</span></div>
+      <span style="font-size:.7rem;color:var(--muted)">🏅 Missions →</span>
+    </div>
     <div class="big" id="m-hello"></div><div class="muted mt" id="m-zone" style="margin-bottom:14px"></div>
     <div id="m-daily-info"></div>
     <div id="m-daily-style" style="font-size:.72rem;font-weight:600;color:var(--gold);text-align:center;margin-bottom:4px;letter-spacing:.3px"></div>
@@ -217,9 +221,23 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <button class="btn btn-ghost" onclick="showWip('relax')" style="opacity:.9;border:1.5px solid rgba(134,239,172,.35);background:rgba(134,239,172,.07);position:relative">🎹 Mode Relax <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#000;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
     <button class="btn btn-ghost" onclick="go('s-sala-menu');renderSalaMenu()" style="border:1.5px solid rgba(212,160,23,.3);background:rgba(212,160,23,.07)">👨‍👩‍👧 Mode Família</button>
     <button class="btn btn-ghost" onclick="showWip('provinces')" style="opacity:.7">🏴 Repte per zones</button>
-    <button class="btn btn-ghost" onclick="showWip('logros')" style="opacity:.7">🏅 Assoliments i badges</button>
+    <button class="btn btn-ghost" onclick="go('s-missions');renderMissions()" style="border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.07)">🏅 Missions i recompenses</button>
     <button class="btn btn-ghost" onclick="showWip('realia')" style="opacity:.7">🤖 Real o IA?</button>
     <button class="btn btn-ghost" onclick="go('s-modes')" style="font-size:.78rem;padding:10px">← Canviar idioma</button>
+    <div style="margin-top:18px;padding:12px 0;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap">
+      <a href="https://instagram.com/canconet" target="_blank" rel="noopener" style="color:var(--muted);font-size:.78rem;text-decoration:none;display:flex;align-items:center;gap:4px">📷 Instagram</a>
+      <span style="color:rgba(255,255,255,.15)">·</span>
+      <a href="https://twitter.com/canconet" target="_blank" rel="noopener" style="color:var(--muted);font-size:.78rem;text-decoration:none;display:flex;align-items:center;gap:4px">🐦 X</a>
+      <span style="color:rgba(255,255,255,.15)">·</span>
+      <a href="https://tiktok.com/@canconet" target="_blank" rel="noopener" style="color:var(--muted);font-size:.78rem;text-decoration:none;display:flex;align-items:center;gap:4px">🎵 TikTok</a>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;font-size:.7rem;color:rgba(255,255,255,.3)">
+      <a href="#" onclick="go('s-privacy');return false" style="color:inherit;text-decoration:none">Privacitat</a>
+      <span>·</span>
+      <a href="#" onclick="go('s-terms');return false" style="color:inherit;text-decoration:none">Termes</a>
+      <span>·</span>
+      <a href="#" onclick="onDeleteMyAccount();return false" style="color:rgba(239,68,68,.5);text-decoration:none">Eliminar compte</a>
+    </div>
   </div>
 </div>
 
@@ -391,7 +409,9 @@ function saveUserProfile(){
 }
 
 async function saveProfileToSupabase(email){
+  const consent=getStoredConsent();
   const row={email:email.toLowerCase(),nick:G.nick,zona:G.zone,lang:G.lang,gender:G.gender||null,age_range:G.age||null,updated_at:new Date().toISOString()};
+  if(consent){row.accepted_terms_at=consent.terms_at;row.accepted_terms_version=consent.terms_version;row.accepted_privacy_at=consent.privacy_at;row.accepted_privacy_version=consent.privacy_version}
   // Intenta actualitzar primer
   try{
     const existing=await sbS('profiles',`email=eq.${encodeURIComponent(email.toLowerCase())}`,'created_at.desc',1);
@@ -401,6 +421,82 @@ async function saveProfileToSupabase(email){
       await sbI('profiles',row)
     }
   }catch(e){console.log('[CançoNet] Profile save error:',e)}
+}
+
+// ═══ CONSENTIMENT RGPD ═══
+const LEGAL_VERSION='1.0';
+
+function getStoredConsent(){
+  try{const s=localStorage.getItem('cn:consent');if(s)return JSON.parse(s)}catch(e){}
+  return null;
+}
+function hasValidConsent(){
+  const c=getStoredConsent();
+  return c&&c.terms_version===LEGAL_VERSION&&c.privacy_version===LEGAL_VERSION;
+}
+function storeConsent(){
+  const now=new Date().toISOString();
+  const consent={terms_at:now,terms_version:LEGAL_VERSION,privacy_at:now,privacy_version:LEGAL_VERSION};
+  try{localStorage.setItem('cn:consent',JSON.stringify(consent))}catch(e){}
+  return consent;
+}
+
+function showLegalInModal(which){
+  // Obrir en nova finestra una versió simple - sense perdre el modal
+  const target=which==='privacy'?'s-privacy':'s-terms';
+  // Guardem que estem en mig del consent flow
+  sessionStorage.setItem('cn:consent_pending','1');
+  go(target);
+}
+
+function onAcceptConsent(){
+  const t=document.getElementById('consent-terms').checked;
+  const p=document.getElementById('consent-privacy').checked;
+  if(!t||!p){toast('⚠️ Has d\'acceptar les dues');return;}
+  storeConsent();
+  // Ara continuem amb el flux normal: si tenim perfil al server, anem al menú; si no, a zona
+  const email=localStorage.getItem('cn:user-email');
+  if(email){
+    loadUserProfile({email}).then(prof=>{
+      if(prof&&prof.nick&&prof.zona){
+        // Re-save per actualitzar consent fields a Supabase
+        saveProfileToSupabase(email);
+        renderMenu();go('s-menu');testSB();
+      }else{
+        go('s-zone');renderZoneScreen();
+      }
+    });
+  }else{go('s-zone');renderZoneScreen();}
+}
+
+function onDeclineConsent(){
+  if(!confirm('Si no acceptes els termes no podràs jugar a CançoNet. Vols sortir?'))return;
+  // Sortim de la sessió
+  Object.keys(localStorage).filter(k=>k.includes('auth-token')||k.includes('sb-')).forEach(k=>localStorage.removeItem(k));
+  localStorage.removeItem('cn:user-email');
+  toast('👋 Has tancat sessió');
+  go('s-zone');
+}
+
+async function onDeleteMyAccount(){
+  if(!confirm('⚠️ Aquesta acció eliminarà permanentment:\n\n• El teu perfil\n• Les teves puntuacions\n• El teu progrés a missions\n• Les sales que has creat\n\nNo es pot desfer. Continuar?'))return;
+  if(!confirm('Confirmes que vols eliminar TOT? Aquesta és la última oportunitat per cancel·lar.'))return;
+
+  const email=localStorage.getItem('cn:user-email');
+  if(email){
+    try{
+      // Eliminar de Supabase
+      await fetch(`${SB_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(email.toLowerCase())}`,{method:'DELETE',headers:SBH});
+      if(G.nick){
+        await fetch(`${SB_URL}/rest/v1/scores?nick=eq.${encodeURIComponent(G.nick)}`,{method:'DELETE',headers:SBH});
+        await fetch(`${SB_URL}/rest/v1/sala_members?nick=eq.${encodeURIComponent(G.nick)}`,{method:'DELETE',headers:SBH});
+      }
+    }catch(e){console.log('Delete err:',e)}
+  }
+  // Esborrar tot localStorage
+  localStorage.clear();
+  toast('✅ Compte eliminat. Adéu!');
+  setTimeout(()=>location.reload(),1500);
 }
 
 let lastEmailSent='';
@@ -428,6 +524,7 @@ async function onVerifyOtp(){
     toast('✅ Sessió iniciada!');
     telTrackEvent('login',{lang:G.lang});
     const email=lastEmailSent;localStorage.setItem('cn:user-email',email);
+    if(!hasValidConsent()){go('s-consent');return;}
     const p=await loadUserProfile({email});
     if(p&&p.nick&&p.zona){
       G.lang=p.lang||'ca';renderMenu();go('s-menu');testSB();
@@ -651,7 +748,10 @@ function pickPill(btn,grp){document.querySelectorAll(`#${grp} .radio-pill`).forE
 function selectLang(lang){G.lang=lang;localStorage.setItem('cn:last-lang',lang);
   // Comprova si ja té sessió guardada
   const email=localStorage.getItem('cn:user-email');
-  if(email){const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();return}}
+  if(email){
+    if(!hasValidConsent()){go('s-consent');return;}
+    const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();return}
+  }
   // Si no → login
   go('s-login')
 }
@@ -660,7 +760,10 @@ function loadUserProfileSync(email){try{const s=localStorage.getItem(`cn:profile
 async function checkExistingSession(lang){
   G.lang=lang;
   const email=localStorage.getItem('cn:user-email');
-  if(email){const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();return}}
+  if(email){
+    if(!hasValidConsent()){go('s-consent');return;}
+    const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();return}
+  }
   go('s-login')
 }
 function renderWelcome(){const t=T[G.lang];document.getElementById('w-sub').textContent=t.appSub;document.getElementById('w-lbl-name').textContent=t.yourName;document.getElementById('inp-nick').placeholder=t.namePH;document.getElementById('w-lbl-zone').textContent=t.yourZone;document.getElementById('w-btn-play').textContent=t.playBtn;document.getElementById('w-btn-rank').textContent=t.seeRank;const zg=document.getElementById('zone-grid');zg.innerHTML='';selZone='';
@@ -677,7 +780,7 @@ function renderWelcome(){const t=T[G.lang];document.getElementById('w-sub').text
     t.zones.forEach((z,i)=>{const b=document.createElement('button');b.className='zone-btn'+(i===t.zones.length-1&&t.zones.length%2!==0?' wide':'');b.dataset.z=z;b.textContent=z;b.onclick=()=>pickZone(b);zg.appendChild(b)});
   }
 }
-function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;renderRankWidget();const _ds2=getDailyStyle(G.lang);const _db=document.getElementById('m-daily-style');if(_db)_db.textContent=`${_ds2.emoji} ${_ds2.label[G.lang]||_ds2.label.ca}`;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
+function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;renderRankWidget();renderNotesWidget();checkMissionsCompleted();const _ds2=getDailyStyle(G.lang);const _db=document.getElementById('m-daily-style');if(_db)_db.textContent=`${_ds2.emoji} ${_ds2.label[G.lang]||_ds2.label.ca}`;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
 function onLogin(){const nv=V.nick(document.getElementById('inp-nick').value);if(!nv.ok)return toast('⚠️ '+nv.e);if(!selZone)return toast('⚠️ Selecciona zona!');if(!selGender)return toast('⚠️ Selecciona gènere!');G.nick=nv.val;G.zone=selZone;G.gender=selGender;G.age=selAge;saveUserProfile();renderMenu();go('s-menu');testSB()}
 async function testSB(){const el=document.getElementById('sb-status');const r=await sbS('scores','','score.desc',1);if(r===null){el.textContent='❌ Sense connexió';el.style.color='var(--err)'}else{el.textContent='✅ Connectat';el.style.color='var(--ok)'}checkSalaUrlParam();}
 
@@ -877,6 +980,10 @@ function checkRankUp(prevScore){
 async function endGame(){
   stopAll();G.active=false;telSaveSession(true);checkStreakMilestone();
   if(G.mode==='sala') saveSalaScore(G.score);
+  trackGamePlayed();trackPerfectGame();
+  if(G.song?.a)trackUniqueAuthor(G.song.a);
+  G.songList?.slice(0,G.songIdx+1).forEach(s=>{if(s?.a)trackUniqueAuthor(s.a)});
+  trackStreakUpdate(getStreak());
   if(G.mode==='daily')localStorage.setItem(`cn:daily:${G.lang}:${new Date().toISOString().slice(0,10)}`,'1');
   const _prevScore=getTotalScore();addTotalScore(G.score);checkRankUp(_prevScore);await saveScore();
   if(G.mode==='challenge'){if(currentChallenge?.isCreator)await saveChallengeCreator();else await saveChallengeRival();return}
@@ -905,7 +1012,7 @@ async function loadBustia(){const el=document.getElementById('bust-list');const 
 // REPTES ASÍNCRONS
 function onChallengeStart(){if(!G.nick){toast('⚠️ Necessites nom');return}telTrackEvent('start_game',{mode:'challenge',lang:G.lang});telTrackEvent('start_game',{mode:'challenge',lang:G.lang});const seed=Date.now()%999999;currentChallenge={seed,isCreator:true,challengeId:null};G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],seed),'challenge')}
 async function saveChallengeCreator(){if(!currentChallenge?.isCreator)return;try{const r=await fetch(`${SB_URL}/rest/v1/challenges`,{method:'POST',headers:{...SBH,'Prefer':'return=representation'},body:JSON.stringify({creator_nick:G.nick,creator_zone:G.zone,creator_score:G.score,creator_results:JSON.stringify(G.results),song_seed:currentChallenge.seed,lang:G.lang,status:'pending'})});if(!r.ok){toast('⚠️ Error');return}const data=await r.json();const ch=Array.isArray(data)?data[0]:data;currentChallenge.challengeId=ch.id;const link=`${window.location.origin}${window.location.pathname}?challenge=${ch.id}`;document.getElementById('ch-creator-score').textContent=G.score.toLocaleString();document.getElementById('ch-link').textContent=link;currentChallenge.link=link;go('s-challenge-share')}catch(e){toast('⚠️ Error de connexió')}}
-function onChallengeShareLink(){if(!currentChallenge?.link)return;telTrackEvent('share_challenge',{score:G.score,lang:G.lang});window.open(`https://wa.me/?text=${encodeURIComponent(`⚔️ T'he reptat a CançoNet!\n🏆 ${G.score} pts\n🎵 Pots superar-me?\n\n${currentChallenge.link}`)}`,'_blank')}
+function onChallengeShareLink(){if(!currentChallenge?.link)return;telTrackEvent('share_challenge',{score:G.score,lang:G.lang});trackChallengeSent();window.open(`https://wa.me/?text=${encodeURIComponent(`⚔️ T'he reptat a CançoNet!\n🏆 ${G.score} pts\n🎵 Pots superar-me?\n\n${currentChallenge.link}`)}`,'_blank')}
 function onChallengeCopyLink(){if(!currentChallenge?.link)return;navigator.clipboard?.writeText(currentChallenge.link).then(()=>toast('📋 Copiat!'))}
 async function checkChallengeUrl(){const p=new URLSearchParams(window.location.search);const chId=p.get('challenge');if(!chId)return false;window.history.replaceState(null,'',window.location.pathname);try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${chId}`,{headers:SBH});if(!r.ok)return false;const data=await r.json();if(!data||!data.length){toast('⚠️ Repte no trobat');return false}const ch=data[0];if(ch.status==='completed'){showChallengeResult(ch);return true}currentChallenge={seed:ch.song_seed,isCreator:false,challengeId:ch.id,data:ch};G.lang=ch.lang||'ca';document.getElementById('ch-rival-name').textContent=ch.creator_nick;document.getElementById('ch-score-to-beat').textContent=(ch.creator_score||0).toLocaleString();go('s-challenge-accept');return true}catch(e){return false}}
 function onChallengeAccept(){if(!currentChallenge?.seed)return;if(!G.nick){toast('⚠️ Registra\'t primer!');go('s-login');return}G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],currentChallenge.seed),'challenge')}
@@ -1033,6 +1140,265 @@ window.addEventListener('popstate', function(e){
 // Push initial state so we can intercept first back press
 pushBackState();
 
+<!-- ═══ CONSENTIMENT RGPD ═══ -->
+<div id="s-consent" class="scr">
+  <div class="logo" style="font-size:2.5rem">🤝</div>
+  <div style="font-weight:900;font-size:1.4rem;margin-bottom:4px;text-align:center">Abans de jugar</div>
+  <div class="sub" style="text-align:center;max-width:400px">Per fer les coses ben fetes, necessitem que llegeixis i acceptis els nostres termes</div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div style="font-size:.92rem;line-height:1.7;color:var(--text);margin-bottom:14px">
+      CançoNet és un projecte personal sense ànim de lucre. <strong style="color:var(--gold)">No venem les teves dades</strong> i <strong style="color:var(--gold)">no fem servir publicitat</strong>.
+    </div>
+
+    <div style="background:rgba(212,160,23,.05);border-left:3px solid var(--gold);padding:10px 14px;margin-bottom:14px;font-size:.82rem;color:var(--muted);line-height:1.6">
+      <strong style="color:var(--gold)">📌 El que recollim:</strong><br>
+      • El teu correu (per al login)<br>
+      • El teu nick i zona (els que tu posis)<br>
+      • Les teves puntuacions (per als rànquings)
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <input type="checkbox" id="consent-terms" style="margin-top:3px;width:18px;height:18px;accent-color:var(--gold)">
+      <label for="consent-terms" style="font-size:.85rem;line-height:1.5;flex:1;cursor:pointer">
+        He llegit i accepto els <a href="#" onclick="showLegalInModal('terms');return false" style="color:var(--gold);text-decoration:underline">Termes d'ús</a>
+      </label>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0">
+      <input type="checkbox" id="consent-privacy" style="margin-top:3px;width:18px;height:18px;accent-color:var(--gold)">
+      <label for="consent-privacy" style="font-size:.85rem;line-height:1.5;flex:1;cursor:pointer">
+        He llegit i accepto la <a href="#" onclick="showLegalInModal('privacy');return false" style="color:var(--gold);text-decoration:underline">Política de Privacitat</a>
+      </label>
+    </div>
+
+    <button class="btn btn-gold" onclick="onAcceptConsent()" style="margin-top:14px">✅ Accepto i continuo</button>
+    <button class="btn btn-ghost" onclick="onDeclineConsent()" style="font-size:.78rem;padding:10px;color:var(--muted)">No accepto (sortir)</button>
+  </div>
+
+  <div style="font-size:.7rem;color:rgba(255,255,255,.3);margin-top:10px;text-align:center;max-width:400px">
+    Pots retirar el consentiment en qualsevol moment des del menú principal (botó "Eliminar el meu compte").
+  </div>
+</div>
+
+<!-- ═══ MISSIONS I CARTERA ═══ -->
+<div id="s-missions" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">🏅 Missions</div>
+  <div class="sub">Completa missions i guanya Notes 🎵</div>
+
+  <div class="card" style="background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(212,160,23,.1));border:1.5px solid rgba(168,85,247,.3);text-align:center">
+    <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">La teva cartera</div>
+    <div style="font-size:2.5rem;font-weight:900;color:#c084fc">🎵 <span id="miss-notes-total">0</span></div>
+    <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Notes acumulades</div>
+  </div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl">🎯 Missions actives</div>
+    <div id="miss-active-list"></div>
+  </div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl">🏆 Missions completades</div>
+    <div id="miss-done-list" style="font-size:.82rem;color:var(--muted)">Cap encara. Comença a jugar!</div>
+  </div>
+
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+</div>
+
+<!-- ═══ PRIVACITAT ═══ -->
+<div id="s-privacy" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">🔒 Privacitat</div>
+  <div class="card" style="width:100%;max-width:520px;text-align:left;font-size:.85rem;line-height:1.7;color:var(--muted)">
+    <div style="font-size:.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">Última actualització: maig 2026</div>
+
+    <p style="margin-bottom:12px;color:var(--text)"><strong>Resum ràpid:</strong> CançoNet és un projecte personal sense ànim de lucre. No venem les teves dades. No fem servir Google Analytics, Facebook Pixel ni publicitat de tercers.</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">Quines dades guardem?</h3>
+    <p style="margin-bottom:10px">• <strong>Correu electrònic:</strong> per al login amb codi OTP. Mai el compartim.<br>• <strong>Nick i zona:</strong> els que tu introdueixes al primer accés.<br>• <strong>Puntuacions i partides:</strong> per als rànquings i estadístiques.<br>• <strong>Telemetria del joc:</strong> quins modes juges, on abandones, etc. (anonim).</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">On es guarden?</h3>
+    <p style="margin-bottom:10px">A Supabase (servidors europeus) amb encriptació en trànsit i Row-Level Security activat.</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">Cookies?</h3>
+    <p style="margin-bottom:10px">Només fem servir <strong>localStorage</strong> propi (no és tècnicament una cookie) per recordar el teu nick i progrés. No fem servir cookies de tercers.</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">Els teus drets (RGPD)</h3>
+    <p style="margin-bottom:10px">Tens dret a accedir, rectificar, eliminar les teves dades i portar-les a un altre servei. Per fer-ho: <strong>canconet.app@gmail.com</strong></p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">Menors de 14 anys</h3>
+    <p style="margin-bottom:10px">CançoNet no està dirigit a menors de 14 anys. Si ets menor, demana permís als teus pares.</p>
+
+    <p style="margin-top:14px;color:var(--gold);font-size:.78rem">📧 Dubtes? Escriu a canconet.app@gmail.com</p>
+  </div>
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="onLegalBack()">↩️ Enrere</button></div>
+</div>
+
+<!-- ═══ TERMES D'ÚS ═══ -->
+<div id="s-terms" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">📜 Termes d'ús</div>
+  <div class="card" style="width:100%;max-width:520px;text-align:left;font-size:.85rem;line-height:1.7;color:var(--muted)">
+    <div style="font-size:.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">Última actualització: maig 2026</div>
+
+    <p style="margin-bottom:12px;color:var(--text)"><strong>En resum:</strong> CançoNet és un joc gratuït fet per amor a la música catalana. Juga, comparteix i diverteix-te.</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">1. El joc</h3>
+    <p style="margin-bottom:10px">CançoNet és un joc musical gratuït per endevinar cançons. Els fragments d'àudio s'obtenen de l'API pública de Deezer (previews de 30 segons). Tots els drets musicals pertanyen als seus titulars.</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">2. Ús acceptable</h3>
+    <p style="margin-bottom:10px">No facis trampa, no insultis altres usuaris a la bústia, no enviïs spam. Si ho fas, podem eliminar el teu perfil.</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">3. Notes 🎵 i botiga</h3>
+    <p style="margin-bottom:10px">Les Notes són una moneda virtual sense valor real fora del joc. No es poden comprar amb diners reals (per ara). No tenen cap valor monetari.</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">4. Continguts d'usuari</h3>
+    <p style="margin-bottom:10px">Els suggeriments que enviïs a la bústia poden ser usats per millorar el joc. No revelarem la teva identitat sense permís.</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">5. Limitació de responsabilitat</h3>
+    <p style="margin-bottom:10px">CançoNet es proporciona "tal com és". No garantim que estigui sempre disponible ni lliure d'errors. Som una persona fent un projecte per amor a la música!</p>
+
+    <h3 style="color:var(--text);margin:14px 0 6px;font-size:1rem">6. Canvis</h3>
+    <p style="margin-bottom:10px">Podem actualitzar aquests termes. T'ho notificarem si hi ha canvis importants.</p>
+
+    <p style="margin-top:14px;color:var(--gold);font-size:.78rem">📧 Dubtes? Escriu a canconet.app@gmail.com</p>
+  </div>
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="onLegalBack()">↩️ Enrere</button></div>
+</div>
+
+<script>
+function onLegalBack(){
+  if(sessionStorage.getItem('cn:consent_pending')==='1'){
+    sessionStorage.removeItem('cn:consent_pending');
+    go('s-consent');
+  }else{
+    go('s-menu');
+  }
+}
+
+// ═══ NOTES + MISSIONS — Lògica ═══
+
+function getNotes(){try{return parseInt(localStorage.getItem('cn:notes')||'0')}catch(e){return 0}}
+function setNotes(n){try{localStorage.setItem('cn:notes',String(Math.max(0,n)))}catch(e){}}
+function addNotes(n){setNotes(getNotes()+n);renderNotesWidget();}
+function spendNotes(n){const cur=getNotes();if(cur<n)return false;setNotes(cur-n);renderNotesWidget();return true}
+
+function renderNotesWidget(){
+  const el=document.getElementById('m-notes-count');
+  if(el)el.textContent=`${getNotes().toLocaleString()} Notes`;
+}
+
+// Definició de totes les missions
+const MISSIONS = [
+  // Volum
+  {id:'play_1',cat:'volum',name:'Primera nota 🌱',desc:'Juga 1 partida',target:1,reward:10,track:'games_played'},
+  {id:'play_10',cat:'volum',name:'Melòman en pràctiques 🎵',desc:'Juga 10 partides',target:10,reward:25,track:'games_played'},
+  {id:'play_50',cat:'volum',name:'Aficionat 📻',desc:'Juga 50 partides',target:50,reward:50,track:'games_played'},
+  {id:'play_100',cat:'volum',name:'Centenar 🏅',desc:'Juga 100 partides',target:100,reward:100,track:'games_played'},
+  {id:'play_365',cat:'volum',name:'Marató musical 🏆',desc:'Juga 365 partides',target:365,reward:250,track:'games_played'},
+
+  // Ratxa
+  {id:'streak_2',cat:'streak',name:'Dos dies seguits 🔥',desc:'Streak de 2 dies',target:2,reward:10,track:'streak_max'},
+  {id:'streak_7',cat:'streak',name:'Setmana perfecta 🔥🔥',desc:'Streak de 7 dies',target:7,reward:30,track:'streak_max'},
+  {id:'streak_30',cat:'streak',name:'Mes de foc 🔥🔥🔥',desc:'Streak de 30 dies',target:30,reward:100,track:'streak_max'},
+  {id:'streak_100',cat:'streak',name:'Imparable 👑',desc:'Streak de 100 dies',target:100,reward:300,track:'streak_max'},
+
+  // Especials
+  {id:'perfect',cat:'special',name:'Perfeccionista ⭐',desc:'Aconsegueix 10/10 en una partida',target:1,reward:50,track:'perfect_games'},
+  {id:'sala_create',cat:'special',name:'Familiar 👨‍👩‍👧',desc:'Crea una sala familiar',target:1,reward:20,track:'salas_created'},
+  {id:'challenge_5',cat:'special',name:'Reptador ⚔️',desc:'Envia 5 reptes',target:5,reward:40,track:'challenges_sent'},
+  {id:'all_langs',cat:'special',name:'Explorador 🌍',desc:'Encerta cançons de 4 idiomes',target:4,reward:30,track:'langs_played'},
+  {id:'authors_5',cat:'special',name:'Mestre dels autors 🎤',desc:'Encerta 20 autors diferents',target:20,reward:40,track:'unique_authors'},
+];
+
+// Tracking
+function getMissionStat(track){try{return parseInt(localStorage.getItem(`cn:mstat:${track}`)||'0')}catch(e){return 0}}
+function setMissionStat(track,v){try{localStorage.setItem(`cn:mstat:${track}`,String(v))}catch(e){}}
+function incrementMissionStat(track,by=1){setMissionStat(track,getMissionStat(track)+by);checkMissionsCompleted();}
+
+function getCompletedMissions(){try{return JSON.parse(localStorage.getItem('cn:miss_done')||'[]')}catch(e){return []}}
+function markMissionDone(id){const done=getCompletedMissions();if(done.includes(id))return false;done.push(id);try{localStorage.setItem('cn:miss_done',JSON.stringify(done))}catch(e){}return true;}
+
+function checkMissionsCompleted(){
+  const done=getCompletedMissions();
+  let newCompleted=[];
+  for(const m of MISSIONS){
+    if(done.includes(m.id))continue;
+    const cur=getMissionStat(m.track);
+    if(cur>=m.target){
+      if(markMissionDone(m.id)){
+        addNotes(m.reward);
+        newCompleted.push(m);
+      }
+    }
+  }
+  // Notifica les missions completades
+  if(newCompleted.length>0){
+    setTimeout(()=>{
+      newCompleted.forEach(m=>toast(`🏅 ${m.name} · +${m.reward} 🎵`));
+    },800);
+  }
+  renderNotesWidget();
+}
+
+// Track esdeveniments del joc
+function trackGamePlayed(){
+  incrementMissionStat('games_played',1);
+  // Idiomes únics
+  try{
+    const langs=JSON.parse(localStorage.getItem('cn:langs_set')||'[]');
+    if(!langs.includes(G.lang)){langs.push(G.lang);localStorage.setItem('cn:langs_set',JSON.stringify(langs));setMissionStat('langs_played',langs.length);}
+  }catch(e){}
+}
+function trackPerfectGame(){if(G.results.filter(r=>r==='ok').length===10)incrementMissionStat('perfect_games',1);}
+function trackStreakUpdate(streak){const max=getMissionStat('streak_max');if(streak>max)setMissionStat('streak_max',streak);checkMissionsCompleted();}
+function trackSalaCreated(){incrementMissionStat('salas_created',1);}
+function trackChallengeSent(){incrementMissionStat('challenges_sent',1);}
+function trackUniqueAuthor(author){
+  if(!author)return;
+  try{
+    const auth=JSON.parse(localStorage.getItem('cn:authors_set')||'[]');
+    const a=author.toLowerCase().trim();
+    if(!auth.includes(a)){auth.push(a);localStorage.setItem('cn:authors_set',JSON.stringify(auth));setMissionStat('unique_authors',auth.length);}
+  }catch(e){}
+}
+
+// Render pantalla missions
+function renderMissions(){
+  document.getElementById('miss-notes-total').textContent=getNotes().toLocaleString();
+  const done=getCompletedMissions();
+  const cats={volum:'🎵 Volum de joc',streak:'🔥 Ratxa diària',special:'⭐ Especials'};
+  const active=document.getElementById('miss-active-list');
+  const doneEl=document.getElementById('miss-done-list');
+
+  let activeHtml='';
+  for(const cat of Object.keys(cats)){
+    const ms=MISSIONS.filter(m=>m.cat===cat&&!done.includes(m.id));
+    if(!ms.length)continue;
+    activeHtml+=`<div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin:12px 0 6px;font-weight:700">${cats[cat]}</div>`;
+    for(const m of ms){
+      const cur=Math.min(getMissionStat(m.track),m.target);
+      const pct=Math.round((cur/m.target)*100);
+      activeHtml+=`<div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <div style="font-size:.88rem;font-weight:700;flex:1">${m.name}</div>
+          <div style="background:rgba(168,85,247,.15);color:#c084fc;font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:99px">+${m.reward} 🎵</div>
+        </div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:5px">${m.desc}</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:99px;height:5px;overflow:hidden;margin-bottom:3px"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#a855f7,#c084fc);border-radius:99px;transition:width .5s"></div></div>
+        <div style="font-size:.7rem;color:var(--muted);text-align:right">${cur} / ${m.target}</div>
+      </div>`;
+    }
+  }
+  active.innerHTML=activeHtml||'<div style="font-size:.82rem;color:var(--muted);padding:12px 0;text-align:center">🎉 Has completat totes les missions disponibles!</div>';
+
+  const dones=MISSIONS.filter(m=>done.includes(m.id));
+  if(!dones.length){doneEl.innerHTML='<div style="padding:8px 0">Cap encara. Comença a jugar!</div>';}
+  else{doneEl.innerHTML=dones.map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+    <div style="font-size:.85rem;color:var(--text);flex:1">✅ ${m.name}</div>
+    <div style="font-size:.72rem;color:#c084fc;font-weight:700">+${m.reward} 🎵</div>
+  </div>`).join('');}
+}
+</script>
+
 <!-- ═══ SALA FAMILIAR ═══ -->
 <div id="s-sala-menu" class="scr">
   <div class="logo" style="font-size:2.5rem">👨‍👩‍👧</div>
@@ -1123,6 +1489,7 @@ async function onCreateSala(){
   salas.unshift(code);
   localStorage.setItem('cn:my_salas', JSON.stringify(salas.slice(0,5)));
   G_SALA = {code, name, creator_nick: G.nick, lang: G.lang};
+  trackSalaCreated();
   toast('✅ Sala creada!');
   go('s-sala');
   await renderSalaRoom();
