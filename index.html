@@ -35,6 +35,14 @@ body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min
 .mode-card-label{font-size:1rem;font-weight:700;color:var(--text);letter-spacing:.5px;text-transform:uppercase}
 .mode-card-sub{font-size:.7rem;color:var(--muted);margin-top:-6px;text-align:center}
 .logo{font-size:3.5rem;font-weight:900;color:var(--gold);letter-spacing:-2px;margin:10px 0 2px;text-align:center}
+.cos-frame-gold{box-shadow:0 0 20px rgba(212,160,23,.5),inset 0 0 12px rgba(212,160,23,.15) !important;border:1.5px solid rgba(212,160,23,.6) !important}
+.cos-frame-senyera{background:linear-gradient(90deg,rgba(241,196,15,.18) 0%,rgba(231,76,60,.18) 50%,rgba(241,196,15,.18) 100%) !important;border:1.5px solid rgba(231,76,60,.4) !important;box-shadow:0 0 14px rgba(231,76,60,.3) !important}
+.cos-vinyl-anim{display:inline-block;animation:vinylRot 8s linear infinite}
+@keyframes vinylRot{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.aid-btn{background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.4);border-radius:10px;padding:8px 12px;color:#c084fc;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.aid-btn:hover:not(:disabled){background:rgba(168,85,247,.2)}
+.aid-btn:disabled{opacity:.35;cursor:not-allowed}
+.aid-btn .cost{background:rgba(168,85,247,.25);border-radius:99px;padding:1px 7px;font-size:.7rem}
 .logo b{color:var(--red)}
 .sub{color:var(--muted);font-size:1.05rem;margin-bottom:14px;text-align:center}
 .card{background:var(--card);border-radius:16px;padding:18px;width:100%;max-width:460px;margin:7px 0}
@@ -256,6 +264,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div id="g-lvl10-clue" style="display:none;width:100%;max-width:460px;background:rgba(212,160,23,.08);border:.5px solid rgba(212,160,23,.25);border-radius:10px;padding:10px 14px;margin:6px 0;text-align:left"></div>
   <div id="g-answer-container" style="width:100%;max-width:460px;margin:7px 0"></div>
   <div id="g-full-song-wrap" style="display:none;width:100%;max-width:460px"><button class="btn btn-green" id="g-full-btn" onclick="onListenFull()"></button></div>
+  <div class="w-full" id="g-aids" style="display:none;margin:10px 0 4px;flex-direction:row;gap:6px;flex-wrap:wrap;justify-content:center"></div>
   <div class="w-full"><button class="btn btn-outline mt" id="g-skip-btn" onclick="onSkip()"></button><button class="btn btn-ghost" id="g-exit-btn" onclick="onExit()" style="font-size:.8rem;padding:10px"></button></div>
 </div>
 
@@ -804,7 +813,7 @@ function renderWelcome(){const t=T[G.lang];document.getElementById('w-sub').text
     t.zones.forEach((z,i)=>{const b=document.createElement('button');b.className='zone-btn'+(i===t.zones.length-1&&t.zones.length%2!==0?' wide':'');b.dataset.z=z;b.textContent=z;b.onclick=()=>pickZone(b);zg.appendChild(b)});
   }
 }
-function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;renderRankWidget();renderNotesWidget();checkMissionsCompleted();const _ds2=getDailyStyle(G.lang);const _db=document.getElementById('m-daily-style');if(_db)_db.textContent=`${_ds2.emoji} ${_ds2.label[G.lang]||_ds2.label.ca}`;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
+function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;renderRankWidget();renderNotesWidget();checkMissionsCompleted();applyCosmetics();const _ds2=getDailyStyle(G.lang);const _db=document.getElementById('m-daily-style');if(_db)_db.textContent=`${_ds2.emoji} ${_ds2.label[G.lang]||_ds2.label.ca}`;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
 function onLogin(){const nv=V.nick(document.getElementById('inp-nick').value);if(!nv.ok)return toast('⚠️ '+nv.e);if(!selZone)return toast('⚠️ Selecciona zona!');if(!selGender)return toast('⚠️ Selecciona gènere!');G.nick=nv.val;G.zone=selZone;G.gender=selGender;G.age=selAge;saveUserProfile();renderMenu();go('s-menu');testSB()}
 async function testSB(){const el=document.getElementById('sb-status');const r=await sbS('scores','','score.desc',1);if(r===null){el.textContent='❌ Sense connexió';el.style.color='var(--err)'}else{el.textContent='✅ Connectat';el.style.color='var(--ok)'}checkSalaUrlParam();}
 
@@ -827,11 +836,11 @@ function getDailyStyle(lang){const s=(STYLES[lang]||STYLES.ca).filter(x=>x.id!==
 function onFree(){const lang=G.lang,styles=(STYLES[lang]||STYLES.ca),t=T[lang];const grid=document.getElementById('sty-grid');document.getElementById('sty-sub').textContent=t.freeBtn||'Tria un estil';document.getElementById('sty-back-lbl').textContent=t.mainMenu||'Enrere';grid.innerHTML=styles.map(s=>`<button class="style-card" onclick="onStartWithStyle('${s.id}')"><div class="style-emoji">${s.emoji}</div><div class="style-label">${esc(s.label[lang]||s.label.ca)}</div></button>`).join('');go('s-style');}
 function onStartWithStyle(styleId){const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const f=styleId==='all'?pool:pool.filter(s=>s.st===styleId);telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});G.mode='free';G.style=styleId==='all'?null:styleId;initGame(seededShuffle(f.length>=5?f:pool,Math.floor(Math.random()*999999)),'free');}
 function onAutor(){telTrackEvent('start_game',{mode:'autor',lang:G.lang});G.mode='autor';initGame(seededShuffle(AUTOR_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'autor')}
-function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];telStartSession();G.songList=list;G.songIdx=0;G.song=list[0];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel()}
+function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];G.usedAidsThisGame={};G.usedAidsThisLevel={};telStartSession();G.songList=list;G.songIdx=0;G.song=list[0];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel();renderGameAids()}
 
 function renderHUD(){document.getElementById('g-badge').textContent=`${G.lvl}/10`;document.getElementById('g-score').textContent=G.score;document.getElementById('g-lives').innerHTML=[1,2,3].map(i=>`<span class="heart${i>G.lives?' dead':''}">❤️</span>`).join('');document.getElementById('g-dots').innerHTML=LEVELS.map((_,i)=>{const r=G.results[i];const isB=(i+1)%3===0;const c=r==='ok'?'ok':r==='fail'||r==='skip'?'fail':i+1===G.lvl?'cur':'';return`<div class="dot ${c}${isB?' bonus':''}">${isB?'⭐':i+1}</div>`}).join('')}
 
-function startLevel(){ytStop(true);const _cl=document.getElementById('g-lvl10-clue');if(_cl){if(G.lvl===10&&G.song){const _tl=T[G.lang];_cl.style.display='block';_cl.innerHTML='<span style="font-size:.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.5px">💡 '+(_tl.clueLabel||'Pista final:')+'</span><br><span style="font-size:.88rem;color:var(--text);line-height:1.5">'+esc(G.song.pista6||_tl.clueDefault||'Cançó molt popular al seu gènere')+'</span>';}else _cl.style.display='none';}const lv=LEVELS[G.lvl-1],t=T[G.lang],lvT=t.lvls[G.lvl-1];G.playCount=0;G.maxPlays=G.lvl<=3?3:G.lvl<=6?2:1;G.playing=false;document.getElementById('g-lname').textContent=lvT.n;document.getElementById('g-ldesc').textContent=lvT.d;const pool=G.mode==='autor'?AUTOR_BY_LANG[G.lang]:SONGS_BY_LANG[G.lang];setupAnswerMode(G.lvl,G.song,pool);document.getElementById('g-bonus-badge').style.display=G.answerIsBonus?'block':'none';const mRT=(G.answerMode==='guess-year'&&(lv.hk==='hY'||lv.hk==='hD'))||(G.answerMode==='guess-author'&&(lv.hk==='hA'||lv.hk==='hL'))||(G.answerMode==='choose-title'&&(lv.hk==='hT'||lv.hk==='hL'))||(G.answerMode==='write-title'&&lv.hk==='hT');const showH=lv.hk&&t[lv.hk]&&!G.answerIsBonus&&!mRT;const hEl=document.getElementById('g-hint');if(showH){hEl.style.display='';document.getElementById('g-hint-txt').textContent=t[lv.hk](G.song)}else hEl.style.display='none';const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;document.getElementById('g-pinfo').textContent=`${t.plays} ${G.maxPlays}`;setWave(false);clearInterval(G.timerID);G.tLeft=lv.tl;G.tMax=lv.tl;updTimer();G.timerID=setInterval(()=>{G.tLeft--;updTimer();if(G.tLeft<=0){clearInterval(G.timerID);onWrong()}},1000);renderHUD()}
+function startLevel(){ytStop(true);G.usedAidsThisLevel={};const _cl=document.getElementById('g-lvl10-clue');if(_cl){if(G.lvl===10&&G.song){const _tl=T[G.lang];_cl.style.display='block';_cl.innerHTML='<span style="font-size:.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.5px">💡 '+(_tl.clueLabel||'Pista final:')+'</span><br><span style="font-size:.88rem;color:var(--text);line-height:1.5">'+esc(G.song.pista6||_tl.clueDefault||'Cançó molt popular al seu gènere')+'</span>';}else _cl.style.display='none';}const lv=LEVELS[G.lvl-1],t=T[G.lang],lvT=t.lvls[G.lvl-1];G.playCount=0;G.maxPlays=G.lvl<=3?3:G.lvl<=6?2:1;G.playing=false;document.getElementById('g-lname').textContent=lvT.n;document.getElementById('g-ldesc').textContent=lvT.d;const pool=G.mode==='autor'?AUTOR_BY_LANG[G.lang]:SONGS_BY_LANG[G.lang];setupAnswerMode(G.lvl,G.song,pool);document.getElementById('g-bonus-badge').style.display=G.answerIsBonus?'block':'none';const mRT=(G.answerMode==='guess-year'&&(lv.hk==='hY'||lv.hk==='hD'))||(G.answerMode==='guess-author'&&(lv.hk==='hA'||lv.hk==='hL'))||(G.answerMode==='choose-title'&&(lv.hk==='hT'||lv.hk==='hL'))||(G.answerMode==='write-title'&&lv.hk==='hT');const showH=lv.hk&&t[lv.hk]&&!G.answerIsBonus&&!mRT;const hEl=document.getElementById('g-hint');if(showH){hEl.style.display='';document.getElementById('g-hint-txt').textContent=t[lv.hk](G.song)}else hEl.style.display='none';const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;document.getElementById('g-pinfo').textContent=`${t.plays} ${G.maxPlays}`;setWave(false);clearInterval(G.timerID);G.tLeft=lv.tl;G.tMax=lv.tl;updTimer();G.timerID=setInterval(()=>{G.tLeft--;updTimer();if(G.tLeft<=0){clearInterval(G.timerID);onWrong()}},1000);renderHUD();renderGameAids()}
 function updTimer(){const bar=document.getElementById('g-tbar');bar.style.width=((G.tLeft/G.tMax)*100)+'%';bar.classList.toggle('hot',G.tLeft<=10);document.getElementById('g-tnum').textContent=G.tLeft+'s'}
 
 function getACtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}
@@ -1062,7 +1071,7 @@ function onChallengeShareResult(){const p1=document.getElementById('ch-res-p1-na
 async function loadChallengeStats(){const el=document.getElementById('ch-my-stats');if(G.nick){const stats=await sbS('challenge_stats',`nick=eq.${encodeURIComponent(G.nick)}&lang=eq.${G.lang||'ca'}`,'updated_at.desc',1);if(stats&&stats.length){const s=stats[0];el.innerHTML=`<div style="display:flex;gap:12px;justify-content:center;margin:8px 0"><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--ok)">${s.wins}</div><div style="font-size:.65rem;color:var(--muted)">VICTÒRIES</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--err)">${s.losses}</div><div style="font-size:.65rem;color:var(--muted)">DERROTES</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--gold)">${s.streak}🔥</div><div style="font-size:.65rem;color:var(--muted)">RATXA</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:#a78bfa">${s.best_streak}</div><div style="font-size:.65rem;color:var(--muted)">MILLOR</div></div></div>`}else el.innerHTML='<div style="font-size:.82rem;color:var(--muted)">Encara no has fet cap repte!</div>'}const lb=document.getElementById('ch-leaderboard');const top=await sbS('challenge_stats',`lang=eq.${G.lang||'ca'}`,'wins.desc',10);if(!top||!top.length){lb.innerHTML='Cap reptador encara.';return}const med=['🥇','🥈','🥉'];lb.innerHTML=top.map((e,i)=>{const isMe=G.nick&&e.nick===G.nick;return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}</div><div class="rzone">${e.wins}W ${e.losses}L · 🔥${e.best_streak}</div></div><div class="rscore">${e.total_challenges}</div></div>`}).join('')}
 
 let tTimer;
-function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');clearTimeout(tTimer);tTimer=setTimeout(()=>el.classList.remove('on'),2500)}
+function toast(msg,dur){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');clearTimeout(tTimer);tTimer=setTimeout(()=>el.classList.remove('on'),dur||2500)}
 
 // ═══════════════════════════════════════
 // INIT — comprova auth ABANS del splash
@@ -1140,6 +1149,7 @@ const SCREEN_PARENT = {
   's-bustia':           's-menu',
   's-profile':          's-menu',
   's-missions':         's-menu',
+  's-shop':             's-missions',
 
   // Legals
   's-privacy':          's-menu',
@@ -1276,7 +1286,32 @@ pushBackState();
     <div id="miss-done-list" style="font-size:.82rem;color:var(--muted)">Cap encara. Comença a jugar!</div>
   </div>
 
-  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+  <div class="w-full" style="max-width:460px">
+    <button class="btn btn-gold" onclick="go('s-shop');renderShop()" style="background:linear-gradient(135deg,#a855f7,#c084fc);border-color:#a855f7">🛍️ Botiga · Gasta les teves Notes</button>
+    <button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button>
+  </div>
+</div>
+
+<!-- ═══ BOTIGA ═══ -->
+<div id="s-shop" class="scr">
+  <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">🛍️ Botiga</div>
+  <div class="sub">Gasta les teves Notes 🎵</div>
+
+  <div class="card" style="background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(212,160,23,.1));border:1.5px solid rgba(168,85,247,.3);text-align:center;padding:14px">
+    <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px">El teu saldo</div>
+    <div style="font-size:2rem;font-weight:900;color:#c084fc;margin-top:4px">🎵 <span id="shop-balance">0</span></div>
+  </div>
+
+  <div style="display:flex;width:100%;max-width:460px;gap:6px;margin-bottom:6px">
+    <button id="shop-tab-cosmetics" class="btn btn-ghost" onclick="setShopTab('cosmetics')" style="flex:1;padding:10px;font-size:.85rem">🎨 Cosmètics</button>
+    <button id="shop-tab-aids" class="btn btn-ghost" onclick="setShopTab('aids')" style="flex:1;padding:10px;font-size:.85rem">🎁 Ajudes</button>
+  </div>
+
+  <div id="shop-info" style="width:100%;max-width:460px;padding:10px 14px;background:rgba(212,160,23,.05);border-left:3px solid var(--gold);border-radius:6px;font-size:.78rem;color:var(--muted);margin-bottom:8px;line-height:1.5"></div>
+
+  <div id="shop-list" style="width:100%;max-width:460px"></div>
+
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-missions');renderMissions()">↩️ Enrere</button></div>
 </div>
 
 <!-- ═══ PRIVACITAT ═══ -->
@@ -1470,6 +1505,207 @@ function renderMissions(){
     <div style="font-size:.85rem;color:var(--text);flex:1">✅ ${m.name}</div>
     <div style="font-size:.72rem;color:#c084fc;font-weight:700">+${m.reward} 🎵</div>
   </div>`).join('');}
+}
+
+// ═══ BOTIGA — Inventari + cosmètics + ajudes ═══
+const SHOP_ITEMS = [
+  // Cosmètics permanents
+  {id:'frame_gold',cat:'cosmetics',name:'Marc daurat',desc:'El teu nom brilla amb un halo daurat al rànquing',icon:'✨',cost:50,slot:'frame'},
+  {id:'frame_senyera',cat:'cosmetics',name:'Marc senyera',desc:'Marc amb els colors de Catalunya. Requereix streak ≥ 7 dies.',icon:'🎗️',cost:100,slot:'frame',req:()=>getStreak()>=7,reqMsg:'Necessites una ratxa de 7 dies'},
+  {id:'wordle_senyera',cat:'cosmetics',name:'Targeta senyera',desc:'Quadradets vermells i grocs en lloc de verds',icon:'🟥🟨',cost:30,slot:'wordle'},
+  {id:'wordle_neon',cat:'cosmetics',name:'Targeta neón',desc:'Colors fluorescents per a Instagram',icon:'🌈',cost:30,slot:'wordle'},
+  {id:'vinyl_anim',cat:'cosmetics',name:'Vinil animat',desc:'Una nota gira al menú principal',icon:'💿',cost:80,slot:'vinyl'},
+  // Ajudes consumibles (cada compra = 1 ús)
+  {id:'aid_extra_life',cat:'aids',name:'Vida extra',desc:'Recupera 1 vida durant la partida (mode lliure, 1 cop)',icon:'❤️',cost:25,consumable:true,gameAid:'extra_life'},
+  {id:'aid_free_skip',cat:'aids',name:'Saltar sense penalització',desc:'Salta una cançó sense perdre vida (mode lliure, 1 cop)',icon:'⏭️',cost:20,consumable:true,gameAid:'free_skip'},
+  {id:'aid_hint_letter',cat:'aids',name:'Pista de títol',desc:'Mostra la primera lletra del títol (mode lliure, 1 cop)',icon:'🔤',cost:15,consumable:true,gameAid:'hint_letter'},
+  {id:'aid_hint_decade',cat:'aids',name:'Pista de dècada',desc:'Et diu la dècada de la cançó (mode lliure, 1 cop)',icon:'📅',cost:10,consumable:true,gameAid:'hint_decade'},
+];
+
+// Inventari
+function getOwned(){try{return JSON.parse(localStorage.getItem('cn:owned')||'[]')}catch(e){return []}}
+function isOwned(id){return getOwned().includes(id)}
+function addOwned(id){const o=getOwned();if(!o.includes(id)){o.push(id);try{localStorage.setItem('cn:owned',JSON.stringify(o))}catch(e){}}}
+
+function getEquipped(){try{return JSON.parse(localStorage.getItem('cn:equipped')||'{}')}catch(e){return {}}}
+function setEquipped(slot,id){const e=getEquipped();if(id===null)delete e[slot];else e[slot]=id;try{localStorage.setItem('cn:equipped',JSON.stringify(e))}catch(e){}}
+function getEquippedItem(slot){return getEquipped()[slot]||null}
+
+// Tab actual
+let _shopTab='cosmetics';
+
+function setShopTab(tab){_shopTab=tab;renderShop()}
+
+function renderShop(){
+  document.getElementById('shop-balance').textContent=getNotes().toLocaleString();
+  // Tabs visual state
+  document.getElementById('shop-tab-cosmetics').style.background=_shopTab==='cosmetics'?'rgba(168,85,247,.2)':'';
+  document.getElementById('shop-tab-cosmetics').style.borderColor=_shopTab==='cosmetics'?'#c084fc':'';
+  document.getElementById('shop-tab-aids').style.background=_shopTab==='aids'?'rgba(168,85,247,.2)':'';
+  document.getElementById('shop-tab-aids').style.borderColor=_shopTab==='aids'?'#c084fc':'';
+  // Info
+  const info=document.getElementById('shop-info');
+  if(_shopTab==='cosmetics')info.innerHTML='💎 Els cosmètics són permanents i no afecten el rànquing global.';
+  else info.innerHTML='⚠️ Les ajudes només funcionen al <b>Mode Lliure</b>. Cada compra dura 1 sola partida.';
+
+  const items=SHOP_ITEMS.filter(i=>i.cat===_shopTab);
+  const list=document.getElementById('shop-list');
+  list.innerHTML=items.map(it=>{
+    const owned=isOwned(it.id);
+    const equipped=it.slot&&getEquippedItem(it.slot)===it.id;
+    const reqMet=!it.req||it.req();
+    const canAfford=getNotes()>=it.cost;
+    let btnHtml='';
+    if(it.consumable){
+      // Consumibles — sempre comprar (s'aplica només la pròxima partida)
+      const canBuy=canAfford&&reqMet;
+      btnHtml=`<button class="btn btn-gold" style="padding:8px 14px;font-size:.8rem;${canBuy?'':'opacity:.4;cursor:not-allowed'}" ${canBuy?`onclick="onShopBuy('${it.id}')"`:'disabled'}>${canBuy?`Comprar 🎵${it.cost}`:(canAfford?'Bloquejat':'Sense Notes')}</button>`;
+    } else if(owned){
+      // Cosmètic ja comprat: equipar / desequipar
+      if(it.slot){
+        if(equipped)btnHtml=`<button onclick="onShopUnequip('${it.slot}')" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);border-radius:8px;padding:8px 14px;color:#22c55e;font-size:.78rem;font-weight:700;cursor:pointer">✅ Equipat</button>`;
+        else btnHtml=`<button onclick="onShopEquip('${it.id}')" style="background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.4);border-radius:8px;padding:8px 14px;color:#c084fc;font-size:.78rem;font-weight:700;cursor:pointer">Equipar</button>`;
+      } else btnHtml=`<span style="font-size:.78rem;color:#22c55e;font-weight:700">✅ Comprat</span>`;
+    } else {
+      const canBuy=canAfford&&reqMet;
+      btnHtml=`<button class="btn btn-gold" style="padding:8px 14px;font-size:.8rem;${canBuy?'':'opacity:.4;cursor:not-allowed'}" ${canBuy?`onclick="onShopBuy('${it.id}')"`:'disabled'}>${canBuy?`Comprar 🎵${it.cost}`:(canAfford?(it.reqMsg||'Bloquejat'):'Sense Notes')}</button>`;
+    }
+    return `<div style="background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:start;gap:10px;margin-bottom:8px">
+        <div style="font-size:1.6rem">${it.icon}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.92rem;margin-bottom:3px">${it.name}</div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.4">${it.desc}</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end">${btnHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function onShopBuy(id){
+  const it=SHOP_ITEMS.find(x=>x.id===id);if(!it)return;
+  if(getNotes()<it.cost){toast(`⚠️ Et falten ${it.cost-getNotes()} Notes`);return}
+  if(it.req&&!it.req()){toast('⚠️ '+(it.reqMsg||'Bloquejat'));return}
+
+  if(it.consumable){
+    // Activar per la pròxima partida
+    if(!confirm(`Comprar "${it.name}" per ${it.cost} 🎵?\n\nS'activarà a la propera partida en Mode Lliure.`))return;
+    spendNotes(it.cost);
+    addPendingAid(it.gameAid);
+    toast(`✅ ${it.name} llest per la propera partida!`);
+  } else {
+    if(!confirm(`Comprar "${it.name}" per ${it.cost} 🎵?`))return;
+    spendNotes(it.cost);
+    addOwned(id);
+    if(it.slot)setEquipped(it.slot,id);
+    toast(`🎉 ${it.name} comprat!`);
+    if(it.slot)applyCosmetics();
+  }
+  renderShop();
+}
+
+function onShopEquip(id){
+  const it=SHOP_ITEMS.find(x=>x.id===id);if(!it||!it.slot)return;
+  setEquipped(it.slot,id);
+  toast(`✅ ${it.name} equipat`);
+  applyCosmetics();
+  renderShop();
+}
+function onShopUnequip(slot){
+  setEquipped(slot,null);
+  toast('✅ Desequipat');
+  applyCosmetics();
+  renderShop();
+}
+
+// Ajudes pendents (compres consumibles encara no usades)
+function getPendingAids(){try{return JSON.parse(localStorage.getItem('cn:pending_aids')||'[]')}catch(e){return []}}
+function addPendingAid(type){const a=getPendingAids();a.push(type);try{localStorage.setItem('cn:pending_aids',JSON.stringify(a))}catch(e){}}
+function consumePendingAid(type){const a=getPendingAids();const i=a.indexOf(type);if(i<0)return false;a.splice(i,1);try{localStorage.setItem('cn:pending_aids',JSON.stringify(a))}catch(e){}return true}
+
+// ═══ APLICAR COSMÈTICS AL UI ═══
+function applyCosmetics(){
+  // Vinil animat al logo del menú
+  const logo=document.querySelector('#s-menu .logo');
+  if(logo){
+    logo.classList.remove('cos-vinyl-anim');
+    if(getEquippedItem('vinyl')==='vinyl_anim')logo.classList.add('cos-vinyl-anim');
+  }
+  // Marc daurat / senyera al widget de rang
+  const rw=document.getElementById('m-rank-widget');
+  if(rw){
+    rw.classList.remove('cos-frame-gold','cos-frame-senyera');
+    const f=getEquippedItem('frame');
+    if(f==='frame_gold')rw.classList.add('cos-frame-gold');
+    if(f==='frame_senyera')rw.classList.add('cos-frame-senyera');
+  }
+}
+
+// ═══ AJUDES EN PARTIDA (només mode lliure) ═══
+function renderGameAids(){
+  const el=document.getElementById('g-aids');
+  if(!el)return;
+  if(G.mode!=='free'){el.style.display='none';return}
+  const pending=getPendingAids();
+  if(!pending.length){el.style.display='none';return}
+
+  el.style.display='flex';
+  // Comptem disponibilitat per tipus + estat d'ús actual
+  const counts={};pending.forEach(t=>{counts[t]=(counts[t]||0)+1});
+  G.usedAidsThisGame=G.usedAidsThisGame||{};
+  G.usedAidsThisLevel=G.usedAidsThisLevel||{};
+
+  const aidDefs={
+    extra_life:{name:'❤️ Vida',handler:'useAidExtraLife()',perGame:true},
+    free_skip:{name:'⏭️ Saltar',handler:'useAidFreeSkip()',perGame:true},
+    hint_letter:{name:'🔤 Lletra',handler:'useAidHintLetter()',perLevel:true},
+    hint_decade:{name:'📅 Dècada',handler:'useAidHintDecade()',perLevel:true},
+  };
+
+  el.innerHTML=Object.keys(aidDefs).filter(t=>counts[t]>0).map(t=>{
+    const d=aidDefs[t];
+    const used=(d.perGame&&G.usedAidsThisGame[t])||(d.perLevel&&G.usedAidsThisLevel[t]);
+    return `<button class="aid-btn" onclick="${d.handler}" ${used?'disabled':''}>${d.name} <span class="cost">${counts[t]}×</span></button>`;
+  }).join('');
+}
+
+function useAidExtraLife(){
+  if(G.usedAidsThisGame.extra_life)return;
+  if(G.lives>=3){toast('❤️ Ja tens totes les vides');return}
+  if(!consumePendingAid('extra_life'))return;
+  G.usedAidsThisGame.extra_life=true;
+  G.lives++;
+  renderHUD();renderGameAids();
+  toast('❤️ Vida recuperada!');
+}
+function useAidFreeSkip(){
+  if(G.usedAidsThisGame.free_skip)return;
+  if(!G.active){toast('⚠️ No es pot saltar ara');return}
+  if(!consumePendingAid('free_skip'))return;
+  G.usedAidsThisGame.free_skip=true;
+  G.results[G.lvl-1]='skip';
+  telTrackRound&&telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);
+  toast('⏭️ Salt gratuït!');
+  G.active=false;stopAll();revealAnswer();
+  setTimeout(()=>nextLvl(),1500);
+}
+function useAidHintLetter(){
+  if(G.usedAidsThisLevel.hint_letter)return;
+  if(!G.song)return;
+  if(!consumePendingAid('hint_letter'))return;
+  G.usedAidsThisLevel.hint_letter=true;
+  toast(`🔤 Comença per: "${G.song.t[0]}"`,3000);
+  renderGameAids();
+}
+function useAidHintDecade(){
+  if(G.usedAidsThisLevel.hint_decade)return;
+  if(!G.song)return;
+  if(!consumePendingAid('hint_decade'))return;
+  G.usedAidsThisLevel.hint_decade=true;
+  const dec=Math.floor(G.song.y/10)*10;
+  toast(`📅 Anys ${dec}`,3000);
+  renderGameAids();
 }
 </script>
 
