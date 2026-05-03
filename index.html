@@ -322,6 +322,33 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="card"><div class="card-ttl">🏆 Millors reptadors</div><div id="ch-leaderboard" style="font-size:.82rem;color:var(--muted)">Carregant...</div></div>
 </div>
 
+<div id="s-challenge-mods" class="scr">
+  <div style="font-size:1.6rem;font-weight:900;margin:8px 0 4px">🎯 Modifica el repte</div>
+  <div class="sub">Afegeix sabotatges 😈 o regals 🎁 abans d'enviar</div>
+
+  <div class="card" style="background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(212,160,23,.05));border:1.5px solid rgba(168,85,247,.25);text-align:center;padding:14px;width:100%;max-width:460px">
+    <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px">Saldo</div>
+    <div style="font-size:1.6rem;font-weight:900;color:#c084fc">🎵 <span id="chm-balance">0</span></div>
+  </div>
+
+  <div id="chm-applied" style="width:100%;max-width:460px"></div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl">😈 Sabotatges</div>
+    <div id="chm-sabotage-list"></div>
+  </div>
+
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl">🎁 Regals</div>
+    <div id="chm-gift-list"></div>
+  </div>
+
+  <div class="w-full" style="max-width:460px">
+    <button class="btn btn-gold" onclick="onChallengeFinishMods()">✅ Continuar i compartir</button>
+    <button class="btn btn-ghost" onclick="onChallengeFinishMods(true)" style="font-size:.82rem">⏭️ Saltar (sense modificadors)</button>
+  </div>
+</div>
+
 <div id="s-challenge-share" class="scr">
   <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">⚔️ Repte creat!</div>
   <div class="card center">
@@ -338,6 +365,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div style="font-size:1.1rem;font-weight:700;margin-bottom:6px"><span id="ch-rival-name" style="color:var(--gold)"></span> et desafia!</div>
     <div style="font-size:.85rem;color:var(--muted);line-height:1.8;margin-bottom:16px">Jugaràs les mateixes 10 cançons.<br>Qui fa més punts, guanya!</div>
     <div style="background:rgba(193,18,31,.15);border-radius:12px;padding:14px;margin-bottom:14px"><div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Puntuació a superar</div><div style="font-size:2rem;font-weight:900;color:var(--red)" id="ch-score-to-beat">0</div></div>
+    <div id="ch-modifiers-box" style="display:none;margin-bottom:14px"></div>
     <button class="btn btn-red" onclick="onChallengeAccept()">⚔️ Acceptar repte!</button>
     <button class="btn btn-ghost" onclick="go('s-menu')">↩️ No, gràcies</button>
   </div>
@@ -820,7 +848,7 @@ async function testSB(){const el=document.getElementById('sb-status');const r=aw
 const DZ_SEGS=[{start:8,dur:10,rate:1.0},{start:8,dur:8,rate:1.0},{start:10,dur:6,rate:1.0},{start:10,dur:5,rate:1.0},{start:12,dur:4,rate:1.0},{start:12,dur:3,rate:1.0},{start:8,dur:5,rate:1.0},{start:12,dur:4,rate:1.0},{start:14,dur:3,rate:0.5},{start:14,dur:2,rate:1.75}];
 const dzPrevCache={};
 function getDzPreview(dzId){return new Promise(resolve=>{if(dzPrevCache[dzId]){resolve(dzPrevCache[dzId]);return}const cb='dzcb_'+dzId+'_'+Date.now();window[cb]=(data)=>{delete window[cb];document.getElementById('dz_sc_'+dzId)?.remove();const url=data?.preview||null;if(url)dzPrevCache[dzId]=url;resolve(url);};const s=document.createElement('script');s.id='dz_sc_'+dzId;s.src=`https://api.deezer.com/track/${dzId}?output=jsonp&callback=${cb}`;s.onerror=()=>{delete window[cb];resolve(null)};document.head.appendChild(s);})}
-async function dzPlay(song,lvIdx){const audio=document.getElementById('dz-audio');if(!audio||!song?.dzId||song.dzId===0)return false;const seg=DZ_SEGS[lvIdx]||DZ_SEGS[0];const url=await getDzPreview(song.dzId);if(!url)return false;audio.pause();audio.src=url;audio.playbackRate=seg.rate||1;audio.load();const play=()=>{try{audio.currentTime=seg.start}catch(e){}audio.play().catch(()=>{});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>{audio.pause();onSegEnd()},seg.dur*1000*(1/seg.rate)+400);};if(audio.readyState>=2)play();else audio.addEventListener('canplay',play,{once:true});return true}
+async function dzPlay(song,lvIdx){const audio=document.getElementById('dz-audio');if(!audio||!song?.dzId||song.dzId===0)return false;const seg=DZ_SEGS[lvIdx]||DZ_SEGS[0];const url=await getDzPreview(song.dzId);if(!url)return false;audio.pause();audio.src=url;const speedMult=(G.mode==='challenge'&&G.challengeMods?.speedMult)||1;const isHardLevel=G.mode==='challenge'&&G.challengeMods?.hardLevel===G.lvl;const baseRate=isHardLevel?0.5:(seg.rate||1);const finalRate=baseRate*speedMult;audio.playbackRate=finalRate;audio.load();const play=()=>{try{audio.currentTime=seg.start}catch(e){}audio.play().catch(()=>{});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>{audio.pause();onSegEnd()},seg.dur*1000*(1/finalRate)+400);};if(audio.readyState>=2)play();else audio.addEventListener('canplay',play,{once:true});return true}
 function dzStop(){const a=document.getElementById('dz-audio');if(a){a.pause();a.src=''}}
 const RANKS={ca:[{min:0,name:'🌱 Aprenent',short:'Aprenent'},{min:500,name:'🎵 Curiós',short:'Curiós'},{min:1500,name:'📻 Aficionat',short:'Aficionat'},{min:3000,name:'🎸 Melòman',short:'Melòman'},{min:6000,name:'🎤 Veu del Poble',short:'Veu del Poble'},{min:10000,name:'🎼 Trobador',short:'Trobador'},{min:16000,name:'📜 Cronista',short:'Cronista'},{min:25000,name:'🌟 Mestre',short:'Mestre'},{min:40000,name:'👑 Erudit',short:'Erudit'},{min:60000,name:'🏛️ Llegenda',short:'Llegenda'}],es:[{min:0,name:'🌱 Novato',short:'Novato'},{min:500,name:'🎵 Curioso',short:'Curioso'},{min:1500,name:'📻 Aficionado',short:'Aficionado'},{min:3000,name:'🎸 Melómano',short:'Melómano'},{min:6000,name:'🎤 Voz del pueblo',short:'Voz del pueblo'},{min:10000,name:'🎼 Trovador',short:'Trovador'},{min:16000,name:'📜 Cronista',short:'Cronista'},{min:25000,name:'🌟 Maestro',short:'Maestro'},{min:40000,name:'👑 Erudito',short:'Erudito'},{min:60000,name:'🏛️ Leyenda',short:'Leyenda'}],eu:[{min:0,name:'🌱 Newcomer',short:'Newcomer'},{min:500,name:'🎵 Curious',short:'Curious'},{min:1500,name:'📻 Fan',short:'Fan'},{min:3000,name:'🎸 Music lover',short:'Music lover'},{min:6000,name:'🎤 Voice',short:'Voice'},{min:10000,name:'🎼 Troubadour',short:'Troubadour'},{min:16000,name:'📜 Chronicler',short:'Chronicler'},{min:25000,name:'🌟 Master',short:'Master'},{min:40000,name:'👑 Scholar',short:'Scholar'},{min:60000,name:'🏛️ Legend',short:'Legend'}],int:[{min:0,name:'🌱 Newcomer',short:'Newcomer'},{min:500,name:'🎵 Curious',short:'Curious'},{min:1500,name:'📻 Fan',short:'Fan'},{min:3000,name:'🎸 Music lover',short:'Music lover'},{min:6000,name:'🎤 Voice',short:'Voice'},{min:10000,name:'🎼 Troubadour',short:'Troubadour'},{min:16000,name:'📜 Chronicler',short:'Chronicler'},{min:25000,name:'🌟 Master',short:'Master'},{min:40000,name:'👑 Scholar',short:'Scholar'},{min:60000,name:'🏛️ Legend',short:'Legend'}]};
 function getTotalScore(){try{return parseInt(localStorage.getItem('cn:total_score')||'0')}catch(e){return 0}}
@@ -834,9 +862,67 @@ function seededShuffle(arr,seed){const r=[...arr];let s=seed>>>0;for(let i=r.len
 function onDaily(){const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}const ds=getDailyStyle(G.lang);const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const fl=pool.filter(s=>s.st===ds.id);telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});G.mode='daily';G.style=ds.id;initGame(seededShuffle(fl.length>=5?fl:pool,today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily')}
 function getDailyStyle(lang){const s=(STYLES[lang]||STYLES.ca).filter(x=>x.id!=='all');const t=new Date().toISOString().slice(0,10);return s[t.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%s.length]}
 function onFree(){const lang=G.lang,styles=(STYLES[lang]||STYLES.ca),t=T[lang];const grid=document.getElementById('sty-grid');document.getElementById('sty-sub').textContent=t.freeBtn||'Tria un estil';document.getElementById('sty-back-lbl').textContent=t.mainMenu||'Enrere';grid.innerHTML=styles.map(s=>`<button class="style-card" onclick="onStartWithStyle('${s.id}')"><div class="style-emoji">${s.emoji}</div><div class="style-label">${esc(s.label[lang]||s.label.ca)}</div></button>`).join('');go('s-style');}
-function onStartWithStyle(styleId){const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const f=styleId==='all'?pool:pool.filter(s=>s.st===styleId);telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});G.mode='free';G.style=styleId==='all'?null:styleId;initGame(seededShuffle(f.length>=5?f:pool,Math.floor(Math.random()*999999)),'free');}
+function onStartWithStyle(styleId){
+  const shown=parseInt(localStorage.getItem('cn:pregame_shown')||'0');
+  if(shown<2&&G.mode!=='free'){ // només per primer mode lliure inicial, no per "tornar a jugar"
+    pendingStyleId=styleId;
+    showPregameShopHint();
+    return;
+  }
+  doStartWithStyle(styleId);
+}
+
+let pendingStyleId=null;
+
+function doStartWithStyle(styleId){const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const f=styleId==='all'?pool:pool.filter(s=>s.st===styleId);telTrackEvent('start_game',{mode:'free',lang:G.lang,style:styleId});G.mode='free';G.style=styleId==='all'?null:styleId;initGame(seededShuffle(f.length>=5?f:pool,Math.floor(Math.random()*999999)),'free');}
+
+function showPregameShopHint(){
+  const shown=parseInt(localStorage.getItem('cn:pregame_shown')||'0');
+  const remaining=2-shown;
+  const html=`
+    <div id="pregame-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closePregameModal(false)">
+      <div style="background:var(--card);border:1.5px solid rgba(168,85,247,.3);border-radius:16px;padding:24px;max-width:420px;width:100%;max-height:85vh;overflow-y:auto">
+        <div style="text-align:center;font-size:2rem;margin-bottom:8px">🎁</div>
+        <div style="text-align:center;font-weight:900;font-size:1.15rem;margin-bottom:6px">Vols comprar ajudes?</div>
+        <div style="text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:16px;line-height:1.5">Pots comprar ajudes que duraran aquesta partida (només Mode Lliure).</div>
+
+        <div style="background:rgba(168,85,247,.06);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:.78rem;color:var(--muted)">El teu saldo</div>
+          <div style="font-size:1.1rem;font-weight:900;color:#c084fc">🎵 ${getNotes().toLocaleString()}</div>
+        </div>
+
+        <button onclick="closePregameModal(true)" style="width:100%;background:linear-gradient(135deg,#a855f7,#c084fc);border:none;border-radius:10px;padding:14px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:8px">🛍️ Sí, anar a la botiga</button>
+        <button onclick="closePregameModal(false)" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;color:var(--text);font-size:.88rem;cursor:pointer">▶️ No, començar partida</button>
+
+        <div style="margin-top:14px;padding:10px;background:rgba(212,160,23,.08);border-radius:8px;font-size:.72rem;color:var(--gold);text-align:center;line-height:1.5">
+          💡 Aquest missatge només sortirà <strong>${remaining} ${remaining===1?'cop més':'cops més'}</strong>.<br>Després pots anar a la botiga des del menú o tocant un botó d'ajuda gris durant la partida.
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+
+function closePregameModal(goShop){
+  const m=document.getElementById('pregame-modal');if(m)m.remove();
+  const shown=parseInt(localStorage.getItem('cn:pregame_shown')||'0');
+  localStorage.setItem('cn:pregame_shown',String(shown+1));
+  if(goShop){
+    // Anem a la botiga, recordant que tornarem amb pendingStyleId
+    sessionStorage.setItem('cn:resume_free',pendingStyleId||'all');
+    go('s-shop');renderShop();setShopTab('aids');
+  } else {
+    doStartWithStyle(pendingStyleId||'all');
+    pendingStyleId=null;
+  }
+}
 function onAutor(){telTrackEvent('start_game',{mode:'autor',lang:G.lang});G.mode='autor';initGame(seededShuffle(AUTOR_BY_LANG[G.lang],Math.floor(Math.random()*999999)),'autor')}
-function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];G.usedAidsThisGame={};G.usedAidsThisLevel={};telStartSession();G.songList=list;G.songIdx=0;G.song=list[0];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel();renderGameAids()}
+function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.lives=3;G.score=0;G.active=true;G.mode=mode;G.results=[];G.usedAidsThisGame={};G.usedAidsThisLevel={};
+  // Aplicar modificadors si es repte rebut
+  if(mode==='challenge'&&G.challengeMods){
+    G.lives=G.challengeMods.lives||3;
+    G.lvl=G.challengeMods.startLvl||1;
+  }
+  telStartSession();G.songList=list;G.songIdx=Math.max(0,G.lvl-1);G.song=list[G.songIdx];G.playCount=0;G.playing=false;const t=T[G.lang];const badge=document.getElementById('g-mode-badge');badge.textContent=t.levelBadge[mode]||mode;badge.className='mode-badge '+mode;document.getElementById('g-lang-badge').textContent=G.lang.toUpperCase();document.getElementById('g-skip-btn').textContent=t.skipBtn;document.getElementById('g-exit-btn').textContent=t.exitBtn;const fsw=document.getElementById('g-full-song-wrap');if(mode==='free'){fsw.style.display='block';document.getElementById('g-full-btn').textContent=t.listenFull}else fsw.style.display='none';go('s-game');renderHUD();startLevel();renderGameAids()}
 
 function renderHUD(){document.getElementById('g-badge').textContent=`${G.lvl}/10`;document.getElementById('g-score').textContent=G.score;document.getElementById('g-lives').innerHTML=[1,2,3].map(i=>`<span class="heart${i>G.lives?' dead':''}">❤️</span>`).join('');document.getElementById('g-dots').innerHTML=LEVELS.map((_,i)=>{const r=G.results[i];const isB=(i+1)%3===0;const c=r==='ok'?'ok':r==='fail'||r==='skip'?'fail':i+1===G.lvl?'cur':'';return`<div class="dot ${c}${isB?' bonus':''}">${isB?'⭐':i+1}</div>`}).join('')}
 
@@ -888,7 +974,7 @@ function onConfirm(){if(!G.active)return;const ans=document.getElementById('g-an
 function stopAll(){clearInterval(G.timerID);ytStop(true);G.playing=false;setWave(false)}
 function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;soundBonus();telTrackEvent('bonus_correct',{level:G.lvl,song_id:G.song?.id,lang:G.lang});toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;soundCorrect();toast(`${T[G.lang].correct} +${pts}`)}G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();setTimeout(()=>nextLvl(),1800)}
 function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
-function onSkip(){if(!G.active)return;if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
+function onSkip(){if(!G.active)return;if(G.mode==='challenge'&&G.challengeMods?.blockSkip){toast('🚫 Aquest repte bloqueja saltar cançons!');return}if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
 function nextLvl(){if(G.lives<=0||G.lvl>=10){endGame();return}soundLevelUp();G.lvl++;G.songIdx=(G.songIdx+1)%G.songList.length;G.song=G.songList[G.songIdx];G.active=true;startLevel()}
 function onExit(){
   // Modal propi en lloc de confirm() per compatibilitat mòbil
@@ -1007,7 +1093,15 @@ function checkRankUp(prevScore){
   const curRank = r1.rank;
   if(prevRank && curRank.min > prevRank.min){
     telTrackEvent('rank_up', {from: prevRank.short, to: curRank.short, lang: G.lang});
-    toast('🎉 Has pujat de rang: ' + curRank.name);
+    const newRankIdx = (RANKS[G.lang]||RANKS.ca).findIndex(r=>r.min===curRank.min);
+    toast('🎉 Has pujat de rang: ' + curRank.name, 3000);
+    // Comprovar si s'ha desbloquejat algun modificador nou
+    const newMods = CHALLENGE_MODS.filter(m=>m.unlockRank===newRankIdx);
+    if(newMods.length>0){
+      setTimeout(()=>{
+        toast(`🔓 Nou modificador desbloquejat: ${newMods.map(m=>m.icon+' '+m.name).join(', ')}`,4000);
+      },2500);
+    }
   }
 }
 async function endGame(){
@@ -1073,11 +1167,170 @@ async function loadBustia(){const el=document.getElementById('bust-list');const 
 
 // REPTES ASÍNCRONS
 function onChallengeStart(){if(!G.nick){toast('⚠️ Necessites nom');return}telTrackEvent('start_game',{mode:'challenge',lang:G.lang});telTrackEvent('start_game',{mode:'challenge',lang:G.lang});const seed=Date.now()%999999;currentChallenge={seed,isCreator:true,challengeId:null};G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],seed),'challenge')}
-async function saveChallengeCreator(){if(!currentChallenge?.isCreator)return;try{const r=await fetch(`${SB_URL}/rest/v1/challenges`,{method:'POST',headers:{...SBH,'Prefer':'return=representation'},body:JSON.stringify({creator_nick:G.nick,creator_zone:G.zone,creator_score:G.score,creator_results:JSON.stringify(G.results),song_seed:currentChallenge.seed,lang:G.lang,status:'pending'})});if(!r.ok){toast('⚠️ Error');return}const data=await r.json();const ch=Array.isArray(data)?data[0]:data;currentChallenge.challengeId=ch.id;const link=`${window.location.origin}${window.location.pathname}?challenge=${ch.id}`;document.getElementById('ch-creator-score').textContent=G.score.toLocaleString();document.getElementById('ch-link').textContent=link;currentChallenge.link=link;go('s-challenge-share')}catch(e){toast('⚠️ Error de connexió')}}
+async function saveChallengeCreator(){if(!currentChallenge?.isCreator)return;try{const r=await fetch(`${SB_URL}/rest/v1/challenges`,{method:'POST',headers:{...SBH,'Prefer':'return=representation'},body:JSON.stringify({creator_nick:G.nick,creator_zone:G.zone,creator_score:G.score,creator_results:JSON.stringify(G.results),song_seed:currentChallenge.seed,lang:G.lang,status:'pending'})});if(!r.ok){toast('⚠️ Error');return}const data=await r.json();const ch=Array.isArray(data)?data[0]:data;currentChallenge.challengeId=ch.id;const link=`${window.location.origin}${window.location.pathname}?challenge=${ch.id}`;document.getElementById('ch-creator-score').textContent=G.score.toLocaleString();document.getElementById('ch-link').textContent=link;currentChallenge.link=link;currentChallenge.appliedMods=[];renderChallengeMods();go('s-challenge-mods')}catch(e){toast('⚠️ Error de connexió')}}
+
+// ═══ MODIFICADORS DE REPTE ═══
+const CHALLENGE_MODS = [
+  // Regals (primers a desbloquejar — positius)
+  {id:'gift_sticker',cat:'gift',name:'Sticker animat',desc:'Apareix un sticker quan obre el repte',icon:'🎉',cost:10,needsInput:'sticker',unlockRank:1},
+  {id:'gift_msg',cat:'gift',name:'Missatge personalitzat',desc:'Tu escrius una nota per a l\'amic',icon:'💌',cost:15,needsInput:'msg',unlockRank:2},
+  {id:'gift_start_lvl',cat:'gift',name:'Triar nivell d\'inici',desc:'Forces que comenci pel nivell que tu vulguis',icon:'🎯',cost:20,needsInput:'level',unlockRank:3},
+  {id:'gift_extra_life',cat:'gift',name:'+1 vida (favor)',desc:'L\'amic començarà amb 4 ❤️',icon:'💖',cost:30,unlockRank:4},
+  // Sabotatges (es desbloquejen progressivament)
+  {id:'sab_block_skip',cat:'sabotage',name:'Bloquejar saltar',desc:'L\'amic no podrà saltar cap cançó',icon:'🚫',cost:20,unlockRank:5},
+  {id:'sab_speed',cat:'sabotage',name:'Velocitat 1.25x',desc:'Tot el joc del repte va més ràpid',icon:'⚡',cost:25,unlockRank:6},
+  {id:'sab_2_lives',cat:'sabotage',name:'Començar amb 2 vides',desc:'L\'amic començarà amb 2 ❤️ en lloc de 3',icon:'💔',cost:40,unlockRank:7},
+  {id:'sab_swap_song',cat:'sabotage',name:'Substituir 1 cançó',desc:'Una cançó random va a velocitat 0.5x — gairebé impossible',icon:'🔄',cost:30,unlockRank:8},
+];
+
+const STICKERS = ['🎉','🔥','💪','😈','🤡','👻','🦄','💩','🍕','🐔','🥹','😎'];
+
+// Dies aproximats per arribar a cada rang (80% encerts ~1.150 pts/partida, 1 partida/dia)
+const RANK_DAYS = [0, 1, 2, 3, 6, 10, 15, 23, 37, 55];
+
+function getCurrentRankIdx(){
+  const ranks = RANKS[G.lang]||RANKS.ca;
+  const pts = getTotalScore();
+  let idx = 0;
+  ranks.forEach((r,i)=>{if(pts>=r.min)idx=i});
+  return idx;
+}
+
+function renderChallengeMods(){
+  document.getElementById('chm-balance').textContent=getNotes().toLocaleString();
+  const applied=currentChallenge?.appliedMods||[];
+  const curRankIdx = getCurrentRankIdx();
+  const ranks = RANKS[G.lang]||RANKS.ca;
+
+  const appliedEl=document.getElementById('chm-applied');
+  if(applied.length){
+    appliedEl.innerHTML='<div style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:12px;padding:12px;margin-bottom:8px"><div style="font-size:.7rem;color:#c084fc;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">\u2705 Aplicats</div>'+applied.map(a=>{const m=CHALLENGE_MODS.find(x=>x.id===a.id);return `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:.85rem"><span>${m.icon} ${m.name}${a.value?` <span style="color:var(--gold)">(${esc(String(a.value))})</span>`:''}</span><button onclick="onRemoveMod('${a.id}')" style="background:transparent;border:none;color:var(--err);cursor:pointer;font-size:.78rem">\u2715 Treure</button></div>`}).join('')+'</div>';
+  } else {appliedEl.innerHTML=''}
+
+  ['gift','sabotage'].forEach(cat=>{
+    const listId = cat==='gift'?'chm-gift-list':'chm-sabotage-list';
+    const list=document.getElementById(listId);
+    const items=CHALLENGE_MODS.filter(m=>m.cat===cat);
+    list.innerHTML=items.map(m=>{
+      const isApplied=applied.some(a=>a.id===m.id);
+      const isLocked=curRankIdx<m.unlockRank;
+      const canAfford=getNotes()>=m.cost;
+      let btn='', lockBadge='';
+      if(isLocked){
+        const targetRank=ranks[m.unlockRank];
+        const prevRank=ranks[m.unlockRank-1]||ranks[0];
+        const pts=getTotalScore();
+        const rangePts=targetRank.min-prevRank.min;
+        const pct=Math.min(100,Math.round(((pts-prevRank.min)/rangePts)*100));
+        const daysLeft=Math.max(0,RANK_DAYS[m.unlockRank]-RANK_DAYS[curRankIdx]);
+        lockBadge=`<div style="margin-top:8px;background:rgba(0,0,0,.3);border-radius:8px;padding:8px 10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div style="font-size:.7rem;color:var(--muted)">\uD83D\uDD12 Desbloqueja a: <strong style="color:var(--gold)">${targetRank.short}</strong></div><div style="font-size:.7rem;color:var(--muted)">~${daysLeft} dia${daysLeft===1?'':'s'}</div></div><div style="background:rgba(255,255,255,.08);border-radius:99px;height:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--gold),#f59e0b);border-radius:99px"></div></div><div style="font-size:.65rem;color:var(--muted);margin-top:3px;text-align:right">${pct}%</div></div>`;
+      } else if(isApplied){
+        btn=`<div style="text-align:right;margin-top:6px"><span style="font-size:.78rem;color:#22c55e;font-weight:700">\u2705 Aplicat</span></div>`;
+      } else {
+        btn=`<div style="text-align:right;margin-top:6px"><button class="btn btn-gold" style="padding:7px 12px;font-size:.78rem;${canAfford?'':'opacity:.4;cursor:not-allowed'}" ${canAfford?`onclick="onAddMod('${m.id}')"`:'disabled'}>${canAfford?`Aplicar \uD83C\uDFB5${m.cost}`:'Sense Notes'}</button></div>`;
+      }
+      return `<div style="background:rgba(255,255,255,.03);border-radius:10px;padding:10px;margin-bottom:8px;${isLocked?'opacity:.65':''}"><div style="display:flex;align-items:start;gap:8px"><div style="font-size:1.3rem">${m.icon}</div><div style="flex:1"><div style="font-weight:700;font-size:.85rem">${m.name}</div><div style="font-size:.72rem;color:var(--muted);line-height:1.4">${m.desc}</div></div></div>${lockBadge}${btn}</div>`;
+    }).join('');
+  });
+}
+
+async function onAddMod(id){
+  const m=CHALLENGE_MODS.find(x=>x.id===id);if(!m)return;
+  if(getNotes()<m.cost){toast(`⚠️ Et falten ${m.cost-getNotes()} Notes`);return}
+  let value=null;
+  if(m.needsInput==='msg'){
+    value=prompt('Escriu el teu missatge (màx. 100 caràcters):','');
+    if(!value||!value.trim())return;
+    value=value.trim().slice(0,100);
+  } else if(m.needsInput==='sticker'){
+    const idx=parseInt(prompt(`Tria un sticker:\n\n${STICKERS.map((s,i)=>`${i+1}. ${s}`).join('\n')}\n\nEscriu el número:`,'1'));
+    if(!idx||idx<1||idx>STICKERS.length)return;
+    value=STICKERS[idx-1];
+  } else if(m.needsInput==='level'){
+    const lvl=parseInt(prompt('A quin nivell vols que comenci? (1-9):','3'));
+    if(!lvl||lvl<1||lvl>9)return;
+    value=lvl;
+  }
+
+  // Aplicar a Supabase
+  const applied=currentChallenge.appliedMods||[];
+  applied.push({id,value});
+  try{
+    const updateRow={modifiers:applied};
+    if(m.id==='gift_msg')updateRow.gift_msg=value;
+    if(m.id==='gift_sticker')updateRow.gift_sticker=value;
+    await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${currentChallenge.challengeId}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(updateRow)});
+    spendNotes(m.cost);
+    currentChallenge.appliedMods=applied;
+    toast(`✅ ${m.name} aplicat!`);
+    renderChallengeMods();
+  }catch(e){toast('⚠️ Error de connexió')}
+}
+
+async function onRemoveMod(id){
+  const applied=(currentChallenge.appliedMods||[]).filter(a=>a.id!==id);
+  // Nota: NO retornem les Notes (ja les ha gastat). Només treu l'efecte.
+  if(!confirm('Treure aquest modificador? (No es retornen les Notes)'))return;
+  try{
+    const updateRow={modifiers:applied};
+    if(id==='gift_msg')updateRow.gift_msg=null;
+    if(id==='gift_sticker')updateRow.gift_sticker=null;
+    await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${currentChallenge.challengeId}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(updateRow)});
+    currentChallenge.appliedMods=applied;
+    toast('Modificador tret');
+    renderChallengeMods();
+  }catch(e){}
+}
+
+function onChallengeFinishMods(){
+  go('s-challenge-share');
+}
 function onChallengeShareLink(){if(!currentChallenge?.link)return;telTrackEvent('share_challenge',{score:G.score,lang:G.lang});trackChallengeSent();window.open(`https://wa.me/?text=${encodeURIComponent(`⚔️ T'he reptat a CançoNet!\n🏆 ${G.score} pts\n🎵 Pots superar-me?\n\n${currentChallenge.link}`)}`,'_blank')}
 function onChallengeCopyLink(){if(!currentChallenge?.link)return;navigator.clipboard?.writeText(currentChallenge.link).then(()=>toast('📋 Copiat!'))}
-async function checkChallengeUrl(){const p=new URLSearchParams(window.location.search);const chId=p.get('challenge');if(!chId)return false;window.history.replaceState(null,'',window.location.pathname);try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${chId}`,{headers:SBH});if(!r.ok)return false;const data=await r.json();if(!data||!data.length){toast('⚠️ Repte no trobat');return false}const ch=data[0];if(ch.status==='completed'){showChallengeResult(ch);return true}currentChallenge={seed:ch.song_seed,isCreator:false,challengeId:ch.id,data:ch};G.lang=ch.lang||'ca';document.getElementById('ch-rival-name').textContent=ch.creator_nick;document.getElementById('ch-score-to-beat').textContent=(ch.creator_score||0).toLocaleString();go('s-challenge-accept');return true}catch(e){return false}}
-function onChallengeAccept(){if(!currentChallenge?.seed)return;if(!G.nick){toast('⚠️ Registra\'t primer!');go('s-login');return}G.mode='challenge';initGame(seededShuffle(SONGS_BY_LANG[G.lang],currentChallenge.seed),'challenge')}
+async function checkChallengeUrl(){const p=new URLSearchParams(window.location.search);const chId=p.get('challenge');if(!chId)return false;window.history.replaceState(null,'',window.location.pathname);try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${chId}`,{headers:SBH});if(!r.ok)return false;const data=await r.json();if(!data||!data.length){toast('⚠️ Repte no trobat');return false}const ch=data[0];if(ch.status==='completed'){showChallengeResult(ch);return true}currentChallenge={seed:ch.song_seed,isCreator:false,challengeId:ch.id,data:ch,modifiers:ch.modifiers||[]};G.lang=ch.lang||'ca';document.getElementById('ch-rival-name').textContent=ch.creator_nick;document.getElementById('ch-score-to-beat').textContent=(ch.creator_score||0).toLocaleString();renderChallengeReveal(ch);go('s-challenge-accept');return true}catch(e){return false}}
+
+function renderChallengeReveal(ch){
+  const box=document.getElementById('ch-modifiers-box');
+  const mods=ch.modifiers||[];
+  const giftMsg=ch.gift_msg;const giftSticker=ch.gift_sticker;
+  if(!mods.length&&!giftMsg&&!giftSticker){box.style.display='none';return}
+  box.style.display='block';
+  let html='<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:12px;margin-top:6px">';
+  if(giftSticker)html+=`<div style="font-size:3rem;text-align:center;margin:6px 0;animation:floatUp 2s ease-in-out infinite alternate">${giftSticker}</div>`;
+  if(giftMsg)html+=`<div style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:10px;padding:10px;margin:8px 0;font-size:.88rem;color:#c084fc;font-style:italic;text-align:center">💌 "${esc(giftMsg)}"</div>`;
+  const sabotages=mods.filter(m=>{const def=CHALLENGE_MODS.find(x=>x.id===m.id);return def&&def.cat==='sabotage'});
+  const gifts=mods.filter(m=>{const def=CHALLENGE_MODS.find(x=>x.id===m.id);return def&&def.cat==='gift'&&!['gift_msg','gift_sticker'].includes(m.id)});
+  if(sabotages.length){
+    html+='<div style="font-size:.7rem;color:var(--err);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">😈 Sabotatges</div>';
+    sabotages.forEach(s=>{const m=CHALLENGE_MODS.find(x=>x.id===s.id);html+=`<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:8px;margin-bottom:5px;font-size:.82rem">${m.icon} ${m.name}</div>`});
+  }
+  if(gifts.length){
+    html+='<div style="font-size:.7rem;color:#22c55e;text-transform:uppercase;letter-spacing:1.5px;margin:10px 0 6px">🎁 Regals</div>';
+    gifts.forEach(g=>{const m=CHALLENGE_MODS.find(x=>x.id===g.id);const valStr=g.value!==null?` (${esc(String(g.value))})`:'';html+=`<div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:8px;margin-bottom:5px;font-size:.82rem">${m.icon} ${m.name}${valStr}</div>`});
+  }
+  html+='</div>';
+  box.innerHTML=html;
+}
+function onChallengeAccept(){
+  if(!currentChallenge?.seed)return;
+  if(!G.nick){toast('⚠️ Registra\'t primer!');go('s-login');return}
+  G.mode='challenge';
+  const mods=currentChallenge.modifiers||[];
+  G.challengeMods={lives:3,blockSkip:false,speedMult:1,startLvl:1,hardLevel:null};
+  mods.forEach(m=>{
+    if(m.id==='sab_2_lives')G.challengeMods.lives=2;
+    if(m.id==='gift_extra_life')G.challengeMods.lives=4;
+    if(m.id==='sab_block_skip')G.challengeMods.blockSkip=true;
+    if(m.id==='sab_speed')G.challengeMods.speedMult=1.25;
+    if(m.id==='gift_start_lvl'&&m.value)G.challengeMods.startLvl=parseInt(m.value)||1;
+    if(m.id==='sab_swap_song'){
+      // Determinístic: nivell aleatori entre 3 i 8 segons el seed
+      const s=currentChallenge.seed||0;
+      G.challengeMods.hardLevel=3+(s%6); // 3..8
+    }
+  });
+  initGame(seededShuffle(SONGS_BY_LANG[G.lang],currentChallenge.seed),'challenge');
+}
 async function saveChallengeRival(){if(!currentChallenge||currentChallenge.isCreator||!currentChallenge.challengeId)return;try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${currentChallenge.challengeId}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=representation'},body:JSON.stringify({rival_nick:G.nick,rival_zone:G.zone,rival_score:G.score,rival_results:JSON.stringify(G.results),status:'completed',completed_at:new Date().toISOString()})});if(!r.ok)return;const data=await r.json();const ch=Array.isArray(data)?data[0]:data;await updateChallengeStats(ch);showChallengeResult(ch)}catch(e){}}
 async function updateChallengeStats(ch){const winner=ch.creator_score>ch.rival_score?ch.creator_nick:ch.rival_score>ch.creator_score?ch.rival_nick:null;for(const nick of[ch.creator_nick,ch.rival_nick]){const isWin=nick===winner,isDraw=winner===null;const ex=await sbS('challenge_stats',`nick=eq.${encodeURIComponent(nick)}&lang=eq.${ch.lang||'ca'}`,'updated_at.desc',1);if(ex&&ex.length>0){const s=ex[0],ns=isWin?s.streak+1:0;await fetch(`${SB_URL}/rest/v1/challenge_stats?nick=eq.${encodeURIComponent(nick)}&lang=eq.${ch.lang||'ca'}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify({wins:s.wins+(isWin?1:0),losses:s.losses+(!isWin&&!isDraw?1:0),draws:s.draws+(isDraw?1:0),streak:ns,best_streak:Math.max(s.best_streak,ns),total_challenges:s.total_challenges+1,updated_at:new Date().toISOString()})})}else await sbI('challenge_stats',{nick,lang:ch.lang||'ca',wins:isWin?1:0,losses:!isWin&&!isDraw?1:0,draws:isDraw?1:0,streak:isWin?1:0,best_streak:isWin?1:0,total_challenges:1})}}
 function showChallengeResult(ch){const isC=G.nick===ch.creator_nick;const my=isC?ch.creator_score:ch.rival_score;const their=isC?ch.rival_score:ch.creator_score;const theirN=isC?ch.rival_nick:ch.creator_nick;const won=my>their,draw=my===their;document.getElementById('ch-result-emoji').textContent=won?'🏆':draw?'🤝':'😤';document.getElementById('ch-result-title').textContent=won?'Has guanyat!':draw?'Empat!':'Has perdut!';document.getElementById('ch-result-sub').textContent=won?`Superat ${esc(theirN)} per ${my-their} pts!`:draw?'Mateixa puntuació!':`${esc(theirN)} t'ha superat per ${their-my} pts`;document.getElementById('ch-res-p1-name').textContent=ch.creator_nick;document.getElementById('ch-res-p1-score').textContent=(ch.creator_score||0).toLocaleString();document.getElementById('ch-res-p2-name').textContent=ch.rival_nick||'???';document.getElementById('ch-res-p2-score').textContent=(ch.rival_score||0).toLocaleString();let cr,rr;try{cr=JSON.parse(ch.creator_results||'[]')}catch(e){cr=[]}try{rr=JSON.parse(ch.rival_results||'[]')}catch(e){rr=[]}document.getElementById('ch-res-rounds').innerHTML=cr.map((c,i)=>{const r=rr[i]||'-';return`<div class="res-row"><span>${i+1}. ${esc(ch.creator_nick)}: ${c==='ok'?'✅':'❌'}</span><span>${esc(ch.rival_nick||'???')}: ${r==='ok'?'✅':r==='-'?'⬜':'❌'}</span></div>`}).join('');document.getElementById('ch-res-share-dots').innerHTML=`${esc(ch.creator_nick)}: ${cr.map(r=>r==='ok'?'🟩':'🟥').join('')}<br>${esc(ch.rival_nick||'???')}: ${rr.map(r=>r==='ok'?'🟩':r==='-'?'⬜':'🟥').join('')}`;document.getElementById('ch-res-share-txt').textContent=`${ch.creator_score} vs ${ch.rival_score||'?'} pts`;go('s-challenge-result')}
@@ -1159,6 +1412,7 @@ const SCREEN_PARENT = {
   // Pantalles del menú
   's-rankings':         's-menu',
   's-challenge-create': 's-menu',
+  's-challenge-mods':   's-menu',
   's-challenge-play':   's-menu',
   's-bustia':           's-menu',
   's-profile':          's-menu',
@@ -1556,6 +1810,25 @@ function setShopTab(tab){_shopTab=tab;renderShop()}
 
 function renderShop(){
   document.getElementById('shop-balance').textContent=getNotes().toLocaleString();
+  // Botó "Començar partida" si venim del modal pre-partida
+  const resumeStyle=sessionStorage.getItem('cn:resume_free');
+  const balanceCard=document.querySelector('#s-shop .card');
+  let resumeBtn=document.getElementById('shop-resume-btn');
+  if(resumeStyle){
+    if(!resumeBtn){
+      resumeBtn=document.createElement('button');
+      resumeBtn.id='shop-resume-btn';
+      resumeBtn.style.cssText='width:100%;max-width:460px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:12px;padding:14px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:10px';
+      resumeBtn.innerHTML='▶️ Començar partida ara';
+      resumeBtn.onclick=()=>{
+        const sid=sessionStorage.getItem('cn:resume_free');
+        sessionStorage.removeItem('cn:resume_free');
+        resumeBtn.remove();
+        doStartWithStyle(sid);
+      };
+      balanceCard.parentNode.insertBefore(resumeBtn,balanceCard);
+    }
+  } else if(resumeBtn){resumeBtn.remove()}
   // Tabs visual state
   document.getElementById('shop-tab-cosmetics').style.background=_shopTab==='cosmetics'?'rgba(168,85,247,.2)':'';
   document.getElementById('shop-tab-cosmetics').style.borderColor=_shopTab==='cosmetics'?'#c084fc':'';
@@ -1723,10 +1996,9 @@ function renderGameAids(){
   if(!el)return;
   if(G.mode!=='free'){el.style.display='none';return}
   const pending=getPendingAids();
-  if(!pending.length){el.style.display='none';return}
 
   el.style.display='flex';
-  // Comptem disponibilitat per tipus + estat d'ús actual
+  // Comptem disponibilitat per tipus
   const counts={};pending.forEach(t=>{counts[t]=(counts[t]||0)+1});
   G.usedAidsThisGame=G.usedAidsThisGame||{};
   G.usedAidsThisLevel=G.usedAidsThisLevel||{};
@@ -1738,11 +2010,29 @@ function renderGameAids(){
     hint_decade:{name:'📅 Dècada',handler:'useAidHintDecade()',perLevel:true},
   };
 
-  el.innerHTML=Object.keys(aidDefs).filter(t=>counts[t]>0).map(t=>{
+  // Sempre mostrem els 4 botons. Si no tens stock → en gris i porta a la botiga
+  el.innerHTML=Object.keys(aidDefs).map(t=>{
     const d=aidDefs[t];
+    const stock=counts[t]||0;
     const used=(d.perGame&&G.usedAidsThisGame[t])||(d.perLevel&&G.usedAidsThisLevel[t]);
-    return `<button class="aid-btn" onclick="${d.handler}" ${used?'disabled':''}>${d.name} <span class="cost">${counts[t]}×</span></button>`;
+    if(stock>0&&!used){
+      // Disponible
+      return `<button class="aid-btn" onclick="${d.handler}">${d.name} <span class="cost">${stock}×</span></button>`;
+    } else {
+      // En gris — clicar porta a la botiga
+      return `<button class="aid-btn" onclick="onAidUnavailable('${t}')" disabled style="opacity:.35">${d.name}</button>`;
+    }
   }).join('');
+}
+
+function onAidUnavailable(type){
+  const names={extra_life:'Vida extra',free_skip:'Saltar sense penalització',hint_letter:'Pista de títol',hint_decade:'Pista de dècada'};
+  if(confirm(`No tens cap "${names[type]||type}" disponible.\n\nVols anar a la botiga a comprar-ne?`)){
+    if(G.active&&!confirm('Si vas a la botiga abandonaràs la partida. Continuar?'))return;
+    if(G.active){telSaveSession(false);telTrackEvent('abandon',{level:G.lvl,mode:G.mode});ytStop(true);clearInterval(G.timerID);}
+    G.active=false;
+    go('s-shop');renderShop();setShopTab('aids');
+  }
 }
 
 function useAidExtraLife(){
