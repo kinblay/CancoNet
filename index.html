@@ -409,7 +409,7 @@ async function sendOtp(email){
 }
 async function verifyOtp(email,token){
   try{
-    const r=await fetch(`${SB_URL}/auth/v1/otp`,{
+    const r=await fetch(`${SB_URL}/auth/v1/verify`,{
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SB_KEY},
       body:JSON.stringify({email:email.trim().toLowerCase(),token:String(token).trim(),type:'email'})
