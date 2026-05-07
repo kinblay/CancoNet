@@ -273,12 +273,33 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="card"><div class="card-ttl center">Puntuació final</div><div class="final-pts" id="go-pts">0</div><div class="center muted mt" id="go-lvltxt" style="margin-bottom:12px;font-size:.8rem"></div><div class="sep"></div><div id="go-res"></div></div>
   <div id="go-deezer-wrap" style="display:none;width:100%;max-width:460px;margin-top:8px;text-align:center"><a id="go-deezer-link" href="#" target="_blank" rel="noopener" style="display:inline-block;background:rgba(26,195,136,.12);border:.5px solid rgba(26,195,136,.35);color:#1ac37c;font-size:.85rem;font-weight:600;padding:10px 20px;border-radius:10px;text-decoration:none">🎧 Escolta a Deezer</a><div id="go-deezer-songs" style="margin-top:8px;font-size:.75rem;color:var(--muted)"></div></div>
   <div class="share-card"><div class="share-title">CançoNet · <span id="sh-date"></span></div><div class="share-dots" id="sh-dots"></div><div class="share-score">🏆 <span id="sh-score"></span> pts</div><div style="font-size:.72rem;color:var(--gold);margin-top:2px" id="sh-rank"></div><div class="share-zone">📍 <span id="sh-zone"></span></div><div style="font-size:.75rem;color:#a78bfa;margin-top:3px" id="sh-streak"></div><div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="sh-mode"></div></div>
+
+  <!-- Posició al rànquing -->
+  <div id="go-rank-preview" style="width:100%;max-width:460px;display:none">
+    <div style="background:rgba(212,160,23,.07);border:1px solid rgba(212,160,23,.2);border-radius:14px;padding:14px 18px">
+      <div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">La teva posició</div>
+      <div style="display:flex;gap:10px">
+        <div id="go-pos-daily" style="flex:1;background:rgba(212,160,23,.1);border-radius:10px;padding:10px;text-align:center;display:none">
+          <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">📅 Avui</div>
+          <div id="go-pos-daily-num" style="font-size:1.8rem;font-weight:900;color:var(--gold)">#—</div>
+          <div id="go-pos-daily-move" style="font-size:.75rem;margin-top:2px"></div>
+        </div>
+        <div id="go-pos-global" style="flex:1;background:rgba(168,85,247,.08);border-radius:10px;padding:10px;text-align:center;display:none">
+          <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">🌍 Global</div>
+          <div id="go-pos-global-num" style="font-size:1.8rem;font-weight:900;color:#c084fc">#—</div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:2px" id="go-pos-global-pts"></div>
+        </div>
+      </div>
+      <div id="go-pos-neighbours" style="margin-top:10px;font-size:.78rem"></div>
+    </div>
+  </div>
+
   <div class="w-full"><button class="btn btn-gold" id="go-share-btn" onclick="onShare()"></button><button class="btn btn-red" id="go-again-btn" onclick="telTrackEvent('play_again',{mode:G.mode,score:G.score});onFree()"></button><button class="btn btn-ghost" id="go-menu-btn" onclick="go('s-menu')"></button><button class="btn btn-ghost" id="go-rank-btn" onclick="go('s-rankings')"></button></div>
 </div>
 
 <div id="s-rankings" class="scr">
   <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">🏆 Rànquing</div>
-  <div class="tabs"><button class="tab on" onclick="onTabChg('global',this)">🌍 Global</button><button class="tab" onclick="onTabChg('zone',this)">📍 Zones</button><button class="tab" onclick="onTabChg('daily',this)">📅 Avui</button></div>
+  <div class="tabs" style="flex-wrap:wrap;gap:4px"><button class="tab on" onclick="onTabChg('global',this)">🌍 Global</button><button class="tab" onclick="onTabChg('zone',this)">📍 Zones</button><button class="tab" onclick="onTabChg('rang',this)">🏅 Rang</button><button class="tab" onclick="onTabChg('weekly',this)">📆 Setmanal</button><button class="tab" onclick="onTabChg('monthly',this)">🗓️ Mensual</button><button class="tab" onclick="onTabChg('daily',this)">📅 Avui</button></div>
   <div class="ztabs" id="ztabs" style="display:none"></div>
   <div class="card" style="padding:0 16px 4px"><div id="rank-list"></div></div>
   <div class="w-full"><button class="btn btn-ghost mt" onclick="onBackRank()">↩️ Enrere</button></div>
@@ -1113,6 +1134,7 @@ async function endGame(){
   trackStreakUpdate(getStreak());
   if(G.mode==='daily')localStorage.setItem(`cn:daily:${G.lang}:${new Date().toISOString().slice(0,10)}`,'1');
   const _prevScore=getTotalScore();addTotalScore(G.score);checkRankUp(_prevScore);await saveScore();
+  loadGameOverRanking();
   if(G.mode==='challenge'){if(currentChallenge?.isCreator)await saveChallengeCreator();else await saveChallengeRival();return}
   const t=T[G.lang],ok=G.results.filter(r=>r==='ok').length,gameNum=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),streak=getStreak();
   document.getElementById('go-emoji').textContent=ok>=9?'🏆':ok>=6?'🎵':'😅';document.getElementById('go-title').textContent=ok===10?t.perfect:ok>=7?t.vgood:t.ggame;document.getElementById('go-sub').textContent=`${ok}/10 ${t.guessed}`;document.getElementById('go-pts').textContent=G.score.toLocaleString();document.getElementById('go-lvltxt').textContent=ok===10?t.allLvl:`${t.upToLvl} ${G.lvl}/10`;
@@ -1121,7 +1143,7 @@ async function endGame(){
 }
 function onShare(){
   telTrackEvent('share',{score:G.score,mode:G.mode,lang:G.lang});
-  const t=T[G.lang];
+  const today=new Date().toISOString().slice(0,10);
   const gn=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24));
   const palette=getEquippedItem('wordle');
   let okE='🟩',skipE='🟨',failE='🟥';
@@ -1130,32 +1152,146 @@ function onShare(){
   const dots=G.results.map(r=>r==='ok'?okE:r==='skip'?skipE:failE).join('');
   const streak=getStreak();
   const sf='🔥'.repeat(Math.min(streak,5));
-  const txt=`CançoNet #${gn}\n${dots}\n🏆 ${G.score.toLocaleString()} pts${sf?`\n${sf}`:''}\n📍 ${G.zone}\nhttps://kinblay.github.io/CancoNet/`;
+
+  // Posicions guardades
+  const dailyPos=parseInt(localStorage.getItem(`cn:rpos:d:${G.lang}:${today}`)||'0');
+
+  let posLine='';
+  if(dailyPos>0)posLine+=`\n\uD83D\uDCC5 #${dailyPos} avui`;
+
+  const txt=
+    `\uD83C\uDFB5 CançoNet #${gn}\n`+
+    `${dots}\n`+
+    `\uD83C\uDFC6 ${G.score.toLocaleString()} pts`+
+    (sf?`\n${sf}`:'')+
+    posLine+
+    `\n\uD83D\uDCCD ${G.zone}`+
+    `\nhttps://kinblay.github.io/CancoNet/`;
+
   if(navigator.share)navigator.share({text:txt}).catch(()=>{});
   else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'));
 }
 
 async function saveScore(){if(!canScore())return;const sv=V.score(G.score);if(!sv.ok)return;const row={nick:G.nick.substring(0,20),zona:G.zone,score:sv.val,mode:G.mode,lang:G.lang,gender:G.gender||null,age_range:G.age||null,data:new Date().toISOString().slice(0,10)};await sbI('scores',row)}
 
+async function loadGameOverRanking(){
+  const previewEl=document.getElementById('go-rank-preview');
+  if(!previewEl||!G.nick)return;
+
+  const today=new Date().toISOString().slice(0,10);
+  const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+
+  try{
+    // ── Posició diària ──────────────────────────────────
+    const dailyRows=await sbS('rank_daily',`lang=eq.${G.lang}&data=eq.${today}`,'score.desc',100);
+    if(dailyRows&&dailyRows.length){
+      const myDailyPos=dailyRows.findIndex(r=>r.nick===G.nick)+1;
+      if(myDailyPos>0){
+        document.getElementById('go-pos-daily').style.display='block';
+        document.getElementById('go-pos-daily-num').textContent=`#${myDailyPos}`;
+
+        // Moviment respecte ahir
+        const prevKeyD=`cn:rpos:d:${G.lang}:${yesterday}`;
+        const prevPosD=parseInt(localStorage.getItem(prevKeyD)||'0');
+        const moveEl=document.getElementById('go-pos-daily-move');
+        if(prevPosD>0){
+          const diff=prevPosD-myDailyPos;
+          if(diff>0)moveEl.innerHTML=`<span style="color:#22c55e">▲ +${diff} posicions</span>`;
+          else if(diff<0)moveEl.innerHTML=`<span style="color:#ef4444">▼ ${diff} posicions</span>`;
+          else moveEl.innerHTML=`<span style="color:var(--muted)">= Mateixa posició</span>`;
+        }
+        // Guardar posició d'avui
+        localStorage.setItem(`cn:rpos:d:${G.lang}:${today}`,String(myDailyPos));
+
+        // Veïns (1 per sobre + 1 per sota)
+        const above=myDailyPos>1?dailyRows[myDailyPos-2]:null;
+        const below=dailyRows[myDailyPos]||null;
+        let neigh='';
+        if(above)neigh+=`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:var(--muted)"><span style="color:var(--gold);margin-right:4px">#${myDailyPos-1}</span>${esc(above.nick)}</span><span style="color:var(--muted)">${(above.score||0).toLocaleString()} pts</span></div>`;
+        neigh+=`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(212,160,23,.06);border-radius:4px;padding:5px 6px"><span><span style="color:var(--gold);margin-right:4px">#${myDailyPos}</span><strong>${esc(G.nick)}</strong> 👤</span><span style="color:var(--gold);font-weight:700">${G.score.toLocaleString()} pts</span></div>`;
+        if(below)neigh+=`<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--muted)"><span style="color:var(--muted);margin-right:4px">#${myDailyPos+1}</span>${esc(below.nick)}</span><span style="color:var(--muted)">${(below.score||0).toLocaleString()} pts</span></div>`;
+        document.getElementById('go-pos-neighbours').innerHTML=neigh;
+      }
+    }
+
+    // ── Posició global ──────────────────────────────────
+    const globalRows=await sbS('rank_global',`lang=eq.${G.lang}`,'score.desc',200);
+    if(globalRows&&globalRows.length){
+      const myGlobalPos=globalRows.findIndex(r=>r.nick===G.nick)+1;
+      if(myGlobalPos>0){
+        document.getElementById('go-pos-global').style.display='block';
+        document.getElementById('go-pos-global-num').textContent=`#${myGlobalPos}`;
+        const me=globalRows[myGlobalPos-1];
+        document.getElementById('go-pos-global-pts').textContent=
+          `${(me.score||0).toLocaleString()} pts · ${me.partides||0} partides`;
+      }
+    }
+
+    previewEl.style.display='block';
+  }catch(e){console.log('[Ranking preview]',e)}
+}
+
 function saveRankPositions(rows,tab,zone,lang){localStorage.setItem(`cn:rank:${lang}:${tab}:${zone||'all'}`,JSON.stringify({positions:Object.fromEntries(rows.map((r,i)=>[r.nick,i+1])),ts:Date.now()}))}
 function loadPrevPositions(tab,zone,lang){try{const raw=localStorage.getItem(`cn:rank:${lang}:${tab}:${zone||'all'}`);if(!raw)return null;const d=JSON.parse(raw);if(Date.now()-d.ts>24*60*60*1000)return null;return d.positions}catch(e){return null}}
 function posChangeHtml(nick,pos,prev,isMe){if(!prev||!(nick in prev))return isMe?'<span class="pos-new">NOU</span>':'';const d=prev[nick]-pos;if(d>0)return`<span class="pos-up">▲+${d}</span>`;if(d<0)return`<span class="pos-down">▼${d}</span>`;return''}
 
-async function loadRankings(){const el=document.getElementById('rank-list');el.innerHTML='<div class="center muted" style="padding:20px">Carregant...</div>';const zones=T[G.lang]?.zones||T.ca.zones;if(!rZone)rZone=zones[0];document.getElementById('ztabs').innerHTML=zones.map(z=>`<button class="ztab${z===rZone?' on':''}" onclick="onZoneChg('${esc(z)}',this)">${esc(z)}</button>`).join('');const today=new Date().toISOString().slice(0,10);
+async function loadRankings(){
+  const el=document.getElementById('rank-list');
+  el.innerHTML='<div class="center muted" style="padding:20px">Carregant...</div>';
+  const zones=T[G.lang]?.zones||T.ca.zones;
+  if(!rZone)rZone=zones[0];
+  document.getElementById('ztabs').innerHTML=zones.map(z=>`<button class="ztab${z===rZone?' on':''}" onclick="onZoneChg('${esc(z)}',this)">${esc(z)}</button>`).join('');
+  const today=new Date().toISOString().slice(0,10);
 
-  // Triar vista: diari vs global
-  const isDaily = rTab==='daily';
-  const table = isDaily ? 'rank_daily' : 'rank_global';
+  // Triar la vista de Supabase segons la pestanya activa
+  let table='rank_global';
+  if(rTab==='daily')   table='rank_daily';
+  else if(rTab==='weekly')  table='rank_weekly';
+  else if(rTab==='monthly') table='rank_monthly';
+  else if(rTab==='rang')    table='rank_by_rang';
+
   let f=`lang=eq.${G.lang||'ca'}`;
   if(rTab==='zone') f+=`&zona=eq.${encodeURIComponent(rZone)}`;
-  if(isDaily) f+=`&data=eq.${today}`;
+  if(rTab==='daily') f+=`&data=eq.${today}`;
+
+  // Per la pestanya "rang" filtrem només jugadors del MEU rang
+  let myRangIdx=null;
+  if(rTab==='rang'){
+    myRangIdx=getCurrentRankIdx()+1; // +1 perquè la SQL retorna 1-10, getCurrentRankIdx 0-9
+    f+=`&rang_idx=eq.${myRangIdx}`;
+  }
 
   const rows=await sbS(table,f,'score.desc',20);
   const t=T[G.lang]||T.ca;
   if(!rows||!rows.length){el.innerHTML=`<div class="center muted" style="padding:24px">${esc(t.noScores)}</div>`;return}
   const prev=loadPrevPositions(rTab,rZone,G.lang);saveRankPositions(rows,rTab,rZone,G.lang);
   const med=['🥇','🥈','🥉'];
-  el.innerHTML=rows.map((e,i)=>{const isMe=G.nick&&e.nick===G.nick;return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}${posChangeHtml(e.nick,i+1,prev,isMe)}</div><div class="rzone">📍 ${esc(e.zona)} · ${isDaily?e.data:e.partides+' partides'}</div></div><div class="rscore">${(e.score||0).toLocaleString()}</div></div>`}).join('')
+
+  // Subtítol: depèn de la pestanya
+  const subFor=(e)=>{
+    if(rTab==='daily')   return `📍 ${esc(e.zona)} · ${e.data}`;
+    if(rTab==='weekly')  return `📍 ${esc(e.zona)} · ${e.partides} partides aquesta setmana`;
+    if(rTab==='monthly') return `📍 ${esc(e.zona)} · ${e.partides} partides aquest mes`;
+    if(rTab==='rang'){
+      const ranks=RANKS[G.lang]||RANKS.ca;
+      const r=ranks[(e.rang_idx||1)-1];
+      return `${r?r.short:''} · ${e.partides} partides`;
+    }
+    return `📍 ${esc(e.zona)} · ${e.partides} partides`;
+  };
+
+  // Capçalera per la pestanya "rang"
+  let header='';
+  if(rTab==='rang'){
+    const ranks=RANKS[G.lang]||RANKS.ca;
+    const r=ranks[myRangIdx-1];
+    header=`<div style="background:rgba(212,160,23,.08);border:1px solid rgba(212,160,23,.25);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:.82rem;color:var(--gold);text-align:center">🏅 La teva lliga: <strong>${r?r.name:'—'}</strong></div>`;
+  }
+
+  el.innerHTML=header+rows.map((e,i)=>{
+    const isMe=G.nick&&e.nick===G.nick;
+    return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}${posChangeHtml(e.nick,i+1,prev,isMe)}</div><div class="rzone">${subFor(e)}</div></div><div class="rscore">${(e.score||0).toLocaleString()}</div></div>`;
+  }).join('');
 }
 function onTabChg(tab,btn){rTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');document.getElementById('ztabs').style.display=tab==='zone'?'flex':'none';loadRankings()}
 function onZoneChg(zone,btn){rZone=zone;document.querySelectorAll('.ztab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');loadRankings()}
@@ -2272,32 +2408,85 @@ let salaPollingTimer = null;
 function genSalaCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ';let c='';for(let i=0;i<6;i++)c+=chars[Math.floor(Math.random()*chars.length)];return c}
 
 async function onCreateSala(){
-  const code = genSalaCode();
+  if(!G.nick){toast('⚠️ Has d\'estar registrat');return}
+  let code = genSalaCode();
   const name = `Sala de ${G.nick}`;
   const row = {code, name, creator_nick: G.nick, lang: G.lang, created_at: new Date().toISOString()};
-  const ok = await sbI('salas', row);
-  if(!ok) return toast('❌ Error creant la sala');
-  await sbI('sala_members', {sala_code: code, nick: G.nick, joined_at: new Date().toISOString()});
+
+  // Inserir amb return=representation per veure l'error si falla
+  let attempts=0,created=null;
+  while(attempts<3){
+    try{
+      const r = await fetch(`${SB_URL}/rest/v1/salas`,{
+        method:'POST',
+        headers:{...SBH,'Prefer':'return=representation'},
+        body:JSON.stringify(row)
+      });
+      if(r.ok){
+        const data=await r.json();
+        created=Array.isArray(data)?data[0]:data;
+        break;
+      } else {
+        const err=await r.json().catch(()=>({}));
+        // Si codi duplicat, regenerar i tornar a provar
+        if(err.code==='23505'||r.status===409){
+          code=genSalaCode();row.code=code;attempts++;continue;
+        }
+        console.error('[Sala] Error creant:',err);
+        toast('❌ Error: '+(err.message||err.msg||'no s\'ha pogut crear'));
+        return;
+      }
+    }catch(e){
+      console.error('[Sala] Excepció:',e);
+      toast('❌ Error de connexió');
+      return;
+    }
+  }
+  if(!created){toast('❌ No s\'ha pogut crear la sala');return}
+
+  // Inserir el creador com a membre
+  try{
+    await sbI('sala_members',{sala_code:code,nick:G.nick,joined_at:new Date().toISOString()});
+  }catch(e){console.error('[Sala] Error membre:',e)}
+
+  // Verificar que realment és a la BD (per protegir contra fallades silencioses)
+  const verify=await sbS('salas',`code=eq.${code}`,'',1);
+  if(!verify||!verify.length){
+    toast('❌ La sala no s\'ha guardat. Contacta amb suport.');
+    return;
+  }
+
   const salas = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
   salas.unshift(code);
   localStorage.setItem('cn:my_salas', JSON.stringify(salas.slice(0,5)));
-  G_SALA = {code, name, creator_nick: G.nick, lang: G.lang};
+  G_SALA = created;
   trackSalaCreated();
-  toast('✅ Sala creada!');
+  toast(`✅ Sala creada amb codi: ${code}`,3500);
   go('s-sala');
   await renderSalaRoom();
 }
 
 async function onJoinSala(){
-  const code = document.getElementById('sala-join-code').value.trim().toUpperCase();
-  if(code.length !== 6) return toast('⚠️ El codi té 6 lletres');
+  if(!G.nick){toast('⚠️ Has d\'estar registrat');return}
+  const codeRaw = document.getElementById('sala-join-code').value;
+  // Netejar caràcters invisibles, espais, accents
+  const code = codeRaw.replace(/[^a-zA-Z0-9]/g,'').trim().toUpperCase();
+  if(code.length !== 6){toast('⚠️ El codi té 6 lletres');return}
+
   const res = await sbS('salas', `code=eq.${code}`, '', 1);
-  if(!res || !res.length) return toast('❌ Sala no trobada');
+  if(!res || !res.length){
+    toast('❌ Sala "'+code+'" no trobada. Comprova el codi.',3500);
+    return;
+  }
   const sala = res[0];
+
+  // Comprovar si ja és membre
   const existing = await sbS('sala_members', `sala_code=eq.${code}&nick=eq.${encodeURIComponent(G.nick)}`, '', 1);
   if(!existing || !existing.length){
-    await sbI('sala_members', {sala_code: code, nick: G.nick, joined_at: new Date().toISOString()});
+    const ok=await sbI('sala_members', {sala_code: code, nick: G.nick, joined_at: new Date().toISOString()});
+    if(!ok){toast('⚠️ No s\'ha pogut afegir-te a la sala');return}
   }
+
   const salas = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
   if(!salas.includes(code)) salas.unshift(code);
   localStorage.setItem('cn:my_salas', JSON.stringify(salas.slice(0,5)));
