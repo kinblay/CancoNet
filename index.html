@@ -224,17 +224,21 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <button class="btn btn-ghost" id="m-btn-rank" onclick="go('s-rankings')"></button>
     <button class="btn btn-ghost" id="m-btn-suggest" onclick="go('s-bustia')"></button>
     <button class="btn btn-ghost" id="m-btn-info" onclick="go('s-info')"></button>
-    <button class="btn btn-ghost" onclick="signOut()" style="font-size:.78rem;padding:10px;opacity:.6">🚪 Tancar sessió</button>
+
+    <div class="sep"></div>
+    <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Joc i social</div>
+    <button class="btn btn-ghost" onclick="go('s-challenge-create');loadChallengeStats()" style="border:1.5px solid rgba(193,18,31,.3);background:rgba(193,18,31,.07)">⚔️ Repte a un amic</button>
+    <button class="btn btn-ghost" onclick="go('s-sala-menu');renderSalaMenu()" style="border:1.5px solid rgba(212,160,23,.3);background:rgba(212,160,23,.07)">👨‍👩‍👧 Mode Família</button>
+    <button class="btn btn-ghost" onclick="go('s-missions');renderMissions()" style="border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.07)">🏅 Missions i recompenses</button>
+
     <div class="sep"></div>
     <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Pròximament</div>
-    <button class="btn btn-ghost" onclick="go('s-challenge-create');loadChallengeStats()">⚔️ Repte a un amic</button>
     <button class="btn btn-ghost" onclick="showWip('emsona')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative">🎭 Em Sona — Plagi o Coincidència? <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
     <button class="btn btn-ghost" onclick="showWip('relax')" style="opacity:.9;border:1.5px solid rgba(134,239,172,.35);background:rgba(134,239,172,.07);position:relative">🎹 Mode Relax <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#000;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
-    <button class="btn btn-ghost" onclick="go('s-sala-menu');renderSalaMenu()" style="border:1.5px solid rgba(212,160,23,.3);background:rgba(212,160,23,.07)">👨‍👩‍👧 Mode Família</button>
     <button class="btn btn-ghost" onclick="showWip('provinces')" style="opacity:.7">🏴 Repte per zones</button>
-    <button class="btn btn-ghost" onclick="go('s-missions');renderMissions()" style="border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.07)">🏅 Missions i recompenses</button>
     <button class="btn btn-ghost" onclick="showWip('realia')" style="opacity:.7">🤖 Real o IA?</button>
     <button class="btn btn-ghost" onclick="go('s-modes')" style="font-size:.78rem;padding:10px">← Canviar idioma</button>
+    <button class="btn btn-ghost" onclick="signOut()" style="font-size:.78rem;padding:10px;opacity:.6">🚪 Tancar sessió</button>
     <div style="margin-top:18px;padding:12px 0;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap">
       <a href="https://instagram.com/canconet" target="_blank" rel="noopener" style="color:var(--muted);font-size:.78rem;text-decoration:none;display:flex;align-items:center;gap:4px">📷 Instagram</a>
       <span style="color:rgba(255,255,255,.15)">·</span>
@@ -402,7 +406,12 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div class="sep"></div><div id="ch-res-rounds" style="font-size:.82rem"></div>
   </div>
   <div class="share-card"><div class="share-title">⚔️ Repte CançoNet</div><div id="ch-res-share-dots" style="font-size:1rem;letter-spacing:2px;margin:6px 0"></div><div style="font-size:.75rem;color:var(--muted);margin-top:4px" id="ch-res-share-txt"></div></div>
-  <div class="w-full"><button class="btn btn-gold" onclick="onChallengeShareResult()">📤 Compartir</button><button class="btn btn-red" onclick="go('s-challenge-create')">⚔️ Nou repte</button><button class="btn btn-ghost" onclick="go('s-menu')">↩️ Menú</button></div>
+  <div class="w-full">
+    <button class="btn btn-gold" id="ch-res-reply-btn" onclick="onChallengeReplyToRival()" style="display:none">💬 Respondre per WhatsApp</button>
+    <button class="btn btn-gold" onclick="onChallengeShareResult()" style="background:rgba(212,160,23,.18);color:var(--gold)">📤 Compartir resultat</button>
+    <button class="btn btn-red" onclick="go('s-challenge-create')">⚔️ Nou repte</button>
+    <button class="btn btn-ghost" onclick="go('s-menu')">↩️ Menú</button>
+  </div>
 </div>
 
 <script>
@@ -424,9 +433,26 @@ async function sendOtp(email){
       headers:{'Content-Type':'application/json','apikey':SB_KEY},
       body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true})
     });
-    if(!r.ok){const err=await r.json().catch(()=>({}));return{ok:false,msg:err.msg||err.message||`Error ${r.status}`}}
+    if(!r.ok){
+      const err=await r.json().catch(()=>({}));
+      const errCode=err.error_code||err.code||'';
+      const errMsg=String(err.msg||err.message||'').toLowerCase();
+      // Rate limit (429) o errors específics de massa peticions
+      if(r.status===429||errCode==='over_email_send_rate_limit'||errMsg.includes('rate limit')||errMsg.includes('too many')){
+        return{ok:false,msg:'⏳ Massa peticions ara mateix. Espera uns minuts i torna-ho a provar.',isRateLimit:true};
+      }
+      // Email invàlid
+      if(errMsg.includes('invalid')||errMsg.includes('valid email')){
+        return{ok:false,msg:'📧 Email invàlid. Comprova-ho.'};
+      }
+      // Servei caigut o error servidor
+      if(r.status>=500){
+        return{ok:false,msg:'🔧 El servei té problemes. Torna-ho a provar més tard.'};
+      }
+      return{ok:false,msg:err.msg||err.message||`Error ${r.status}. Torna-ho a provar més tard.`};
+    }
     return{ok:true}
-  }catch(e){return{ok:false,msg:'Error de connexió'}}
+  }catch(e){return{ok:false,msg:'❌ Sense connexió. Comprova internet i torna-ho a provar.'}}
 }
 async function verifyOtp(email,token){
   try{
@@ -573,7 +599,11 @@ async function onSendOtp(){
     document.getElementById('login-card-sent').style.display='block';
     document.getElementById('login-sent-desc').textContent=`Hem enviat un codi de 8 dígits a ${email}. Caduca en 10 minuts.`;
     setTimeout(()=>document.getElementById('login-otp-input')?.focus(),300);
-  }else toast('⚠️ '+(res.msg||'Error'));
+  }else{
+    // Errors importants (rate limit, etc.) duren més perquè l'usuari els pugui llegir
+    const dur=res.isRateLimit?6000:4000;
+    toast(res.msg||'Error',dur);
+  }
 }
 async function onVerifyOtp(){
   const otp=document.getElementById('login-otp-input').value.trim();
@@ -1587,8 +1617,75 @@ function onChallengeAccept(){
 }
 async function saveChallengeRival(){if(!currentChallenge||currentChallenge.isCreator||!currentChallenge.challengeId)return;try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${currentChallenge.challengeId}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=representation'},body:JSON.stringify({rival_nick:G.nick,rival_zone:G.zone,rival_score:G.score,rival_results:JSON.stringify(G.results),status:'completed',completed_at:new Date().toISOString()})});if(!r.ok)return;const data=await r.json();const ch=Array.isArray(data)?data[0]:data;await updateChallengeStats(ch);showChallengeResult(ch)}catch(e){}}
 async function updateChallengeStats(ch){const winner=ch.creator_score>ch.rival_score?ch.creator_nick:ch.rival_score>ch.creator_score?ch.rival_nick:null;for(const nick of[ch.creator_nick,ch.rival_nick]){const isWin=nick===winner,isDraw=winner===null;const ex=await sbS('challenge_stats',`nick=eq.${encodeURIComponent(nick)}&lang=eq.${ch.lang||'ca'}`,'updated_at.desc',1);if(ex&&ex.length>0){const s=ex[0],ns=isWin?s.streak+1:0;await fetch(`${SB_URL}/rest/v1/challenge_stats?nick=eq.${encodeURIComponent(nick)}&lang=eq.${ch.lang||'ca'}`,{method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify({wins:s.wins+(isWin?1:0),losses:s.losses+(!isWin&&!isDraw?1:0),draws:s.draws+(isDraw?1:0),streak:ns,best_streak:Math.max(s.best_streak,ns),total_challenges:s.total_challenges+1,updated_at:new Date().toISOString()})})}else await sbI('challenge_stats',{nick,lang:ch.lang||'ca',wins:isWin?1:0,losses:!isWin&&!isDraw?1:0,draws:isDraw?1:0,streak:isWin?1:0,best_streak:isWin?1:0,total_challenges:1})}}
-function showChallengeResult(ch){const isC=G.nick===ch.creator_nick;const my=isC?ch.creator_score:ch.rival_score;const their=isC?ch.rival_score:ch.creator_score;const theirN=isC?ch.rival_nick:ch.creator_nick;const won=my>their,draw=my===their;document.getElementById('ch-result-emoji').textContent=won?'🏆':draw?'🤝':'😤';document.getElementById('ch-result-title').textContent=won?'Has guanyat!':draw?'Empat!':'Has perdut!';document.getElementById('ch-result-sub').textContent=won?`Superat ${esc(theirN)} per ${my-their} pts!`:draw?'Mateixa puntuació!':`${esc(theirN)} t'ha superat per ${their-my} pts`;document.getElementById('ch-res-p1-name').textContent=ch.creator_nick;document.getElementById('ch-res-p1-score').textContent=(ch.creator_score||0).toLocaleString();document.getElementById('ch-res-p2-name').textContent=ch.rival_nick||'???';document.getElementById('ch-res-p2-score').textContent=(ch.rival_score||0).toLocaleString();let cr,rr;try{cr=JSON.parse(ch.creator_results||'[]')}catch(e){cr=[]}try{rr=JSON.parse(ch.rival_results||'[]')}catch(e){rr=[]}document.getElementById('ch-res-rounds').innerHTML=cr.map((c,i)=>{const r=rr[i]||'-';return`<div class="res-row"><span>${i+1}. ${esc(ch.creator_nick)}: ${c==='ok'?'✅':'❌'}</span><span>${esc(ch.rival_nick||'???')}: ${r==='ok'?'✅':r==='-'?'⬜':'❌'}</span></div>`}).join('');document.getElementById('ch-res-share-dots').innerHTML=`${esc(ch.creator_nick)}: ${cr.map(r=>r==='ok'?'🟩':'🟥').join('')}<br>${esc(ch.rival_nick||'???')}: ${rr.map(r=>r==='ok'?'🟩':r==='-'?'⬜':'🟥').join('')}`;document.getElementById('ch-res-share-txt').textContent=`${ch.creator_score} vs ${ch.rival_score||'?'} pts`;go('s-challenge-result')}
+function showChallengeResult(ch){
+  const isC=G.nick===ch.creator_nick;
+  const my=isC?ch.creator_score:ch.rival_score;
+  const their=isC?ch.rival_score:ch.creator_score;
+  const theirN=isC?ch.rival_nick:ch.creator_nick;
+  const won=my>their,draw=my===their;
+  document.getElementById('ch-result-emoji').textContent=won?'🏆':draw?'🤝':'😤';
+  document.getElementById('ch-result-title').textContent=won?'Has guanyat!':draw?'Empat!':'Has perdut!';
+  document.getElementById('ch-result-sub').textContent=won?(`Superat `+esc(theirN)+` per `+(my-their)+` pts!`):draw?'Mateixa puntuació!':(esc(theirN)+` t'ha superat per `+(their-my)+` pts`);
+  document.getElementById('ch-res-p1-name').textContent=ch.creator_nick;
+  document.getElementById('ch-res-p1-score').textContent=(ch.creator_score||0).toLocaleString();
+  document.getElementById('ch-res-p2-name').textContent=ch.rival_nick||'???';
+  document.getElementById('ch-res-p2-score').textContent=(ch.rival_score||0).toLocaleString();
+  let cr,rr;
+  try{cr=JSON.parse(ch.creator_results||'[]')}catch(e){cr=[]}
+  try{rr=JSON.parse(ch.rival_results||'[]')}catch(e){rr=[]}
+  document.getElementById('ch-res-rounds').innerHTML=cr.map((c,i)=>{const r=rr[i]||'-';return'<div class="res-row"><span>'+(i+1)+'. '+esc(ch.creator_nick)+': '+(c==='ok'?'✅':'❌')+'</span><span>'+esc(ch.rival_nick||'???')+': '+(r==='ok'?'✅':r==='-'?'⬜':'❌')+'</span></div>'}).join('');
+  document.getElementById('ch-res-share-dots').innerHTML=esc(ch.creator_nick)+': '+cr.map(r=>r==='ok'?'🟩':'🟥').join('')+'<br>'+esc(ch.rival_nick||'???')+': '+rr.map(r=>r==='ok'?'🟩':r==='-'?'⬜':'🟥').join('');
+  document.getElementById('ch-res-share-txt').textContent=ch.creator_score+' vs '+(ch.rival_score||'?')+' pts';
+  const replyBtn=document.getElementById('ch-res-reply-btn');
+  if(replyBtn){
+    if(!isC&&ch.creator_nick&&ch.rival_score){window._lastChResult={ch,won,draw,my,their,theirN};replyBtn.style.display='';}
+    else replyBtn.style.display='none';
+  }
+  go('s-challenge-result');
+}
 function onChallengeShareResult(){const p1=document.getElementById('ch-res-p1-name')?.textContent||'';const s1=document.getElementById('ch-res-p1-score')?.textContent||'0';const p2=document.getElementById('ch-res-p2-name')?.textContent||'';const s2=document.getElementById('ch-res-p2-score')?.textContent||'0';const txt=`⚔️ Repte CançoNet!\n${p1}: ${s1} pts\n${p2}: ${s2} pts\n🎵 https://kinblay.github.io/CancoNet/`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
+
+function onChallengeReplyToRival(){
+  const r=window._lastChResult;if(!r)return;
+  const won=r.won,draw=r.draw,my=r.my,their=r.their,theirN=r.theirN;
+  let suggestions=[];
+  if(won){
+    suggestions=[
+      "T'he superat per "+(my-their)+" punts! 😎",
+      "Massa pop català per a tu! 🎵",
+      "Toca repte de tornada? 🔥",
+      "Et tocarà escoltar més Sopa de Cabra... 🎸"
+    ];
+  } else if(draw){
+    suggestions=["Empat! Quina barbaritat 🤝","Necessitem desempat... 🎵","La música no enganya, anem cap empat ⚖️","Una altra ronda?"];
+  } else {
+    suggestions=[
+      "Per "+(their-my)+" pts! Però la pròxima... 😤",
+      "Has tingut sort, eh 🎵",
+      "Repte de tornada? Que hi vinc fort 🔥",
+      "Mereixes la corona... avui 👑"
+    ];
+  }
+  const opts=suggestions.map(function(s,i){return (i+1)+". "+s}).join("\n");
+  let msg=prompt("Quin missatge vols enviar a "+theirN+"?\n\nTria un número o escriu el teu missatge:\n\n"+opts+"\n\n(Deixa-ho buit per cancel·lar)","1");
+  if(!msg||!msg.trim())return;
+  const numMatch=msg.trim().match(/^([1-9])$/);
+  if(numMatch){
+    const idx=parseInt(numMatch[1])-1;
+    if(idx>=0&&idx<suggestions.length)msg=suggestions[idx];
+  }
+  const resultIcon=won?"🏆":draw?"🤝":"😤";
+  const resultText=won?("He guanyat per "+(my-their)+" pts!"):draw?"Empat!":("Has guanyat per "+(their-my)+" pts.");
+  const text=
+    resultIcon+" CançoNet — Repte acabat\n"+
+    resultText+"\n"+
+    r.ch.creator_nick+": "+(r.ch.creator_score||0).toLocaleString()+" pts\n"+
+    r.ch.rival_nick+": "+(r.ch.rival_score||0).toLocaleString()+" pts\n\n"+
+    msg.trim()+"\n\n"+
+    "🎵 https://kinblay.github.io/CancoNet/";
+  window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");
+}
+
 async function loadChallengeStats(){const el=document.getElementById('ch-my-stats');if(G.nick){const stats=await sbS('challenge_stats',`nick=eq.${encodeURIComponent(G.nick)}&lang=eq.${G.lang||'ca'}`,'updated_at.desc',1);if(stats&&stats.length){const s=stats[0];el.innerHTML=`<div style="display:flex;gap:12px;justify-content:center;margin:8px 0"><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--ok)">${s.wins}</div><div style="font-size:.65rem;color:var(--muted)">VICTÒRIES</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--err)">${s.losses}</div><div style="font-size:.65rem;color:var(--muted)">DERROTES</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:var(--gold)">${s.streak}🔥</div><div style="font-size:.65rem;color:var(--muted)">RATXA</div></div><div style="text-align:center"><div style="font-size:1.3rem;font-weight:900;color:#a78bfa">${s.best_streak}</div><div style="font-size:.65rem;color:var(--muted)">MILLOR</div></div></div>`}else el.innerHTML='<div style="font-size:.82rem;color:var(--muted)">Encara no has fet cap repte!</div>'}const lb=document.getElementById('ch-leaderboard');const top=await sbS('challenge_stats',`lang=eq.${G.lang||'ca'}`,'wins.desc',10);if(!top||!top.length){lb.innerHTML='Cap reptador encara.';return}const med=['🥇','🥈','🥉'];lb.innerHTML=top.map((e,i)=>{const isMe=G.nick&&e.nick===G.nick;return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}</div><div class="rzone">${e.wins}W ${e.losses}L · 🔥${e.best_streak}</div></div><div class="rscore">${e.total_challenges}</div></div>`}).join('')}
 
 let tTimer;
