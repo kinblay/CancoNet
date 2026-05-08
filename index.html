@@ -1196,7 +1196,7 @@ function onShare(){
     (sf?`\n${sf}`:'')+
     posLine+
     `\n\uD83D\uDCCD ${G.zone}`+
-    `\nhttps://kinblay.github.io/CancoNet/`;
+    `\nhttps://canconet.net`;
 
   if(navigator.share)navigator.share({text:txt}).catch(()=>{});
   else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'));
@@ -1643,7 +1643,7 @@ function showChallengeResult(ch){
   }
   go('s-challenge-result');
 }
-function onChallengeShareResult(){const p1=document.getElementById('ch-res-p1-name')?.textContent||'';const s1=document.getElementById('ch-res-p1-score')?.textContent||'0';const p2=document.getElementById('ch-res-p2-name')?.textContent||'';const s2=document.getElementById('ch-res-p2-score')?.textContent||'0';const txt=`⚔️ Repte CançoNet!\n${p1}: ${s1} pts\n${p2}: ${s2} pts\n🎵 https://kinblay.github.io/CancoNet/`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
+function onChallengeShareResult(){const p1=document.getElementById('ch-res-p1-name')?.textContent||'';const s1=document.getElementById('ch-res-p1-score')?.textContent||'0';const p2=document.getElementById('ch-res-p2-name')?.textContent||'';const s2=document.getElementById('ch-res-p2-score')?.textContent||'0';const txt=`⚔️ Repte CançoNet!\n${p1}: ${s1} pts\n${p2}: ${s2} pts\n🎵 https://canconet.net`;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard?.writeText(txt).then(()=>toast('📋 Copiat!'))}
 
 function onChallengeReplyToRival(){
   const r=window._lastChResult;if(!r)return;
@@ -1682,7 +1682,7 @@ function onChallengeReplyToRival(){
     r.ch.creator_nick+": "+(r.ch.creator_score||0).toLocaleString()+" pts\n"+
     r.ch.rival_nick+": "+(r.ch.rival_score||0).toLocaleString()+" pts\n\n"+
     msg.trim()+"\n\n"+
-    "🎵 https://kinblay.github.io/CancoNet/";
+    "🎵 https://canconet.net";
   window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");
 }
 
