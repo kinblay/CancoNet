@@ -220,7 +220,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div id="m-daily-style" style="font-size:.72rem;font-weight:600;color:var(--gold);text-align:center;margin-bottom:4px;letter-spacing:.3px"></div>
     <button class="btn btn-gold" id="m-btn-daily" onclick="onDaily()"></button>
     <button class="btn btn-red" id="m-btn-free" onclick="onFree()"></button>
-    <button class="btn btn-purple" id="m-btn-autor" onclick="onAutor()"></button>
+    <button class="btn btn-purple" id="m-btn-autor" onclick="showWip('autor')" style="opacity:.75;position:relative">🎸 Cançó d'Autor <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
     <button class="btn btn-ghost" id="m-btn-rank" onclick="go('s-rankings')"></button>
     <button class="btn btn-ghost" id="m-btn-suggest" onclick="go('s-bustia')"></button>
     <button class="btn btn-ghost" id="m-btn-info" onclick="go('s-info')"></button>
@@ -618,8 +618,9 @@ async function onVerifyOtp(){
     if(!hasValidConsent()){go('s-consent');return;}
     const p=await loadUserProfile({email});
     if(p&&p.nick&&p.zona){
-      G.lang=p.lang||'ca';renderMenu();go('s-menu');testSB();
+      G.lang=p.lang||'ca';
       toast(`👋 Benvingut, ${G.nick}!`);
+      await resumePendingChallenge();
     }else{
       G.lang=localStorage.getItem('cn:last-lang')||'ca';
       go('s-welcome');renderWelcome();
@@ -711,7 +712,7 @@ const SONGS_EU=[
 {id:37,dzId:858371,t:"The Final Countdown",a:"Europe",y:1986,g:"Rock",ai:"E",dec:"anys 80",ytId:"9jK-NcRmVcw",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:38,dzId:664107,t:"Take On Me",a:"a-ha",y:1985,g:"Pop",ai:"A",dec:"anys 80",ytId:"djV11Xbc914",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:39,dzId:927900,t:"Wind of Change",a:"Scorpions",y:1991,g:"Rock",ai:"S",dec:"anys 90",ytId:"n4RjJKxsamQ",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
-{id:40,dzId:0,t:"99 Luftballons",a:"Nena",y:1983,g:"Pop",ai:"N",dec:"anys 80",ytId:"Fpu5a0Bl8eY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:40,dzId:638952,t:"99 Luftballons",a:"Nena",y:1983,g:"Pop",ai:"N",dec:"anys 80",ytId:"Fpu5a0Bl8eY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:41,dzId:14408104,t:"Never Gonna Give You Up",a:"Rick Astley",y:1987,g:"Pop",ai:"R",dec:"anys 80",ytId:"dQw4w9WgXcQ",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:42,dzId:6177415,t:"Freed from Desire",a:"Gala",y:1997,g:"Dance",ai:"G",dec:"anys 90",ytId:"YxvkvO_hGag",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:43,dzId:1411240392,t:"Dragostea Din Tei",a:"O-Zone",y:2003,g:"Dance",ai:"O",dec:"anys 2000",ytId:"jRx5PrAlUdY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
@@ -1470,7 +1471,12 @@ function onChallengeShareLink(){
   window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 function onChallengeCopyLink(){if(!currentChallenge?.link)return;navigator.clipboard?.writeText(currentChallenge.link).then(()=>toast('📋 Copiat!'))}
-async function checkChallengeUrl(){const p=new URLSearchParams(window.location.search);const chId=p.get('challenge');if(!chId)return false;window.history.replaceState(null,'',window.location.pathname);try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${chId}`,{headers:SBH});if(!r.ok)return false;const data=await r.json();if(!data||!data.length){toast('⚠️ Repte no trobat');return false}const ch=data[0];if(ch.status==='completed'){showChallengeResult(ch);return true}currentChallenge={seed:ch.song_seed,isCreator:false,challengeId:ch.id,data:ch,modifiers:ch.modifiers||[]};G.lang=ch.lang||'ca';document.getElementById('ch-rival-name').textContent=ch.creator_nick;document.getElementById('ch-score-to-beat').textContent=(ch.creator_score||0).toLocaleString();renderChallengeReveal(ch);go('s-challenge-accept');return true}catch(e){return false}}
+async function checkChallengeUrl(forcedId){
+  const p=new URLSearchParams(window.location.search);
+  const chId=forcedId||p.get('challenge');
+  if(!chId)return false;
+  if(!forcedId)window.history.replaceState(null,'',window.location.pathname);
+  try{const r=await fetch(`${SB_URL}/rest/v1/challenges?id=eq.${chId}`,{headers:SBH});if(!r.ok)return false;const data=await r.json();if(!data||!data.length){toast('⚠️ Repte no trobat');return false}const ch=data[0];if(ch.status==='completed'){showChallengeResult(ch);return true}currentChallenge={seed:ch.song_seed,isCreator:false,challengeId:ch.id,data:ch,modifiers:ch.modifiers||[]};G.lang=ch.lang||'ca';document.getElementById('ch-rival-name').textContent=ch.creator_nick;document.getElementById('ch-score-to-beat').textContent=(ch.creator_score||0).toLocaleString();renderChallengeReveal(ch);go('s-challenge-accept');return true}catch(e){return false}}
 
 function renderChallengeReveal(ch){
   const box=document.getElementById('ch-modifiers-box');
@@ -1695,11 +1701,15 @@ function toast(msg,dur){const el=document.getElementById('toast');el.textContent
 // INIT — comprova auth ABANS del splash
 // ═══════════════════════════════════════
 async function appInit(){
-  // 1. Comprova si és un link de repte
-  const isChallenge=await checkChallengeUrl();
-  if(isChallenge)return;
+  // 1. Si hi ha challenge a la URL, guardem l'ID i comprovem sessió primer
+  const _params=new URLSearchParams(window.location.search);
+  const _chId=_params.get('challenge');
+  if(_chId){
+    sessionStorage.setItem('cn:pending_challenge',_chId);
+    window.history.replaceState(null,'',window.location.pathname);
+  }
 
-  // 2. Comprova si ve del magic link (token a la URL)
+  // 2. Magic link (token a la URL)
   const fromML=await handleAuthCallback();
   if(fromML){
     const email=localStorage.getItem('cn:user-email');
@@ -1707,27 +1717,49 @@ async function appInit(){
       const p=await loadUserProfile({email});
       if(p&&p.nick&&p.zone){
         G.lang=p.lang||'ca';
-        renderMenu();go('s-menu');testSB();
-        toast(`👋 Benvingut, ${G.nick}!`);
+        await resumePendingChallenge();
         return;
       }
     }
-    // Té auth però no perfil → welcome
     G.lang=localStorage.getItem('cn:last-lang')||'ca';
     go('s-welcome');renderWelcome();
     return;
   }
 
-  // 3. Comprova sessió existent (usuari que torna)
+  // 3. Sessió existent (usuari que torna)
   const email=localStorage.getItem('cn:user-email');
   if(email){
+    if(!hasValidConsent()){go('s-consent');return;}
     const p=await loadUserProfile({email});
     if(p&&p.nick&&p.zone){
       G.lang=p.lang||'ca';
-      renderMenu();go('s-menu');testSB();
-      toast(`👋 Hola, ${G.nick}!`);
+      await resumePendingChallenge();
       return;
     }
+  }
+
+  // 4. Sense sessió — si hi havia repte pendent, mostra'l igualment (vista prèvia)
+  // però l'usuari haurà de logar-se per jugar
+  if(_chId){
+    const isChallenge=await checkChallengeUrl(_chId);
+    if(isChallenge)return;
+  }
+
+  // 5. Fluix normal → selecció d'idioma
+  go('s-modes');
+}
+
+async function resumePendingChallenge(){
+  const chId=sessionStorage.getItem('cn:pending_challenge');
+  if(chId){
+    sessionStorage.removeItem('cn:pending_challenge');
+    const isChallenge=await checkChallengeUrl(chId);
+    if(isChallenge)return true;
+  }
+  // Sense repte pendent → menú normal
+  renderMenu();go('s-menu');testSB();
+  return false;
+}
   }
 
   // 4. Usuari nou → splash normal
