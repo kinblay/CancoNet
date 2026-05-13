@@ -1738,15 +1738,14 @@ async function appInit(){
     }
   }
 
-  // 4. Sense sessió — si hi havia repte pendent, mostra'l igualment (vista prèvia)
-  // però l'usuari haurà de logar-se per jugar
+  // 4. Sense sessió — si hi havia repte pendent, mostra'l igualment
   if(_chId){
     const isChallenge=await checkChallengeUrl(_chId);
     if(isChallenge)return;
   }
 
-  // 5. Fluix normal → selecció d'idioma
-  go('s-modes');
+  // 5. Usuari nou → splash normal
+  initSplash();
 }
 
 async function resumePendingChallenge(){
@@ -1756,14 +1755,8 @@ async function resumePendingChallenge(){
     const isChallenge=await checkChallengeUrl(chId);
     if(isChallenge)return true;
   }
-  // Sense repte pendent → menú normal
   renderMenu();go('s-menu');testSB();
   return false;
-}
-  }
-
-  // 4. Usuari nou → splash normal
-  initSplash();
 }
 
 window.addEventListener('load',()=>setTimeout(appInit,100));
