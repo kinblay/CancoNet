@@ -1887,7 +1887,7 @@ window.addEventListener('popstate', function(e){
   // Navegació normal enrere
   go(parent);
   if(parent === 's-menu') renderMenu();
-  if(parent === 's-sala-menu') renderSalaMenu();
+  if(parent === 's-sala-menu'){stopChatPolling();renderSalaMenu();}
   pushBackState();
 });
 
@@ -2546,6 +2546,23 @@ function useAidHintDecade(){
     <button class="btn btn-outline" onclick="onDeleteSala()" style="border-color:var(--err);color:var(--err);font-size:.8rem;padding:10px">🗑️ Eliminar sala</button>
   </div>
 
+  <!-- Chat de la sala -->
+  <div class="card" style="width:100%;max-width:460px">
+    <div class="card-ttl" style="display:flex;justify-content:space-between;align-items:center">
+      <span>💬 Xat de la sala</span>
+      <span id="sala-chat-status" style="font-size:.65rem;color:var(--muted)">⟳ cada 15s</span>
+    </div>
+    <div id="sala-chat-msgs" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:10px;min-height:60px">
+      <div style="font-size:.78rem;color:var(--muted);text-align:center;padding:16px 0">Cap missatge encara. Sigues el primer! 👋</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input id="sala-chat-input" placeholder="Escriu un missatge..." maxlength="200"
+        style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:9px 12px;border-radius:10px;font-size:.85rem;outline:none"
+        onkeydown="if(event.key==='Enter')onSendChatMsg()">
+      <button onclick="onSendChatMsg()" style="background:var(--gold);color:#000;border:none;border-radius:10px;padding:9px 16px;font-weight:900;font-size:.85rem;cursor:pointer">➤</button>
+    </div>
+  </div>
+
   <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
 </div>
 
@@ -2553,6 +2570,72 @@ function useAidHintDecade(){
 // ═══ SALA FAMILIAR — Lògica ═══
 let G_SALA = null; // sala activa
 let salaPollingTimer = null;
+let chatPollingTimer = null;
+let lastMsgId = 0;
+
+// ─── Chat functions ───────────────────────────────────
+async function loadChatMsgs(scroll=true){
+  if(!G_SALA)return;
+  const msgs = await sbS('sala_messages',
+    `sala_code=eq.${G_SALA.code}`,
+    'created_at.asc', 50);
+  if(!msgs)return;
+  const el = document.getElementById('sala-chat-msgs');
+  if(!el)return;
+  if(!msgs.length){
+    el.innerHTML='<div style="font-size:.78rem;color:var(--muted);text-align:center;padding:16px 0">Cap missatge encara. Sigues el primer! 👋</div>';
+    return;
+  }
+  const now = Date.now();
+  el.innerHTML = msgs.map(m=>{
+    const isMe = m.nick === G.nick;
+    const t = new Date(m.created_at);
+    const mins = Math.floor((now - t.getTime())/60000);
+    const timeStr = mins < 1 ? 'ara' : mins < 60 ? `fa ${mins}m` : t.toLocaleTimeString('ca',{hour:'2-digit',minute:'2-digit'});
+    return `<div style="display:flex;flex-direction:column;align-items:${isMe?'flex-end':'flex-start'}">
+      <div style="font-size:.62rem;color:var(--muted);margin-bottom:2px;padding:0 4px">${isMe?'Tu':esc(m.nick)} · ${timeStr}</div>
+      <div style="background:${isMe?'rgba(212,160,23,.2)':'rgba(255,255,255,.06)'};border:1px solid ${isMe?'rgba(212,160,23,.3)':'rgba(255,255,255,.08)'};border-radius:${isMe?'12px 12px 2px 12px':'12px 12px 12px 2px'};padding:7px 11px;font-size:.85rem;max-width:80%;word-break:break-word">${esc(m.message)}</div>
+    </div>`;
+  }).join('');
+  if(scroll) el.scrollTop = el.scrollHeight;
+  // Actualitzar indicador
+  const st = document.getElementById('sala-chat-status');
+  if(st) st.textContent = `↻ ${new Date().toLocaleTimeString('ca',{hour:'2-digit',minute:'2-digit'})}`;
+}
+
+async function onSendChatMsg(){
+  if(!G_SALA||!G.nick)return;
+  const inp = document.getElementById('sala-chat-input');
+  if(!inp)return;
+  const msg = inp.value.trim();
+  if(!msg)return;
+  if(msg.length > 200){toast('⚠️ Màxim 200 caràcters');return}
+  inp.value='';
+  inp.disabled=true;
+  try{
+    await fetch(`${SB_URL}/rest/v1/sala_messages`,{
+      method:'POST',
+      headers:{...SBH,'Prefer':'return=minimal'},
+      body:JSON.stringify({
+        sala_code: G_SALA.code,
+        nick: G.nick,
+        message: msg,
+        created_at: new Date().toISOString()
+      })
+    });
+    await loadChatMsgs(true);
+  }catch(e){toast('❌ Error enviant missatge')}
+  finally{inp.disabled=false;inp.focus()}
+}
+
+function startChatPolling(){
+  stopChatPolling();
+  loadChatMsgs(true);
+  chatPollingTimer = setInterval(()=>loadChatMsgs(false), 15000);
+}
+function stopChatPolling(){
+  if(chatPollingTimer){clearInterval(chatPollingTimer);chatPollingTimer=null}
+}
 
 function genSalaCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ';let c='';for(let i=0;i<6;i++)c+=chars[Math.floor(Math.random()*chars.length)];return c}
 
@@ -2606,6 +2689,7 @@ async function onCreateSala(){
   toast(`✅ Sala creada amb codi: ${code}`,3500);
   go('s-sala');
   await renderSalaRoom();
+  startChatPolling();
 }
 
 async function onJoinSala(){
@@ -2636,6 +2720,7 @@ async function onJoinSala(){
   toast(`✅ Entrat a "${sala.name}"!`);
   go('s-sala');
   await renderSalaRoom();
+  startChatPolling();
 }
 
 async function renderSalaMenu(){
@@ -2672,6 +2757,7 @@ async function onEnterSala(code){
   G_SALA = res[0];
   go('s-sala');
   await renderSalaRoom();
+  startChatPolling();
 }
 
 async function renderSalaRoom(){
