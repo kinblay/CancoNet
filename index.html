@@ -10,6 +10,33 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CançoNet">
 <script>if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'));</script>
+<script>
+// Detector d'errors globals — mostra missatge visible si JS falla
+window.addEventListener('error', function(e){
+  const el = document.getElementById('s-splash');
+  if(el) el.innerHTML = `
+    <div style="padding:30px;text-align:center;max-width:340px">
+      <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
+      <div style="font-size:1rem;font-weight:700;margin-bottom:8px">Error carregant el joc</div>
+      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:16px">${e.message||'Error desconegut'}</div>
+      <div style="font-size:.75rem;color:#64748b;background:rgba(255,255,255,.05);padding:10px;border-radius:8px;text-align:left;word-break:break-all">
+        Navegador: ${navigator.userAgent.substring(0,80)}<br>
+        Versió: ${navigator.appVersion.substring(0,40)}
+      </div>
+      <button onclick="location.reload()" style="margin-top:16px;background:#D4A017;color:#000;border:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:.9rem;cursor:pointer">
+        Tornar a intentar
+      </button>
+    </div>`;
+});
+// Comprova compatibilitat mínima
+try {
+  const _t = null?.x; // optional chaining
+  const _t2 = null ?? 'ok'; // nullish coalescing
+  const _t3 = async () => {}; // async/await
+} catch(e) {
+  document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif;color:#fff;background:#08080f;min-height:100vh"><h2>Navegador no compatible</h2><p style="color:#94a3b8;margin-top:12px">Actualitza el teu navegador per jugar a CançoNet.<br><br>iOS: requereix iOS 13.4 o superior<br>Android: requereix Chrome 80 o superior</p></div>';
+}
+</script>
 <style>
 :root{--gold:#D4A017;--red:#C1121F;--bg:#0d0d1a;--card:#161e35;--text:#eee;--muted:#778;--ok:#4caf50;--err:#f44336;--purple:#7c3aed}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -748,7 +775,7 @@ const ALL_SONGS=[...SONGS_CA,...SONGS_AUTOR_CA,...SONGS_ES,...SONGS_EU,...SONGS_
 const LEVELS=[{tl:55,dur:8,seg:"full",hk:'hT'},{tl:45,dur:6,seg:"chorus",hk:'hL'},{tl:40,dur:7,seg:"intro",hk:'hY'},{tl:35,dur:6,seg:"end",hk:'hG'},{tl:30,dur:6,seg:"mid",hk:'hA'},{tl:28,dur:4,seg:"chorus",hk:'hW'},{tl:24,dur:5,seg:"full",hk:'hD'},{tl:22,dur:5,seg:"mid",hk:null},{tl:20,dur:4,seg:"end",hk:null},{tl:18,dur:3,seg:"chorus",hk:null}];
 
 const G={nick:'',zone:'',mode:'free',lang:'ca',lvl:1,lives:3,score:0,song:null,songList:[],songIdx:0,tLeft:0,tMax:60,timerID:null,playing:false,active:false,results:[],playCount:0,maxPlays:3,answerMode:'write-title',answerIsBonus:false};
-let rTab='global',rZone='',selZone='',selGender='',selAge='',actx,ytStopTimer,splashDone=false,currentChallenge=null;
+let rTab='global',rZone='',selZone='',selGender='',selAge='',actx,audioStopTimer,splashDone=false,currentChallenge=null;
 
 
 // ═══════════════════════════════════════
@@ -848,7 +875,7 @@ const WIP_DATA={emsona:{
     '🇨🇦 Inclou casos catalans (El Pony Pisador, Rosalía, Waka Waka...)',
   ],
   note:'🔧 En preparació: verificant les cançons a Deezer i documentant els veredictes reals. Inspirat en la secció "Em Sona" de Flaixbac.'
-},relax:{title:'🎹 Mode Relax',sub:'Endevina la cançó escoltant-la en versió de piano.',features:['🎹 Versions de piano de cançons famoses','🌿 Visual suau i ambient relaxant','🧘 Ideal per desconnectar jugant','🎵 Catàleg complet en versió piano','📅 Partida diària i lliure','🎧 Àudio via YouTube (versions piano)'],note:"Per activar necessitem afegir YouTube IDs de versions piano a cada cançó. Suggereix-les per la bústia!"},familia:{title:'👨‍👩‍👧 Mode família',sub:'Crea un grup familiar!',features:['🔑 Codi de 6 lletres','👥 Fins a 8 jugadors','🏅 Rànquing familiar']},provinces:{title:'🏴 Repte per zones',sub:'Competeix per la teva zona!',features:['🏴 Comarques','🏆 Copa setmanal','⚔️ Derbis']},logros:{title:'🏅 Assoliments',sub:'Desbloqueja badges!',features:['🎸 Mestre de Sau','🔥 En ratxa','⚡ Llampec','👑 Campió']},realia:{title:'🤖 Real o IA?',sub:'Escolta un fragment i endevina si la cançó és real o generada per intel·ligència artificial!',features:['🎵 Fragments de cançons reals i generades amb IA','🧠 Posa a prova el teu oïda','📊 Estadístiques de encerts','🏆 Rànquing dels millors detectors']}};
+},relax:{title:'🎹 Mode Relax',sub:'Endevina la cançó escoltant-la en versió de piano.',features:['🎹 Versions de piano de cançons famoses','🌿 Visual suau i ambient relaxant','🧘 Ideal per desconnectar jugant','🎵 Catàleg complet en versió piano','📅 Partida diària i lliure','🎧 Àudio via Deezer (versions piano)'],note:"Per activar necessitem afegir IDs de Deezer de versions piano a cada cançó. Suggereix-les per la bústia!"},familia:{title:'👨‍👩‍👧 Mode família',sub:'Crea un grup familiar!',features:['🔑 Codi de 6 lletres','👥 Fins a 8 jugadors','🏅 Rànquing familiar']},provinces:{title:'🏴 Repte per zones',sub:'Competeix per la teva zona!',features:['🏴 Comarques','🏆 Copa setmanal','⚔️ Derbis']},logros:{title:'🏅 Assoliments',sub:'Desbloqueja badges!',features:['🎸 Mestre de Sau','🔥 En ratxa','⚡ Llampec','👑 Campió']},realia:{title:'🤖 Real o IA?',sub:'Escolta un fragment i endevina si la cançó és real o generada per intel·ligència artificial!',features:['🎵 Fragments de cançons reals i generades amb IA','🧠 Posa a prova el teu oïda','📊 Estadístiques de encerts','🏆 Rànquing dels millors detectors']}};
 function showWip(type){const d=WIP_DATA[type]||{title:'En construcció',sub:'Aviat!',features:[]};document.getElementById('wip-title').textContent=d.title;document.getElementById('wip-sub').textContent=d.sub;document.getElementById('wip-features').innerHTML=d.features.map(f=>`<div>✦ ${esc(f)}</div>`).join('');const _ne=document.getElementById('wip-note');if(_ne){_ne.style.display=d.note?'block':'none';if(d.note)_ne.textContent=d.note;}document.getElementById('modal-wip').classList.remove('hide')}
 function closeWip(){document.getElementById('modal-wip').classList.add('hide')}
 
@@ -900,7 +927,7 @@ async function testSB(){const el=document.getElementById('sb-status');const r=aw
 const DZ_SEGS=[{start:8,dur:10,rate:1.0},{start:8,dur:8,rate:1.0},{start:10,dur:6,rate:1.0},{start:10,dur:5,rate:1.0},{start:12,dur:4,rate:1.0},{start:12,dur:3,rate:1.0},{start:8,dur:5,rate:1.0},{start:12,dur:4,rate:1.0},{start:14,dur:3,rate:0.5},{start:14,dur:2,rate:1.75}];
 const dzPrevCache={};
 function getDzPreview(dzId){return new Promise(resolve=>{if(dzPrevCache[dzId]){resolve(dzPrevCache[dzId]);return}const cb='dzcb_'+dzId+'_'+Date.now();window[cb]=(data)=>{delete window[cb];document.getElementById('dz_sc_'+dzId)?.remove();const url=data?.preview||null;if(url)dzPrevCache[dzId]=url;resolve(url);};const s=document.createElement('script');s.id='dz_sc_'+dzId;s.src=`https://api.deezer.com/track/${dzId}?output=jsonp&callback=${cb}`;s.onerror=()=>{delete window[cb];resolve(null)};document.head.appendChild(s);})}
-async function dzPlay(song,lvIdx){const audio=document.getElementById('dz-audio');if(!audio||!song?.dzId||song.dzId===0)return false;const seg=DZ_SEGS[lvIdx]||DZ_SEGS[0];const url=await getDzPreview(song.dzId);if(!url)return false;audio.pause();audio.src=url;const speedMult=(G.mode==='challenge'&&G.challengeMods?.speedMult)||1;const isHardLevel=G.mode==='challenge'&&G.challengeMods?.hardLevel===G.lvl;const baseRate=isHardLevel?0.5:(seg.rate||1);const finalRate=baseRate*speedMult;audio.load();const play=()=>{try{audio.currentTime=seg.start}catch(e){}audio.playbackRate=finalRate;audio.play().catch(()=>{});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>{audio.pause();onSegEnd()},seg.dur*1000*(1/finalRate)+400);};if(audio.readyState>=2)play();else audio.addEventListener('canplay',play,{once:true});return true}
+async function dzPlay(song,lvIdx){const audio=document.getElementById('dz-audio');if(!audio||!song?.dzId||song.dzId===0)return false;const seg=DZ_SEGS[lvIdx]||DZ_SEGS[0];const url=await getDzPreview(song.dzId);if(!url)return false;audio.pause();audio.src=url;const speedMult=(G.mode==='challenge'&&G.challengeMods?.speedMult)||1;const isHardLevel=G.mode==='challenge'&&G.challengeMods?.hardLevel===G.lvl;const baseRate=isHardLevel?0.5:(seg.rate||1);const finalRate=baseRate*speedMult;audio.load();const play=()=>{try{audio.currentTime=seg.start}catch(e){}audio.playbackRate=finalRate;audio.play().catch(()=>{});clearTimeout(audioStopTimer);audioStopTimer=setTimeout(()=>{audio.pause();onSegEnd()},seg.dur*1000*(1/finalRate)+400);};if(audio.readyState>=2)play();else audio.addEventListener('canplay',play,{once:true});return true}
 function dzStop(){const a=document.getElementById('dz-audio');if(a){a.pause();a.src=''}}
 const RANKS={ca:[{min:0,name:'🌱 Aprenent',short:'Aprenent'},{min:500,name:'🎵 Curiós',short:'Curiós'},{min:1500,name:'📻 Aficionat',short:'Aficionat'},{min:3000,name:'🎸 Melòman',short:'Melòman'},{min:6000,name:'🎤 Veu del Poble',short:'Veu del Poble'},{min:10000,name:'🎼 Trobador',short:'Trobador'},{min:16000,name:'📜 Cronista',short:'Cronista'},{min:25000,name:'🌟 Mestre',short:'Mestre'},{min:40000,name:'👑 Erudit',short:'Erudit'},{min:60000,name:'🏛️ Llegenda',short:'Llegenda'}],es:[{min:0,name:'🌱 Novato',short:'Novato'},{min:500,name:'🎵 Curioso',short:'Curioso'},{min:1500,name:'📻 Aficionado',short:'Aficionado'},{min:3000,name:'🎸 Melómano',short:'Melómano'},{min:6000,name:'🎤 Voz del pueblo',short:'Voz del pueblo'},{min:10000,name:'🎼 Trovador',short:'Trovador'},{min:16000,name:'📜 Cronista',short:'Cronista'},{min:25000,name:'🌟 Maestro',short:'Maestro'},{min:40000,name:'👑 Erudito',short:'Erudito'},{min:60000,name:'🏛️ Leyenda',short:'Leyenda'}],eu:[{min:0,name:'🌱 Newcomer',short:'Newcomer'},{min:500,name:'🎵 Curious',short:'Curious'},{min:1500,name:'📻 Fan',short:'Fan'},{min:3000,name:'🎸 Music lover',short:'Music lover'},{min:6000,name:'🎤 Voice',short:'Voice'},{min:10000,name:'🎼 Troubadour',short:'Troubadour'},{min:16000,name:'📜 Chronicler',short:'Chronicler'},{min:25000,name:'🌟 Master',short:'Master'},{min:40000,name:'👑 Scholar',short:'Scholar'},{min:60000,name:'🏛️ Legend',short:'Legend'}],int:[{min:0,name:'🌱 Newcomer',short:'Newcomer'},{min:500,name:'🎵 Curious',short:'Curious'},{min:1500,name:'📻 Fan',short:'Fan'},{min:3000,name:'🎸 Music lover',short:'Music lover'},{min:6000,name:'🎤 Voice',short:'Voice'},{min:10000,name:'🎼 Troubadour',short:'Troubadour'},{min:16000,name:'📜 Chronicler',short:'Chronicler'},{min:25000,name:'🌟 Master',short:'Master'},{min:40000,name:'👑 Scholar',short:'Scholar'},{min:60000,name:'🏛️ Legend',short:'Legend'}]};
 function getTotalScore(){try{return parseInt(localStorage.getItem('cn:total_score')||'0')}catch(e){return 0}}
@@ -978,21 +1005,21 @@ function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.l
 
 function renderHUD(){document.getElementById('g-badge').textContent=`${G.lvl}/10`;document.getElementById('g-score').textContent=G.score;document.getElementById('g-lives').innerHTML=[1,2,3].map(i=>`<span class="heart${i>G.lives?' dead':''}">❤️</span>`).join('');document.getElementById('g-dots').innerHTML=LEVELS.map((_,i)=>{const r=G.results[i];const isB=(i+1)%3===0;const c=r==='ok'?'ok':r==='fail'||r==='skip'?'fail':i+1===G.lvl?'cur':'';return`<div class="dot ${c}${isB?' bonus':''}">${isB?'⭐':i+1}</div>`}).join('')}
 
-function startLevel(){ytStop(true);G.usedAidsThisLevel={};const _cl=document.getElementById('g-lvl10-clue');if(_cl){if(G.lvl===10&&G.song){const _tl=T[G.lang];_cl.style.display='block';_cl.innerHTML='<span style="font-size:.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.5px">💡 '+(_tl.clueLabel||'Pista final:')+'</span><br><span style="font-size:.88rem;color:var(--text);line-height:1.5">'+esc(G.song.pista6||_tl.clueDefault||'Cançó molt popular al seu gènere')+'</span>';}else _cl.style.display='none';}const lv=LEVELS[G.lvl-1],t=T[G.lang],lvT=t.lvls[G.lvl-1];G.playCount=0;G.maxPlays=G.lvl<=3?3:G.lvl<=6?2:1;G.playing=false;document.getElementById('g-lname').textContent=lvT.n;document.getElementById('g-ldesc').textContent=lvT.d;const pool=G.mode==='autor'?AUTOR_BY_LANG[G.lang]:SONGS_BY_LANG[G.lang];setupAnswerMode(G.lvl,G.song,pool);document.getElementById('g-bonus-badge').style.display=G.answerIsBonus?'block':'none';const mRT=(G.answerMode==='guess-year'&&(lv.hk==='hY'||lv.hk==='hD'))||(G.answerMode==='guess-author'&&(lv.hk==='hA'||lv.hk==='hL'))||(G.answerMode==='choose-title'&&(lv.hk==='hT'||lv.hk==='hL'))||(G.answerMode==='write-title'&&lv.hk==='hT');const showH=lv.hk&&t[lv.hk]&&!G.answerIsBonus&&!mRT;const hEl=document.getElementById('g-hint');if(showH){hEl.style.display='';document.getElementById('g-hint-txt').textContent=t[lv.hk](G.song)}else hEl.style.display='none';const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;document.getElementById('g-pinfo').textContent=`${t.plays} ${G.maxPlays}`;setWave(false);clearInterval(G.timerID);G.tLeft=lv.tl;G.tMax=lv.tl;updTimer();G.timerID=setInterval(()=>{G.tLeft--;updTimer();if(G.tLeft<=0){clearInterval(G.timerID);onWrong()}},1000);renderHUD();renderGameAids()}
+function startLevel(){audioStop(true);G.usedAidsThisLevel={};const _cl=document.getElementById('g-lvl10-clue');if(_cl){if(G.lvl===10&&G.song){const _tl=T[G.lang];_cl.style.display='block';_cl.innerHTML='<span style="font-size:.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.5px">💡 '+(_tl.clueLabel||'Pista final:')+'</span><br><span style="font-size:.88rem;color:var(--text);line-height:1.5">'+esc(G.song.pista6||_tl.clueDefault||'Cançó molt popular al seu gènere')+'</span>';}else _cl.style.display='none';}const lv=LEVELS[G.lvl-1],t=T[G.lang],lvT=t.lvls[G.lvl-1];G.playCount=0;G.maxPlays=G.lvl<=3?3:G.lvl<=6?2:1;G.playing=false;document.getElementById('g-lname').textContent=lvT.n;document.getElementById('g-ldesc').textContent=lvT.d;const pool=G.mode==='autor'?AUTOR_BY_LANG[G.lang]:SONGS_BY_LANG[G.lang];setupAnswerMode(G.lvl,G.song,pool);document.getElementById('g-bonus-badge').style.display=G.answerIsBonus?'block':'none';const mRT=(G.answerMode==='guess-year'&&(lv.hk==='hY'||lv.hk==='hD'))||(G.answerMode==='guess-author'&&(lv.hk==='hA'||lv.hk==='hL'))||(G.answerMode==='choose-title'&&(lv.hk==='hT'||lv.hk==='hL'))||(G.answerMode==='write-title'&&lv.hk==='hT');const showH=lv.hk&&t[lv.hk]&&!G.answerIsBonus&&!mRT;const hEl=document.getElementById('g-hint');if(showH){hEl.style.display='';document.getElementById('g-hint-txt').textContent=t[lv.hk](G.song)}else hEl.style.display='none';const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;document.getElementById('g-pinfo').textContent=`${t.plays} ${G.maxPlays}`;setWave(false);clearInterval(G.timerID);G.tLeft=lv.tl;G.tMax=lv.tl;updTimer();G.timerID=setInterval(()=>{G.tLeft--;updTimer();if(G.tLeft<=0){clearInterval(G.timerID);onWrong()}},1000);renderHUD();renderGameAids()}
 function updTimer(){const bar=document.getElementById('g-tbar');bar.style.width=((G.tLeft/G.tMax)*100)+'%';bar.classList.toggle('hot',G.tLeft<=10);document.getElementById('g-tnum').textContent=G.tLeft+'s'}
 
 function getACtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}
-function playDemo(songId,dur){const ctx=getACtx(),notes=[261.63,293.66,329.63,349.23,392,440,493.88,523.25],n=Math.ceil(dur*2.5),nd=dur/n,base=songId*7;const mel=[...Array(n)].map((_,i)=>notes[(base+i*3)%notes.length]);const m=ctx.createGain();m.gain.setValueAtTime(0,ctx.currentTime);m.gain.linearRampToValueAtTime(.14,ctx.currentTime+.08);m.gain.linearRampToValueAtTime(0,ctx.currentTime+dur-.05);m.connect(ctx.destination);mel.forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*nd;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.4,t+.02);g.gain.linearRampToValueAtTime(0,t+nd-.02);o.connect(g);g.connect(m);o.start(t);o.stop(t+nd)});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>onSegEnd(),dur*1000+200)}
+function playDemo(songId,dur){const ctx=getACtx(),notes=[261.63,293.66,329.63,349.23,392,440,493.88,523.25],n=Math.ceil(dur*2.5),nd=dur/n,base=songId*7;const mel=[...Array(n)].map((_,i)=>notes[(base+i*3)%notes.length]);const m=ctx.createGain();m.gain.setValueAtTime(0,ctx.currentTime);m.gain.linearRampToValueAtTime(.14,ctx.currentTime+.08);m.gain.linearRampToValueAtTime(0,ctx.currentTime+dur-.05);m.connect(ctx.destination);mel.forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*nd;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.4,t+.02);g.gain.linearRampToValueAtTime(0,t+nd-.02);o.connect(g);g.connect(m);o.start(t);o.stop(t+nd)});clearTimeout(audioStopTimer);audioStopTimer=setTimeout(()=>onSegEnd(),dur*1000+200)}
 function getSegBounds(song,lv){const raw=song.seg?.[lv.seg]||song.seg?.full||{s:0,e:8};const s=Number(raw.s)||0,e=Math.max(s+1,Number(raw.e)||s+lv.dur);const want=Math.max(1,lv.dur),avail=e-s;if(avail<=want)return{start:s,end:e};if(lv.seg==='end')return{start:e-want,end:e};return{start:s,end:s+want}}
-function buildEmbed(ytId,bounds){return`https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&start=${Math.max(0,Math.floor(bounds.start))}&end=${Math.ceil(bounds.end)+1}`}
+// buildEmbed eliminat: no usem YouTube
 const IS_SANDBOX=(()=>{try{return window.self!==window.top||location.protocol==='about:'||location.hostname==='claude.ai'}catch(e){return true}})();
-async function ytPlay(song,lvIdx){if(song?.dzId&&song.dzId!==0){const ok=await dzPlay(song,lvIdx);if(ok)return true}return false}
-function ytStop(silent){clearTimeout(ytStopTimer);dzStop();if(!silent)onSegEnd()}
-function playAudio(song,lvIdx){if(!IS_SANDBOX&&song.ytId&&song.ytId!=='DEMO')ytPlay(song,lvIdx);else playDemo(song.id,LEVELS[lvIdx].dur)}
+
+function audioStop(silent){clearTimeout(audioStopTimer);dzStop();if(!silent)onSegEnd()}
+function playAudio(song,lvIdx){if(!IS_SANDBOX&&song?.dzId&&song.dzId!==0)dzPlay(song,lvIdx);else playDemo(song.id,LEVELS[lvIdx].dur)}
 function onSegEnd(){if(!G.playing)return;G.playing=false;const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;setWave(false);const rem=Math.max(0,G.maxPlays-G.playCount),t=T[G.lang];document.getElementById('g-pinfo').textContent=rem>0?`${t.playsLeft} ${rem}`:t.noPlays}
 function setWave(on){document.getElementById('g-wave').innerHTML=[...Array(18)].map((_,i)=>`<div class="wb${on?' a':''}" style="${on?`animation-delay:${i*.055}s;height:${4+Math.sin(i*.7)*14+8}px`:'height:4px'}"></div>`).join('')}
 function onPlay(){if(G.playing)return;if(G.playCount>=G.maxPlays){toast(T[G.lang].noPlays);return}G.playCount++;G.playing=true;const pb=document.getElementById('g-pbtn');pb.textContent='■';pb.classList.add('on');pb.disabled=true;document.getElementById('g-pinfo').textContent=`${T[G.lang].playing} (${G.playCount}/${G.maxPlays})`;setWave(true);playAudio(G.song,G.lvl-1)}
-function onListenFull(){if(!G.song)return;if(!IS_SANDBOX&&G.song.dzId&&G.song.dzId!==0){const a=document.getElementById('dz-audio');getDzPreview(G.song.dzId).then(url=>{if(url){a.pause();a.src=url;a.playbackRate=1;a.load();a.addEventListener('canplay',()=>{a.currentTime=0;a.play().catch(()=>{})},{once:true});clearTimeout(ytStopTimer);ytStopTimer=setTimeout(()=>a.pause(),31000)}});toast(T[G.lang].listenFull)}else{playDemo(G.song.id,15);toast(T[G.lang].listenFull)}}
+function onListenFull(){if(!G.song)return;if(!IS_SANDBOX&&G.song.dzId&&G.song.dzId!==0){const a=document.getElementById('dz-audio');getDzPreview(G.song.dzId).then(url=>{if(url){a.pause();a.src=url;a.playbackRate=1;a.load();a.addEventListener('canplay',()=>{a.currentTime=0;a.play().catch(()=>{})},{once:true});clearTimeout(audioStopTimer);audioStopTimer=setTimeout(()=>a.pause(),31000)}});toast(T[G.lang].listenFull)}else{playDemo(G.song.id,15);toast(T[G.lang].listenFull)}}
 
 const ANS_MODES=['write-title','choose-title','guess-year','guess-author'];
 function getAnswerMode(lvl){return{mode:ANS_MODES[(lvl-1)%4],isBonus:lvl%3===0}}
@@ -1023,7 +1050,7 @@ btn.classList.add(ok?'correct':'wrong');if(!ok)document.querySelectorAll('.choic
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/['\u2018\u2019`]/g,' ').replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,' ')}
 function onConfirm(){if(!G.active)return;const ans=document.getElementById('g-ans');if(!ans)return;const v=ans.value.trim();if(!v||v.length<2){toast('⚠️ Escriu primer');return}if(norm(v)===norm(G.song.t))onCorrect();else onWrong()}
 
-function stopAll(){clearInterval(G.timerID);ytStop(true);G.playing=false;setWave(false)}
+function stopAll(){clearInterval(G.timerID);audioStop(true);G.playing=false;setWave(false)}
 function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;soundBonus();telTrackEvent('bonus_correct',{level:G.lvl,song_id:G.song?.id,lang:G.lang});toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;soundCorrect();toast(`${T[G.lang].correct} +${pts}`)}G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();setTimeout(()=>nextLvl(),1800)}
 function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
 function onSkip(){if(!G.active)return;if(G.mode==='challenge'&&G.challengeMods?.blockSkip){toast('🚫 Aquest repte bloqueja saltar cançons!');return}if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
@@ -1819,7 +1846,7 @@ window.addEventListener('popstate', function(e){
     if(G.active){
       if(confirm('Vols abandonar la partida?')){
         telSaveSession(false);telTrackEvent('abandon',{level:G.lvl,mode:G.mode});
-        ytStop(true);
+        audioStop(true);
         clearInterval(G.timerInt);
         go('s-menu');renderMenu();pushBackState();
       } else {
@@ -2405,7 +2432,7 @@ function onAidUnavailable(type){
   const names={extra_life:'Vida extra',free_skip:'Saltar sense penalització',hint_letter:'Pista de títol',hint_decade:'Pista de dècada'};
   if(confirm(`No tens cap "${names[type]||type}" disponible.\n\nVols anar a la botiga a comprar-ne?`)){
     if(G.active&&!confirm('Si vas a la botiga abandonaràs la partida. Continuar?'))return;
-    if(G.active){telSaveSession(false);telTrackEvent('abandon',{level:G.lvl,mode:G.mode});ytStop(true);clearInterval(G.timerID);}
+    if(G.active){telSaveSession(false);telTrackEvent('abandon',{level:G.lvl,mode:G.mode});audioStop(true);clearInterval(G.timerID);}
     G.active=false;
     go('s-shop');renderShop();setShopTab('aids');
   }
@@ -2570,13 +2597,6 @@ async function onCreateSala(){
   try{
     await sbI('sala_members',{sala_code:code,nick:G.nick,joined_at:new Date().toISOString()});
   }catch(e){console.error('[Sala] Error membre:',e)}
-
-  // Verificar que realment és a la BD (per protegir contra fallades silencioses)
-  const verify=await sbS('salas',`code=eq.${code}`,'',1);
-  if(!verify||!verify.length){
-    toast('❌ La sala no s\'ha guardat. Contacta amb suport.');
-    return;
-  }
 
   const salas = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
   salas.unshift(code);
