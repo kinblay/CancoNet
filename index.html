@@ -2639,6 +2639,15 @@ async function onJoinSala(){
 }
 
 async function renderSalaMenu(){
+  // Neteja làzima: esborra salas inactives fa +90 dies (1 cop per sessió)
+  if(!sessionStorage.getItem('cn:sala_cleanup_done')){
+    try{
+      await fetch(`${SB_URL}/rest/v1/rpc/cleanup_inactive_salas`,{
+        method:'POST',headers:SBH,body:'{}'
+      });
+    }catch(e){}
+    sessionStorage.setItem('cn:sala_cleanup_done','1');
+  }
   const codes = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
   if(!codes.length){ document.getElementById('sala-meves-wrap').style.display='none'; return; }
   document.getElementById('sala-meves-wrap').style.display='block';
@@ -2670,6 +2679,14 @@ async function renderSalaRoom(){
   const today = new Date().toISOString().slice(0,10);
   const isCreator = G_SALA.creator_nick === G.nick;
 
+  // Actualitzar last_active de la sala (cada vegada que algú entra)
+  try{
+    await fetch(`${SB_URL}/rest/v1/salas?code=eq.${G_SALA.code}`,{
+      method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},
+      body:JSON.stringify({last_active:new Date().toISOString()})
+    });
+  }catch(e){}
+
   // VIP — emoji al nom + missatge VIP
   const isVip = !!G_SALA.is_vip;
   const emoji = G_SALA.emoji || '';
@@ -2678,6 +2695,27 @@ async function renderSalaRoom(){
   document.getElementById('sala-code-display').textContent = `Codi: ${G_SALA.code}`;
   document.getElementById('sala-edit-btn').style.display = isCreator ? 'block' : 'none';
   document.getElementById('sala-delete-wrap').style.display = isCreator ? 'block' : 'none';
+
+  // Avís caducitat per al creador
+  let expiryEl = document.getElementById('sala-expiry-warning');
+  if(isCreator){
+    if(!expiryEl){
+      expiryEl = document.createElement('div');
+      expiryEl.id = 'sala-expiry-warning';
+      document.getElementById('sala-delete-wrap').after(expiryEl);
+    }
+    const lastActive = G_SALA.last_active ? new Date(G_SALA.last_active) : new Date();
+    const daysInactive = Math.floor((Date.now() - lastActive.getTime()) / 86400000);
+    const daysLeft = 90 - daysInactive;
+    const color = daysLeft <= 14 ? '#ef4444' : daysLeft <= 30 ? '#f59e0b' : '#64748b';
+    expiryEl.style.cssText = 'width:100%;max-width:460px;margin-top:6px';
+    expiryEl.innerHTML = `<div style="font-size:.72rem;color:${color};text-align:center;padding:4px 0">
+      ⏳ La sala s'eliminarà si no hi ha activitat durant 90 dies
+      ${daysInactive > 0 ? `· ${daysLeft > 0 ? `${daysLeft} dies restants` : 'Caducada aviat'}` : '· Activa'}
+    </div>`;
+  } else if(expiryEl){
+    expiryEl.style.display = 'none';
+  }
 
   // Missatge VIP del creador (visible per tots els membres)
   let vipMsgEl = document.getElementById('sala-vip-msg');
