@@ -446,7 +446,7 @@ const SB_URL='https://ikfouhxdtkptafglthmd.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrZm91aHhkdGtwdGFmZ2x0aG1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMjY5MTksImV4cCI6MjA5MTYwMjkxOX0.j1GM0Ec2w_gDlRMHAoOk6LUdgX5YUYXpXp9ULX0kkJQ';
 const SBH={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
 async function sbI(table,row){try{const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(row)});return r.ok}catch(e){return false}}
-async function sbS(table,f='',o='score.desc',l=20){try{const r=await fetch(`${SB_URL}/rest/v1/${table}?${f}&order=${o}&limit=${Math.min(l,100)}`,{headers:SBH});if(!r.ok)return null;return await r.json()}catch(e){return null}}
+async function sbS(table,f='',o='score.desc',l=20){try{const orderPart=o?`&order=${o}`:'';const r=await fetch(`${SB_URL}/rest/v1/${table}?${f}${orderPart}&limit=${Math.min(l,100)}`,{headers:SBH});if(!r.ok)return null;return await r.json()}catch(e){return null}}
 
 const RL={_s:{},check(k,mx,ms){const n=Date.now();if(!this._s[k])this._s[k]=[];this._s[k]=this._s[k].filter(t=>n-t<ms);if(this._s[k].length>=mx)return false;this._s[k].push(n);return true}};
 const canScore=()=>RL.check('sc',3,10*60*1000);const canBustia=()=>RL.check('bu',5,60*60*1000);
