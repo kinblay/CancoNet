@@ -9,7 +9,32 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CançoNet">
-<script>if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'));</script>
+<script>
+// Reset d'emergència: canconet.net/?reset=1
+// Neteja la Service Worker i el cau sense afectar altres dades del navegador
+(async function(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('reset') === '1'){
+    document.body.style.cssText = 'background:#08080f;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:20px';
+    document.body.innerHTML = '<div><div style="font-size:2rem;margin-bottom:12px">🔄</div><div style="font-size:1rem;font-weight:700;margin-bottom:8px">Netejant el cau...</div><div style="font-size:.82rem;color:#94a3b8">Un moment</div></div>';
+    try{
+      // Desregistrar totes les Service Workers de CançoNet
+      if('serviceWorker' in navigator){
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for(const reg of regs) await reg.unregister();
+      }
+      // Esborrar tots els caus de CançoNet
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }catch(e){}
+    // Redirigir a la pàgina principal neta
+    document.body.innerHTML = '<div><div style="font-size:2rem;margin-bottom:12px">✅</div><div style="font-size:1rem;font-weight:700;margin-bottom:8px">Fet!</div><div style="font-size:.82rem;color:#94a3b8;margin-bottom:16px">La memòria cau s\'ha netejat correctament</div><a href="/" style="background:#D4A017;color:#000;padding:12px 28px;border-radius:10px;font-weight:700;text-decoration:none;font-size:.95rem">Obrir CançoNet →</a></div>';
+    return;
+  }
+  // Registre normal de SW
+  if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js'));
+})();
+</script>
 <script>
 // Detector d'errors globals — mostra missatge visible si JS falla
 window.addEventListener('error', function(e){
@@ -72,7 +97,7 @@ body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min
 .aid-btn .cost{background:rgba(168,85,247,.25);border-radius:99px;padding:1px 7px;font-size:.7rem}
 .logo b{color:var(--red)}
 .sub{color:var(--muted);font-size:1.05rem;margin-bottom:14px;text-align:center}
-.card{background:var(--card);border-radius:16px;padding:18px;width:100%;max-width:460px;margin:7px 0}
+.card{background:var(--card);border-radius:14px;padding:clamp(10px,4vw,18px);width:100%;max-width:460px;margin:5px 0}
 .card-ttl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:10px}
 .btn{display:block;width:100%;padding:18px;border:none;border-radius:14px;font-size:1.15rem;font-weight:700;cursor:pointer;margin:5px 0;transition:transform .15s,box-shadow .15s;touch-action:manipulation;min-height:60px}
 .btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.98)}
@@ -88,21 +113,21 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .zone-btn{background:rgba(255,255,255,.05);border:2px solid transparent;border-radius:12px;padding:14px 6px;color:var(--text);cursor:pointer;font-size:.9rem;font-weight:600;transition:all .2s;text-align:center;touch-action:manipulation;min-height:50px}
 .zone-btn:hover,.zone-btn.sel{border-color:var(--gold);color:var(--gold);background:rgba(212,160,23,.1)}
 .zone-btn.wide{grid-column:1/-1}.style-card{background:var(--card);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 10px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:all .18s;touch-action:manipulation;min-height:88px;width:100%;border:none;color:var(--text)}.style-card:hover,.style-card:active{border:1.5px solid var(--gold) !important;transform:scale(1.03)}.style-emoji{font-size:1.9rem;line-height:1}.style-label{font-size:.8rem;font-weight:600;text-align:center;line-height:1.3}
-.hud{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:460px;margin:8px 0}
+.hud{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:460px;margin:4px 0}
 .lvl-badge{background:var(--red);color:#fff;font-size:.75rem;font-weight:700;padding:5px 12px;border-radius:99px;letter-spacing:1px}
-.lives{display:flex;gap:4px}.heart{font-size:1.3rem;transition:all .3s}.heart.dead{opacity:.2;filter:grayscale(1)}
-.score-disp{font-size:2.2rem;font-weight:900;color:var(--gold)}
-.dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;width:100%;max-width:460px;margin:5px 0}
-.dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.12);color:var(--muted);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.lives{display:flex;gap:2px}.heart{font-size:clamp(1rem,4vw,1.3rem);transition:all .3s}.heart.dead{opacity:.2;filter:grayscale(1)}
+.score-disp{font-size:clamp(1.5rem,7vw,2.2rem);font-weight:900;color:var(--gold)}
+.dots{display:flex;gap:clamp(2px,1vw,5px);flex-wrap:wrap;justify-content:center;width:100%;max-width:460px;margin:3px 0}
+.dot{width:clamp(22px,6vw,28px);height:clamp(22px,6vw,28px);border-radius:50%;border:2px solid rgba(255,255,255,.12);color:var(--muted);font-size:clamp(.58rem,.65rem,.72rem);font-weight:700;display:flex;align-items:center;justify-content:center}
 .dot.ok{background:var(--ok);border-color:var(--ok);color:#fff}.dot.cur{background:var(--gold);border-color:var(--gold);color:#000}
 .dot.fail{background:var(--err);border-color:var(--err);color:#fff}.dot.bonus{border-color:var(--purple);box-shadow:0 0 6px rgba(124,58,237,.4)}
-.t-wrap{width:100%;max-width:460px;margin:7px 0}.t-track{background:rgba(255,255,255,.1);border-radius:99px;height:8px;overflow:hidden}
+.t-wrap{width:100%;max-width:460px;margin:4px 0}.t-track{background:rgba(255,255,255,.1);border-radius:99px;height:6px;overflow:hidden}
 .t-fill{height:100%;background:var(--gold);border-radius:99px;transition:width 1s linear,background .4s}.t-fill.hot{background:var(--err)}
 .t-num{text-align:right;font-size:.8rem;color:var(--muted);margin-top:3px}
-.lv-info{background:rgba(255,255,255,.04);border-radius:12px;padding:10px 14px;text-align:center;width:100%;max-width:460px;margin:4px 0}
-.lv-name{font-weight:700;color:var(--gold);font-size:1.1rem}.lv-desc{font-size:.92rem;color:var(--muted);margin-top:2px}
-.player-box{background:rgba(255,255,255,.04);border:2px solid rgba(212,160,23,.2);border-radius:16px;padding:18px;width:100%;max-width:460px;text-align:center;margin:7px 0}
-.play-btn{width:68px;height:68px;border-radius:50%;background:var(--gold);border:none;font-size:1.7rem;cursor:pointer;transition:all .2s;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;color:#000;touch-action:manipulation}
+.lv-info{background:rgba(255,255,255,.04);border-radius:10px;padding:6px 12px;text-align:center;width:100%;max-width:460px;margin:2px 0}
+.lv-name{font-weight:700;color:var(--gold);font-size:clamp(.9rem,3vw,1.1rem)}.lv-desc{font-size:clamp(.78rem,2.5vw,.92rem);color:var(--muted);margin-top:1px}
+.player-box{background:rgba(255,255,255,.04);border:2px solid rgba(212,160,23,.2);border-radius:14px;padding:clamp(10px,4vw,18px);width:100%;max-width:460px;text-align:center;margin:4px 0}
+.play-btn{width:clamp(54px,15vw,68px);height:clamp(54px,15vw,68px);border-radius:50%;background:var(--gold);border:none;font-size:clamp(1.3rem,4.5vw,1.7rem);cursor:pointer;transition:all .2s;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:#000;touch-action:manipulation}
 .play-btn:hover{transform:scale(1.08);box-shadow:0 0 26px rgba(212,160,23,.5)}
 .play-btn.on{background:var(--red);color:#fff;animation:pulse 1s infinite}
 .play-btn:disabled{opacity:.4;cursor:not-allowed;animation:none;transform:none}
@@ -164,6 +189,18 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border-radius:14px;padding:12px 20px;font-weight:700;opacity:0;transition:all .3s;pointer-events:none;z-index:999;border:1px solid rgba(255,255,255,.12);font-size:.9rem;max-width:88vw;text-align:center}
 #toast.on{transform:translateX(-50%) translateY(0);opacity:1}
 .w-full{width:100%;max-width:460px}.center{text-align:center}.muted{color:var(--muted)}.field{margin-bottom:14px}.big{font-size:1.6rem;font-weight:700}.mt{margin-top:8px}.sep{height:1px;background:rgba(255,255,255,.07);margin:10px 0}
+
+@media(max-width:375px){
+  .hud{margin:2px 0}
+  .lv-info{padding:5px 10px}
+  .player-box{padding:8px}
+  .dots{gap:2px}
+  .card{padding:10px;margin:4px 0}
+  .score-disp{font-size:1.4rem}
+  .play-btn{width:50px;height:50px;font-size:1.2rem;margin-bottom:6px}
+  .card-ttl{font-size:.85rem!important;margin-bottom:8px!important}
+  .btn{padding:10px 14px;font-size:.85rem}
+}
 </style>
 </head>
 <body>
@@ -197,10 +234,12 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div style="font-size:2.5rem;margin-bottom:12px">📧</div>
     <div style="font-weight:700;font-size:1.1rem;margin-bottom:8px" id="login-sent-title">Email enviat!</div>
     <div style="font-size:.85rem;color:var(--muted);line-height:1.8" id="login-sent-desc"></div>
-    <div style="margin-top:18px;display:flex;justify-content:center"><input id="login-otp-input" type="tel" maxlength="8" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" placeholder="00000000" style="width:210px;text-align:center;font-size:1.6rem;font-weight:900;letter-spacing:8px;background:rgba(255,255,255,.06);border:2px solid var(--gold);border-radius:12px;padding:14px 8px;color:var(--gold);outline:none" oninput="if(this.value.length===8)onVerifyOtp()"></div>
+    <div style="background:rgba(212,160,23,.06);border:1px solid rgba(212,160,23,.2);border-radius:8px;padding:8px 12px;margin:10px 0;font-size:.75rem;color:var(--muted);text-align:left">
+      ⏳ L'email pot tardar fins a <strong style="color:var(--gold)">1 minut</strong> · No cliquis "Reenviar" fins que no hagi passat 1 minut · Comprova la carpeta de spam si no arriba
+    </div>
+    <div style="margin-top:14px;display:flex;justify-content:center"><input id="login-otp-input" type="tel" maxlength="8" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" placeholder="00000000" style="width:210px;text-align:center;font-size:1.6rem;font-weight:900;letter-spacing:8px;background:rgba(255,255,255,.06);border:2px solid var(--gold);border-radius:12px;padding:14px 8px;color:var(--gold);outline:none" oninput="if(this.value.length===8)onVerifyOtp()"></div>
     <button class="btn btn-gold" id="login-verify-btn" onclick="onVerifyOtp()" style="margin-top:14px">✅ Verificar codi</button>
-    <div style="margin-top:16px;padding:12px;background:rgba(212,160,23,.1);border-radius:10px;font-size:.78rem;color:var(--gold)" id="login-sent-hint">Revisa la carpeta de spam</div>
-    <button class="btn btn-ghost mt" onclick="onResentEmail()" id="login-resend-btn" style="margin-top:14px">Reenviar</button>
+    <button class="btn btn-ghost mt" onclick="onResentEmail()" id="login-resend-btn" style="margin-top:14px" disabled>Reenviar (60s)</button>
     <button class="btn btn-ghost" onclick="resetLoginForm()" style="font-size:.78rem;padding:10px" id="login-back-btn">← Canviar correu</button>
   </div>
 </div>
@@ -226,7 +265,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div class="field"><label id="w-lbl-name"></label><input id="inp-nick" type="text" maxlength="20"></div>
     <div class="field"><label id="w-lbl-zone"></label><div class="zone-grid" id="zone-grid"></div></div>
     <div class="field"><label>Gènere</label><div class="zone-grid" style="grid-template-columns:1fr 1fr 1fr"><button class="zone-btn" data-g="home" onclick="pickGender(this)">👨 Home</button><button class="zone-btn" data-g="dona" onclick="pickGender(this)">👩 Dona</button><button class="zone-btn" data-g="altres" onclick="pickGender(this)">🏳️ Altres</button></div></div>
-    <div class="field"><label>Edat <span style="color:var(--muted);font-weight:400;font-size:.7rem">(opcional)</span></label><div style="background:rgba(255,255,255,.05);border-radius:12px;padding:14px 16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:.82rem;color:var(--muted)" id="age-label">Prefereixo no dir</span><span style="font-size:1.1rem;font-weight:700;color:var(--gold)" id="age-value">—</span></div><input type="range" id="inp-age" min="0" max="80" value="0" style="width:100%;accent-color:var(--gold);cursor:pointer" oninput="onAgeChange(this.value)"><div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:4px"><span>No dir</span><span>16</span><span>30</span><span>45</span><span>60+</span></div></div></div>
+    <div class="field"><label>Edat <span style="color:var(--muted);font-weight:400;font-size:.7rem">(opcional)</span></label><div style="display:flex;gap:10px;align-items:center"><input type="number" id="inp-age" min="8" max="99" placeholder="Ex: 35" style="width:110px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);color:var(--gold);padding:10px 14px;border-radius:10px;font-size:1.1rem;font-weight:700;outline:none;-moz-appearance:textfield" oninput="onAgeChange(this.value)"><span style="font-size:.82rem;color:var(--muted)">anys (deixa buit si prefereixes no dir-ho)</span></div></div>
     <button class="btn btn-gold" id="w-btn-play" onclick="onLogin()"></button>
     <button class="btn btn-ghost" id="w-btn-rank" onclick="go('s-rankings')"></button>
     <button class="btn btn-ghost" onclick="go('s-modes')" style="font-size:.8rem;padding:10px">← Canviar mode</button>
@@ -446,7 +485,7 @@ const SB_URL='https://ikfouhxdtkptafglthmd.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrZm91aHhkdGtwdGFmZ2x0aG1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMjY5MTksImV4cCI6MjA5MTYwMjkxOX0.j1GM0Ec2w_gDlRMHAoOk6LUdgX5YUYXpXp9ULX0kkJQ';
 const SBH={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
 async function sbI(table,row){try{const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(row)});return r.ok}catch(e){return false}}
-async function sbS(table,f='',o='score.desc',l=20){try{const orderPart=o?`&order=${o}`:'';const r=await fetch(`${SB_URL}/rest/v1/${table}?${f}${orderPart}&limit=${Math.min(l,100)}`,{headers:SBH});if(!r.ok)return null;return await r.json()}catch(e){return null}}
+async function sbS(table,f='',o='score.desc',l=20){try{const r=await fetch(`${SB_URL}/rest/v1/${table}?${f}&order=${o}&limit=${Math.min(l,100)}`,{headers:SBH});if(!r.ok)return null;return await r.json()}catch(e){return null}}
 
 const RL={_s:{},check(k,mx,ms){const n=Date.now();if(!this._s[k])this._s[k]=[];this._s[k]=this._s[k].filter(t=>n-t<ms);if(this._s[k].length>=mx)return false;this._s[k].push(n);return true}};
 const canScore=()=>RL.check('sc',3,10*60*1000);const canBustia=()=>RL.check('bu',5,60*60*1000);
@@ -568,19 +607,22 @@ function onAcceptConsent(){
   const p=document.getElementById('consent-privacy').checked;
   if(!t||!p){toast('⚠️ Has d\'acceptar les dues');return;}
   storeConsent();
-  // Ara continuem amb el flux normal: si tenim perfil al server, anem al menú; si no, a zona
   const email=localStorage.getItem('cn:user-email');
   if(email){
     loadUserProfile({email}).then(prof=>{
       if(prof&&prof.nick&&prof.zona){
-        // Re-save per actualitzar consent fields a Supabase
         saveProfileToSupabase(email);
         renderMenu();go('s-menu');testSB();
       }else{
-        go('s-zone');renderZoneScreen();
+        // Usuari nou: va al formulari de perfil directament
+        G.lang=localStorage.getItem('cn:last-lang')||'ca';
+        go('s-welcome');renderWelcome();
       }
     });
-  }else{go('s-zone');renderZoneScreen();}
+  }else{
+    // Sense email (cas estrany): va al login
+    go('s-login');
+  }
 }
 
 function onDeclineConsent(){
@@ -626,11 +668,29 @@ async function onSendOtp(){
     document.getElementById('login-card-sent').style.display='block';
     document.getElementById('login-sent-desc').textContent=`Hem enviat un codi de 8 dígits a ${email}. Caduca en 10 minuts.`;
     setTimeout(()=>document.getElementById('login-otp-input')?.focus(),300);
+    startResendCountdown(60);
   }else{
-    // Errors importants (rate limit, etc.) duren més perquè l'usuari els pugui llegir
     const dur=res.isRateLimit?6000:4000;
     toast(res.msg||'Error',dur);
   }
+}
+
+function startResendCountdown(secs){
+  const btn=document.getElementById('login-resend-btn');
+  if(!btn)return;
+  btn.disabled=true;
+  let s=secs;
+  btn.textContent=`Reenviar (${s}s)`;
+  const t=setInterval(()=>{
+    s--;
+    if(s<=0){
+      clearInterval(t);
+      btn.disabled=false;
+      btn.textContent='Reenviar codi';
+    } else {
+      btn.textContent=`Reenviar (${s}s)`;
+    }
+  },1000);
 }
 async function onVerifyOtp(){
   const otp=document.getElementById('login-otp-input').value.trim();
@@ -642,6 +702,8 @@ async function onVerifyOtp(){
     toast('✅ Sessió iniciada!');
     telTrackEvent('login',{lang:G.lang});
     const email=lastEmailSent;localStorage.setItem('cn:user-email',email);
+    // Consent: si no l'ha acceptat, guardem l'email i anem a consent
+    // onAcceptConsent continuarà amb loadUserProfile
     if(!hasValidConsent()){go('s-consent');return;}
     const p=await loadUserProfile({email});
     if(p&&p.nick&&p.zona){
@@ -649,12 +711,13 @@ async function onVerifyOtp(){
       toast(`👋 Benvingut, ${G.nick}!`);
       await resumePendingChallenge();
     }else{
+      // Usuari nou: va directament al formulari de perfil
       G.lang=localStorage.getItem('cn:last-lang')||'ca';
       go('s-welcome');renderWelcome();
     }
   }else toast('⚠️ '+(res.msg||'Codi invàlid'));
 }
-async function onResentEmail(){if(!lastEmailSent)return;await sendOtp(lastEmailSent);toast('📧 Codi reenviat!');document.getElementById('login-otp-input').value='';}
+async function onResentEmail(){if(!lastEmailSent)return;await sendOtp(lastEmailSent);toast('📧 Codi reenviat!');document.getElementById('login-otp-input').value='';startResendCountdown(60);}
 function resetLoginForm(){document.getElementById('login-card-email').style.display='block';document.getElementById('login-card-sent').style.display='none';document.getElementById('login-email').value=''}
 
 // ═══ DEBUG MODE ═══
@@ -696,7 +759,7 @@ const SONGS_CA=[
 {id:5,dzId:14966842,t:"Jenifer",a:"Els Catarres",y:2011,g:"Pop folk",ai:"E",dec:"anys 2010",ytId:"FhJR6OO1X8Y",seg:{full:{s:45,e:57},chorus:{s:60,e:64},intro:{s:8,e:23},end:{s:126,e:141},mid:{s:75,e:82}}},
 {id:6,dzId:98128702,t:"Sense tu",a:"Teràpia de Shock",y:2011,g:"Rock català",ai:"T",dec:"anys 2010",ytId:"x_Zd3KoEtRk",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:7,dzId:3238541641,t:"Pa amb oli i sal",a:"Blaumut",y:2012,g:"Pop català",ai:"B",dec:"anys 2010",ytId:"g8-TqoOK4ow",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
-{id:8,dzId:3868688081,t:"Camins",a:"Sopa de Cabra",y:1991,g:"Rock català",ai:"S",dec:"anys 90",ytId:"79foF5DoOxY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
+{id:8,dzId:14955577,t:"Camins",a:"Sopa de Cabra",y:2001,g:"Rock català",ai:"S",dec:"anys 2000",ytId:"79foF5DoOxY",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:9,dzId:681479,t:"Que tinguem sort",a:"Lluís Llach",y:1974,g:"Cançó d'autor",ai:"L",dec:"anys 70",ytId:"3yMS-c1nSF4",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:10,dzId:1376216,t:"La Flama",a:"Obrint Pas",y:2004,g:"Rock català",ai:"O",dec:"anys 2000",ytId:"gr1CUFsj-vs",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
 {id:11,dzId:10866248,t:"Bon dia",a:"Els Pets",y:1997,g:"Rock català",ai:"E",dec:"anys 90",ytId:"XgwnYX0flkk",seg:{full:{s:30,e:40},chorus:{s:60,e:70},intro:{s:0,e:10},end:{s:150,e:160},mid:{s:90,e:100}}},
@@ -883,7 +946,7 @@ function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove(
 
 function pickZone(btn){document.querySelectorAll('#zone-grid .zone-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selZone=btn.dataset.z}
 function pickGender(btn){document.querySelectorAll('[data-g]').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selGender=btn.dataset.g}
-function onAgeChange(v){const n=parseInt(v);if(n===0){document.getElementById('age-label').textContent='Prefereixo no dir';document.getElementById('age-value').textContent='—';selAge=''}else{const age=n+15;document.getElementById('age-label').textContent=age+' anys';document.getElementById('age-value').textContent=age;selAge=age<=20?'16-20':age<=30?'21-30':age<=45?'31-45':age<=60?'46-60':'60+'}}
+function onAgeChange(v){const n=parseInt(v);if(!v||isNaN(n)||n<8||n>99){selAge=''}else{selAge=n<=20?'16-20':n<=30?'21-30':n<=45?'31-45':n<=60?'46-60':'60+'}}
 function pickPill(btn,grp){document.querySelectorAll(`#${grp} .radio-pill`).forEach(b=>b.classList.remove('sel'));btn.classList.add('sel')}
 function selectLang(lang){G.lang=lang;localStorage.setItem('cn:last-lang',lang);
   // Comprova si ja té sessió guardada
@@ -1560,7 +1623,19 @@ function showGiftOverlay(ch,gifts,giftMsg,giftSticker,sabotages){
       #gift-lid-el.flying{animation:lidFly .5s ease-out forwards}
       #gift-reveal-el{display:none}
       #gift-reveal-el.show{display:flex;flex-direction:column;align-items:center;animation:revealIn .5s cubic-bezier(.34,1.56,.64,1) forwards}
-    </style>
+    
+@media(max-width:375px){
+  .hud{margin:2px 0}
+  .lv-info{padding:5px 10px}
+  .player-box{padding:8px}
+  .dots{gap:2px}
+  .card{padding:10px;margin:4px 0}
+  .score-disp{font-size:1.4rem}
+  .play-btn{width:50px;height:50px;font-size:1.2rem;margin-bottom:6px}
+  .card-ttl{font-size:.85rem!important;margin-bottom:8px!important}
+  .btn{padding:10px 14px;font-size:.85rem}
+}
+</style>
     <div style="font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase">${esc(ch.creator_nick)} t'ha fet un regal!</div>
 
     <div id="gift-box-el" style="cursor:pointer;text-align:center" onclick="doOpenGift()">
@@ -1887,7 +1962,7 @@ window.addEventListener('popstate', function(e){
   // Navegació normal enrere
   go(parent);
   if(parent === 's-menu') renderMenu();
-  if(parent === 's-sala-menu'){stopChatPolling();renderSalaMenu();}
+  if(parent === 's-sala-menu') renderSalaMenu();
   pushBackState();
 });
 
@@ -2546,23 +2621,6 @@ function useAidHintDecade(){
     <button class="btn btn-outline" onclick="onDeleteSala()" style="border-color:var(--err);color:var(--err);font-size:.8rem;padding:10px">🗑️ Eliminar sala</button>
   </div>
 
-  <!-- Chat de la sala -->
-  <div class="card" style="width:100%;max-width:460px">
-    <div class="card-ttl" style="display:flex;justify-content:space-between;align-items:center">
-      <span>💬 Xat de la sala</span>
-      <span id="sala-chat-status" style="font-size:.65rem;color:var(--muted)">⟳ cada 15s</span>
-    </div>
-    <div id="sala-chat-msgs" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:10px;min-height:60px">
-      <div style="font-size:.78rem;color:var(--muted);text-align:center;padding:16px 0">Cap missatge encara. Sigues el primer! 👋</div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <input id="sala-chat-input" placeholder="Escriu un missatge..." maxlength="200"
-        style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:9px 12px;border-radius:10px;font-size:.85rem;outline:none"
-        onkeydown="if(event.key==='Enter')onSendChatMsg()">
-      <button onclick="onSendChatMsg()" style="background:var(--gold);color:#000;border:none;border-radius:10px;padding:9px 16px;font-weight:900;font-size:.85rem;cursor:pointer">➤</button>
-    </div>
-  </div>
-
   <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
 </div>
 
@@ -2570,72 +2628,6 @@ function useAidHintDecade(){
 // ═══ SALA FAMILIAR — Lògica ═══
 let G_SALA = null; // sala activa
 let salaPollingTimer = null;
-let chatPollingTimer = null;
-let lastMsgId = 0;
-
-// ─── Chat functions ───────────────────────────────────
-async function loadChatMsgs(scroll=true){
-  if(!G_SALA)return;
-  const msgs = await sbS('sala_messages',
-    `sala_code=eq.${G_SALA.code}`,
-    'created_at.asc', 50);
-  if(!msgs)return;
-  const el = document.getElementById('sala-chat-msgs');
-  if(!el)return;
-  if(!msgs.length){
-    el.innerHTML='<div style="font-size:.78rem;color:var(--muted);text-align:center;padding:16px 0">Cap missatge encara. Sigues el primer! 👋</div>';
-    return;
-  }
-  const now = Date.now();
-  el.innerHTML = msgs.map(m=>{
-    const isMe = m.nick === G.nick;
-    const t = new Date(m.created_at);
-    const mins = Math.floor((now - t.getTime())/60000);
-    const timeStr = mins < 1 ? 'ara' : mins < 60 ? `fa ${mins}m` : t.toLocaleTimeString('ca',{hour:'2-digit',minute:'2-digit'});
-    return `<div style="display:flex;flex-direction:column;align-items:${isMe?'flex-end':'flex-start'}">
-      <div style="font-size:.62rem;color:var(--muted);margin-bottom:2px;padding:0 4px">${isMe?'Tu':esc(m.nick)} · ${timeStr}</div>
-      <div style="background:${isMe?'rgba(212,160,23,.2)':'rgba(255,255,255,.06)'};border:1px solid ${isMe?'rgba(212,160,23,.3)':'rgba(255,255,255,.08)'};border-radius:${isMe?'12px 12px 2px 12px':'12px 12px 12px 2px'};padding:7px 11px;font-size:.85rem;max-width:80%;word-break:break-word">${esc(m.message)}</div>
-    </div>`;
-  }).join('');
-  if(scroll) el.scrollTop = el.scrollHeight;
-  // Actualitzar indicador
-  const st = document.getElementById('sala-chat-status');
-  if(st) st.textContent = `↻ ${new Date().toLocaleTimeString('ca',{hour:'2-digit',minute:'2-digit'})}`;
-}
-
-async function onSendChatMsg(){
-  if(!G_SALA||!G.nick)return;
-  const inp = document.getElementById('sala-chat-input');
-  if(!inp)return;
-  const msg = inp.value.trim();
-  if(!msg)return;
-  if(msg.length > 200){toast('⚠️ Màxim 200 caràcters');return}
-  inp.value='';
-  inp.disabled=true;
-  try{
-    await fetch(`${SB_URL}/rest/v1/sala_messages`,{
-      method:'POST',
-      headers:{...SBH,'Prefer':'return=minimal'},
-      body:JSON.stringify({
-        sala_code: G_SALA.code,
-        nick: G.nick,
-        message: msg,
-        created_at: new Date().toISOString()
-      })
-    });
-    await loadChatMsgs(true);
-  }catch(e){toast('❌ Error enviant missatge')}
-  finally{inp.disabled=false;inp.focus()}
-}
-
-function startChatPolling(){
-  stopChatPolling();
-  loadChatMsgs(true);
-  chatPollingTimer = setInterval(()=>loadChatMsgs(false), 15000);
-}
-function stopChatPolling(){
-  if(chatPollingTimer){clearInterval(chatPollingTimer);chatPollingTimer=null}
-}
 
 function genSalaCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ';let c='';for(let i=0;i<6;i++)c+=chars[Math.floor(Math.random()*chars.length)];return c}
 
@@ -2689,7 +2681,6 @@ async function onCreateSala(){
   toast(`✅ Sala creada amb codi: ${code}`,3500);
   go('s-sala');
   await renderSalaRoom();
-  startChatPolling();
 }
 
 async function onJoinSala(){
@@ -2720,19 +2711,9 @@ async function onJoinSala(){
   toast(`✅ Entrat a "${sala.name}"!`);
   go('s-sala');
   await renderSalaRoom();
-  startChatPolling();
 }
 
 async function renderSalaMenu(){
-  // Neteja làzima: esborra salas inactives fa +90 dies (1 cop per sessió)
-  if(!sessionStorage.getItem('cn:sala_cleanup_done')){
-    try{
-      await fetch(`${SB_URL}/rest/v1/rpc/cleanup_inactive_salas`,{
-        method:'POST',headers:SBH,body:'{}'
-      });
-    }catch(e){}
-    sessionStorage.setItem('cn:sala_cleanup_done','1');
-  }
   const codes = JSON.parse(localStorage.getItem('cn:my_salas')||'[]');
   if(!codes.length){ document.getElementById('sala-meves-wrap').style.display='none'; return; }
   document.getElementById('sala-meves-wrap').style.display='block';
@@ -2757,21 +2738,12 @@ async function onEnterSala(code){
   G_SALA = res[0];
   go('s-sala');
   await renderSalaRoom();
-  startChatPolling();
 }
 
 async function renderSalaRoom(){
   if(!G_SALA) return;
   const today = new Date().toISOString().slice(0,10);
   const isCreator = G_SALA.creator_nick === G.nick;
-
-  // Actualitzar last_active de la sala (cada vegada que algú entra)
-  try{
-    await fetch(`${SB_URL}/rest/v1/salas?code=eq.${G_SALA.code}`,{
-      method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},
-      body:JSON.stringify({last_active:new Date().toISOString()})
-    });
-  }catch(e){}
 
   // VIP — emoji al nom + missatge VIP
   const isVip = !!G_SALA.is_vip;
@@ -2781,27 +2753,6 @@ async function renderSalaRoom(){
   document.getElementById('sala-code-display').textContent = `Codi: ${G_SALA.code}`;
   document.getElementById('sala-edit-btn').style.display = isCreator ? 'block' : 'none';
   document.getElementById('sala-delete-wrap').style.display = isCreator ? 'block' : 'none';
-
-  // Avís caducitat per al creador
-  let expiryEl = document.getElementById('sala-expiry-warning');
-  if(isCreator){
-    if(!expiryEl){
-      expiryEl = document.createElement('div');
-      expiryEl.id = 'sala-expiry-warning';
-      document.getElementById('sala-delete-wrap').after(expiryEl);
-    }
-    const lastActive = G_SALA.last_active ? new Date(G_SALA.last_active) : new Date();
-    const daysInactive = Math.floor((Date.now() - lastActive.getTime()) / 86400000);
-    const daysLeft = 90 - daysInactive;
-    const color = daysLeft <= 14 ? '#ef4444' : daysLeft <= 30 ? '#f59e0b' : '#64748b';
-    expiryEl.style.cssText = 'width:100%;max-width:460px;margin-top:6px';
-    expiryEl.innerHTML = `<div style="font-size:.72rem;color:${color};text-align:center;padding:4px 0">
-      ⏳ La sala s'eliminarà si no hi ha activitat durant 90 dies
-      ${daysInactive > 0 ? `· ${daysLeft > 0 ? `${daysLeft} dies restants` : 'Caducada aviat'}` : '· Activa'}
-    </div>`;
-  } else if(expiryEl){
-    expiryEl.style.display = 'none';
-  }
 
   // Missatge VIP del creador (visible per tots els membres)
   let vipMsgEl = document.getElementById('sala-vip-msg');
