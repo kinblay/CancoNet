@@ -158,10 +158,16 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .ztab{flex-shrink:0;padding:8px 14px;border:none;border-radius:20px;background:rgba(255,255,255,.06);color:var(--muted);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;touch-action:manipulation}
 .ztab.on{background:var(--gold);color:#000}
 .rrow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-.rrow.highlight{background:rgba(212,160,23,.07);border-radius:8px;margin:0 -8px;padding-left:8px;padding-right:8px}
+.rrow{animation:rowSlide .35s ease-out both}
+.rrow.highlight{background:rgba(212,160,23,.07);border-radius:8px;margin:0 -8px;padding-left:8px;padding-right:8px;animation:rowSlide .35s ease-out both, myRowPulse 2s ease-in-out .5s 3}
 .rpos{width:28px;text-align:center;font-weight:900;color:var(--muted)}.rname{flex:1;font-weight:600;font-size:.9rem}
 .rzone{font-size:.74rem;color:var(--muted)}.rscore{font-weight:900;color:var(--gold)}
-.pos-up{color:#4caf50;font-size:.75rem;font-weight:700;margin-left:4px}.pos-down{color:#f44336;font-size:.75rem;font-weight:700;margin-left:4px}
+@keyframes posUp{0%{opacity:0;transform:translateY(6px) scale(.8)}60%{transform:translateY(-3px) scale(1.15)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes posDown{0%{opacity:0;transform:translateY(-6px) scale(.8)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes rowSlide{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes myRowPulse{0%,100%{background:rgba(212,160,23,.07)}50%{background:rgba(212,160,23,.18)}}
+.pos-up{color:#22c55e;font-size:.75rem;font-weight:700;margin-left:5px;animation:posUp .5s cubic-bezier(.34,1.56,.64,1) both}
+.pos-down{color:#f43f5e;font-size:.75rem;font-weight:700;margin-left:5px;animation:posDown .4s ease-out both}
 .pos-new{color:#D4A017;font-size:.7rem;font-weight:700;margin-left:4px;background:rgba(212,160,23,.15);padding:1px 5px;border-radius:4px}
 .go-emoji{font-size:3.2rem;margin:10px 0}.go-title{font-size:1.5rem;font-weight:900;text-align:center}
 .go-sub{color:var(--muted);font-size:.88rem;margin:5px 0 14px;text-align:center}
@@ -342,7 +348,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="go-emoji" id="go-emoji">🎵</div><div class="go-title" id="go-title"></div><div class="go-sub" id="go-sub"></div>
   <div class="card"><div class="card-ttl center">Puntuació final</div><div class="final-pts" id="go-pts">0</div><div class="center muted mt" id="go-lvltxt" style="margin-bottom:12px;font-size:.8rem"></div><div class="sep"></div><div id="go-res"></div></div>
   <div id="go-deezer-wrap" style="display:none;width:100%;max-width:460px;margin-top:8px;text-align:center"><a id="go-deezer-link" href="#" target="_blank" rel="noopener" style="display:inline-block;background:rgba(26,195,136,.12);border:.5px solid rgba(26,195,136,.35);color:#1ac37c;font-size:.85rem;font-weight:600;padding:10px 20px;border-radius:10px;text-decoration:none">🎧 Escolta a Deezer</a><div id="go-deezer-songs" style="margin-top:8px;font-size:.75rem;color:var(--muted)"></div></div>
-  <div class="share-card"><div class="share-title">CançoNet · <span id="sh-date"></span></div><div class="share-dots" id="sh-dots"></div><div class="share-score">🏆 <span id="sh-score"></span> pts</div><div style="font-size:.72rem;color:var(--gold);margin-top:2px" id="sh-rank"></div><div class="share-zone">📍 <span id="sh-zone"></span></div><div style="font-size:.75rem;color:#a78bfa;margin-top:3px" id="sh-streak"></div><div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="sh-mode"></div></div>
+  <div class="share-card"><div class="share-title">CançoNet · <span id="sh-date"></span></div><div class="share-dots" id="sh-dots"></div><div class="share-score">🏆 <span id="sh-score"></span> pts</div><div style="font-size:.72rem;color:var(--gold);margin-top:2px" id="sh-rank"></div><div id="sh-pos" style="display:none;font-size:.8rem;font-weight:700;margin-top:4px;padding:3px 0"></div><div class="share-zone">📍 <span id="sh-zone"></span></div><div style="font-size:.75rem;color:#a78bfa;margin-top:3px" id="sh-streak"></div><div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="sh-mode"></div></div>
 
   <!-- Posició al rànquing -->
   <div id="go-rank-preview" style="width:100%;max-width:460px;display:none">
@@ -612,7 +618,7 @@ function onAcceptConsent(){
     loadUserProfile({email}).then(prof=>{
       if(prof&&prof.nick&&prof.zona){
         saveProfileToSupabase(email);
-        renderMenu();go('s-menu');testSB();
+        renderMenu();go('s-menu');testSB();setTimeout(checkDailyBonus,500);
       }else{
         // Usuari nou: va al formulari de perfil directament
         G.lang=localStorage.getItem('cn:last-lang')||'ca';
@@ -953,7 +959,7 @@ function selectLang(lang){G.lang=lang;localStorage.setItem('cn:last-lang',lang);
   const email=localStorage.getItem('cn:user-email');
   if(email){
     if(!hasValidConsent()){go('s-consent');return;}
-    const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();return}
+    const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();setTimeout(checkDailyBonus,500);return}
   }
   // Si no → login
   go('s-login')
@@ -965,7 +971,7 @@ async function checkExistingSession(lang){
   const email=localStorage.getItem('cn:user-email');
   if(email){
     if(!hasValidConsent()){go('s-consent');return;}
-    const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();return}
+    const p=loadUserProfileSync(email);if(p&&p.nick&&p.zone){G.nick=p.nick;G.zone=p.zone;renderMenu();go('s-menu');testSB();setTimeout(checkDailyBonus,500);return}
   }
   go('s-login')
 }
@@ -983,6 +989,53 @@ function renderWelcome(){const t=T[G.lang];document.getElementById('w-sub').text
     t.zones.forEach((z,i)=>{const b=document.createElement('button');b.className='zone-btn'+(i===t.zones.length-1&&t.zones.length%2!==0?' wide':'');b.dataset.z=z;b.textContent=z;b.onclick=()=>pickZone(b);zg.appendChild(b)});
   }
 }
+
+// ─── BONUS DIARI ──────────────────────────────────────────────────────
+function checkDailyBonus(){
+  const today=new Date().toISOString().slice(0,10);
+  const lastDate=localStorage.getItem('cn:bonus_date');
+  if(lastDate===today)return; // ja s'ha reclamat avui
+
+  let streak=parseInt(localStorage.getItem('cn:bonus_streak')||'0');
+  if(lastDate){
+    const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    if(lastDate!==yesterday) streak=0; // ratxa trencada
+  }
+  streak++;
+  const mult=Math.min(2.0,1.0+(streak-1)*0.1);
+  const bonus=Math.round(20*mult);
+
+  localStorage.setItem('cn:bonus_date',today);
+  localStorage.setItem('cn:bonus_streak',String(streak));
+  addNotes(bonus);
+  showDailyBonusPopup(bonus,streak,mult);
+}
+
+function showDailyBonusPopup(bonus,streak,mult){
+  const streakEmojis=['','🔥','🔥🔥','🔥🔥🔥','🔥🔥🔥🔥','🔥🔥🔥🔥🔥'];
+  const fire=streakEmojis[Math.min(streak,5)]||'🔥🔥🔥🔥🔥';
+  const isMaxMult=mult>=2.0;
+  const html=`
+    <div id="daily-bonus-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)document.getElementById('daily-bonus-overlay').remove()">
+      <div style="background:var(--card);border:2px solid rgba(212,160,23,.4);border-radius:20px;padding:28px 24px;max-width:360px;width:100%;text-align:center">
+        <div style="font-size:2.8rem;margin-bottom:6px">🎵</div>
+        <div style="font-weight:900;font-size:1.2rem;margin-bottom:4px;color:var(--gold)">Bonus diari!</div>
+        <div style="font-size:.85rem;color:var(--muted);margin-bottom:18px">Dia ${streak} de ratxa ${fire}</div>
+
+        <div style="background:rgba(212,160,23,.1);border-radius:12px;padding:16px;margin-bottom:18px">
+          <div style="font-size:2.4rem;font-weight:900;color:var(--gold)">+${bonus} 🎵</div>
+          ${mult>1?`<div style="font-size:.78rem;color:var(--muted);margin-top:4px">×${mult.toFixed(1)} per ${streak} dies seguits${isMaxMult?' · Màxim!':''}</div>`:''}
+        </div>
+
+        ${!isMaxMult?`<div style="font-size:.72rem;color:var(--muted);margin-bottom:14px">A ${10-streak>0?10-streak:0} dies del multiplicador màxim ×2 (+40 🎵/dia)</div>`:'<div style="font-size:.75rem;color:var(--gold);margin-bottom:14px;font-weight:700">Multiplicador màxim assolit! 🏆</div>'}
+
+        <button onclick="document.getElementById('daily-bonus-overlay').remove()" style="width:100%;background:var(--gold);color:#000;border:none;border-radius:10px;padding:14px;font-size:.95rem;font-weight:900;cursor:pointer">Genial! 💪</button>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+// ─── FI BONUS DIARI ───────────────────────────────────────────────────
+
 function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;renderRankWidget();renderNotesWidget();checkMissionsCompleted();applyCosmetics();const _ds2=getDailyStyle(G.lang);const _db=document.getElementById('m-daily-style');if(_db)_db.textContent=`${_ds2.emoji} ${_ds2.label[G.lang]||_ds2.label.ca}`;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
 function onLogin(){const nv=V.nick(document.getElementById('inp-nick').value);if(!nv.ok)return toast('⚠️ '+nv.e);if(!selZone)return toast('⚠️ Selecciona zona!');if(!selGender)return toast('⚠️ Selecciona gènere!');G.nick=nv.val;G.zone=selZone;G.gender=selGender;G.age=selAge;saveUserProfile();renderMenu();go('s-menu');testSB()}
 async function testSB(){const el=document.getElementById('sb-status');const r=await sbS('scores','','score.desc',1);if(r===null){el.textContent='❌ Sense connexió';el.style.color='var(--err)'}else{el.textContent='✅ Connectat';el.style.color='var(--ok)'}checkSalaUrlParam();}
@@ -1001,12 +1054,43 @@ function renderRankWidget(){const prog=getRankProgress(G.lang),el=document.getEl
 const STYLES={ca:[{id:'all',emoji:'🎵',label:{ca:'Tots els estils',es:'Todos',eu:'All',int:'All'}},{id:'rock',emoji:'🎸',label:{ca:'Rock català',es:'Rock catalán',eu:'Catalan Rock',int:'Catalan Rock'}},{id:'pop',emoji:'🎤',label:{ca:'Pop català',es:'Pop catalán',eu:'Catalan Pop',int:'Catalan Pop'}},{id:'folk',emoji:'🌿',label:{ca:'Folk',es:'Folk',eu:'Folk',int:'Folk'}},{id:'festa',emoji:'💃',label:{ca:'Festa / Rumba',es:'Fiesta / Rumba',eu:'Festa / Rumba',int:'Festa / Rumba'}}],es:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop español',eu:'Spanish Pop',int:'Spanish Pop'}},{id:'balada',emoji:'❤️',label:{ca:'Balada',es:'Balada',eu:'Ballad',int:'Ballad'}},{id:'flamenco',emoji:'💃',label:{ca:'Flamenco',es:'Flamenco',eu:'Flamenco',int:'Flamenco'}}],eu:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop',eu:'Pop',int:'Pop'}},{id:'rock',emoji:'🎸',label:{ca:'Rock',es:'Rock',eu:'Rock',int:'Rock'}},{id:'dance',emoji:'🔊',label:{ca:'Dance',es:'Dance',eu:'Dance / Eurodance',int:'Dance / Eurodance'}}],int:[{id:'all',emoji:'🎵',label:{ca:'Tots',es:'Todos',eu:'All',int:'All'}},{id:'pop',emoji:'🎤',label:{ca:'Pop',es:'Pop',eu:'Pop',int:'Pop'}},{id:'rock',emoji:'🎸',label:{ca:'Rock',es:'Rock',eu:'Rock',int:'Rock'}},{id:'hiphop',emoji:'🎤',label:{ca:'Hip-hop',es:'Hip-hop',eu:'Hip-hop',int:'Hip-hop'}},{id:'funk',emoji:'🎷',label:{ca:'Funk / Soul',es:'Funk / Soul',eu:'Funk / Soul',int:'Funk / Soul'}},{id:'kpop',emoji:'🌸',label:{ca:'K-pop',es:'K-pop',eu:'K-pop',int:'K-pop'}}]};
 
 function seededShuffle(arr,seed){const r=[...arr];let s=seed>>>0;for(let i=r.length-1;i>0;i--){s=(s*1664525+1013904223)>>>0;const j=s%(i+1);[r[i],r[j]]=[r[j],r[i]]}return r}
-function onDaily(){const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}const ds=getDailyStyle(G.lang);const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);const fl=pool.filter(s=>s.st===ds.id);telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});G.mode='daily';G.style=ds.id;initGame(seededShuffle(fl.length>=5?fl:pool,today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily')}
+
+// ─── SONG STATS ────────────────────────────────────────────────────────
+function trackSongStat(songId,lang,result){
+  if(!songId)return;
+  const pk=parseInt(localStorage.getItem(`cn:sp_${songId}`)||'0')+1;
+  localStorage.setItem(`cn:sp_${songId}`,pk);
+  if(result!=='ok'){
+    const fk=parseInt(localStorage.getItem(`cn:sf_${songId}`)||'0')+1;
+    localStorage.setItem(`cn:sf_${songId}`,fk);
+  }
+  // Cooldown local: si fail_rate>70% amb >=10 partides → exclou 7 dies
+  const plays=pk, fails=parseInt(localStorage.getItem(`cn:sf_${songId}`)||'0');
+  if(plays>=10 && fails/plays>0.70){
+    const until=Date.now()+(7*86400000);
+    localStorage.setItem(`cn:sc_${songId}`,String(until));
+  }
+  // Enviar a Supabase (non-blocking)
+  fetch(`${SB_URL}/rest/v1/rpc/update_song_stat`,{
+    method:'POST',headers:{...SBH,'Content-Type':'application/json'},
+    body:JSON.stringify({p_song_id:songId,p_lang:lang||'ca',p_result:result})
+  }).catch(()=>{});
+}
+
+function isSongCooling(songId){
+  const until=parseInt(localStorage.getItem(`cn:sc_${songId}`)||'0');
+  return until > Date.now();
+}
+// ─── FI SONG STATS ─────────────────────────────────────────────────────
+
+function onDaily(){const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1'){toast(T[G.lang].dailyPlayed);return}const ds=getDailyStyle(G.lang);const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0&&!isSongCooling(s.id));const fl=pool.filter(s=>s.st===ds.id);telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});telTrackEvent('start_game',{mode:'daily',lang:G.lang,style:ds.id});G.mode='daily';G.style=ds.id;initGame(seededShuffle(fl.length>=5?fl:pool,today.split('').reduce((a,c)=>a+c.charCodeAt(0),0)),'daily')}
 function getDailyStyle(lang){const s=(STYLES[lang]||STYLES.ca).filter(x=>x.id!=='all');const t=new Date().toISOString().slice(0,10);return s[t.split('').reduce((a,c)=>a+c.charCodeAt(0),0)%s.length]}
 function onFree(){const lang=G.lang,styles=(STYLES[lang]||STYLES.ca),t=T[lang];const grid=document.getElementById('sty-grid');document.getElementById('sty-sub').textContent=t.freeBtn||'Tria un estil';document.getElementById('sty-back-lbl').textContent=t.mainMenu||'Enrere';grid.innerHTML=styles.map(s=>`<button class="style-card" onclick="onStartWithStyle('${s.id}')"><div class="style-emoji">${s.emoji}</div><div class="style-label">${esc(s.label[lang]||s.label.ca)}</div></button>`).join('');go('s-style');}
 function onStartWithStyle(styleId){
-  const shown=parseInt(localStorage.getItem('cn:pregame_shown')||'0');
-  if(shown<2&&G.mode!=='free'){ // només per primer mode lliure inicial, no per "tornar a jugar"
+  // Mostrar hint botiga si han passat 7 dies des de l'última vegada
+  const lastShown=parseInt(localStorage.getItem('cn:shop_hint_ts')||'0');
+  const daysSince=(Date.now()-lastShown)/(1000*60*60*24);
+  if(daysSince>=7&&G.mode!=='free'){
     pendingStyleId=styleId;
     showPregameShopHint();
     return;
@@ -1020,7 +1104,7 @@ function doStartWithStyle(styleId){const pool=(SONGS_BY_LANG[G.lang]||[]).filter
 
 function showPregameShopHint(){
   const shown=parseInt(localStorage.getItem('cn:pregame_shown')||'0');
-  const remaining=2-shown;
+  
   const html=`
     <div id="pregame-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closePregameModal(false)">
       <div style="background:var(--card);border:1.5px solid rgba(168,85,247,.3);border-radius:16px;padding:24px;max-width:420px;width:100%;max-height:85vh;overflow-y:auto">
@@ -1037,7 +1121,7 @@ function showPregameShopHint(){
         <button onclick="closePregameModal(false)" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:12px;color:var(--text);font-size:.88rem;cursor:pointer">▶️ No, començar partida</button>
 
         <div style="margin-top:14px;padding:10px;background:rgba(212,160,23,.08);border-radius:8px;font-size:.72rem;color:var(--gold);text-align:center;line-height:1.5">
-          💡 Aquest missatge només sortirà <strong>${remaining} ${remaining===1?'cop més':'cops més'}</strong>.<br>Després pots anar a la botiga des del menú o tocant un botó d'ajuda gris durant la partida.
+          💡 Tornarem a recordar-te la botiga d'aquí 7 dies.<br>Sempre pots anar-hi des del menú o tocant un botó d'ajuda gris durant la partida.
         </div>
       </div>
     </div>`;
@@ -1046,8 +1130,7 @@ function showPregameShopHint(){
 
 function closePregameModal(goShop){
   const m=document.getElementById('pregame-modal');if(m)m.remove();
-  const shown=parseInt(localStorage.getItem('cn:pregame_shown')||'0');
-  localStorage.setItem('cn:pregame_shown',String(shown+1));
+  localStorage.setItem('cn:shop_hint_ts',String(Date.now()));
   if(goShop){
     // Anem a la botiga, recordant que tornarem amb pendingStyleId
     sessionStorage.setItem('cn:resume_free',pendingStyleId||'all');
@@ -1114,9 +1197,9 @@ function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f
 function onConfirm(){if(!G.active)return;const ans=document.getElementById('g-ans');if(!ans)return;const v=ans.value.trim();if(!v||v.length<2){toast('⚠️ Escriu primer');return}if(norm(v)===norm(G.song.t))onCorrect();else onWrong()}
 
 function stopAll(){clearInterval(G.timerID);audioStop(true);G.playing=false;setWave(false)}
-function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;soundBonus();telTrackEvent('bonus_correct',{level:G.lvl,song_id:G.song?.id,lang:G.lang});toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;soundCorrect();toast(`${T[G.lang].correct} +${pts}`)}G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();setTimeout(()=>nextLvl(),1800)}
-function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
-function onSkip(){if(!G.active)return;if(G.mode==='challenge'&&G.challengeMods?.blockSkip){toast('🚫 Aquest repte bloqueja saltar cançons!');return}if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
+function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;soundBonus();telTrackEvent('bonus_correct',{level:G.lvl,song_id:G.song?.id,lang:G.lang});toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;soundCorrect();toast(`${T[G.lang].correct} +${pts}`)}G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'ok');trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();setTimeout(()=>nextLvl(),1800)}
+function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'fail');toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
+function onSkip(){if(!G.active)return;if(G.mode==='challenge'&&G.challengeMods?.blockSkip){toast('🚫 Aquest repte bloqueja saltar cançons!');return}if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'skip');toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
 function nextLvl(){if(G.lives<=0||G.lvl>=10){endGame();return}soundLevelUp();G.lvl++;G.songIdx=(G.songIdx+1)%G.songList.length;G.song=G.songList[G.songIdx];G.active=true;startLevel()}
 function onExit(){
   // Modal propi en lloc de confirm() per compatibilitat mòbil
@@ -1260,7 +1343,21 @@ async function endGame(){
   const t=T[G.lang],ok=G.results.filter(r=>r==='ok').length,gameNum=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),streak=getStreak();
   document.getElementById('go-emoji').textContent=ok>=9?'🏆':ok>=6?'🎵':'😅';document.getElementById('go-title').textContent=ok===10?t.perfect:ok>=7?t.vgood:t.ggame;document.getElementById('go-sub').textContent=`${ok}/10 ${t.guessed}`;document.getElementById('go-pts').textContent=G.score.toLocaleString();document.getElementById('go-lvltxt').textContent=ok===10?t.allLvl:`${t.upToLvl} ${G.lvl}/10`;
   document.getElementById('go-res').innerHTML=G.results.map((r,i)=>{const ico=r==='ok'?'✅':r==='skip'?'⏭️':'❌';const song=G.songList[i]||G.songList[G.songList.length-1];return`<div class="res-row"><span>${ico} ${i+1}. ${esc(t.lvls[i].n)}</span><span class="muted" style="font-size:.76rem">${esc(song.t)}</span></div>`}).join('');
-  const _dzW=document.getElementById('go-deezer-wrap');if(_dzW&&G.mode==='free'){_dzW.style.display='block';const _ls=G.songList[G.songIdx]||G.song;if(_ls?.dzId&&_ls.dzId!==0)document.getElementById('go-deezer-link').href=`https://www.deezer.com/track/${_ls.dzId}`;document.getElementById('go-deezer-songs').innerHTML=G.songList.slice(0,10).filter(s=>s?.dzId&&s.dzId!==0).map(s=>`<a href="https://www.deezer.com/track/${s.dzId}" target="_blank" rel="noopener" style="color:#1ac37c;text-decoration:none;margin:2px 4px;display:inline-block">♪ ${esc(s.t)}</a>`).join('');}else if(_dzW)_dzW.style.display='none';document.getElementById('sh-date').textContent=`#${gameNum}`;document.getElementById('sh-dots').textContent=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join('');document.getElementById('sh-score').textContent=G.score.toLocaleString();document.getElementById('sh-zone').textContent=G.zone;if(document.getElementById('sh-rank'))document.getElementById('sh-rank').textContent=getRank(G.lang).short;document.getElementById('sh-streak').textContent=streak>1?`🔥${'🔥'.repeat(Math.min(streak,5))}`:'';document.getElementById('sh-mode').textContent=t.levelBadge[G.mode]||G.mode;document.getElementById('go-share-btn').textContent=t.shareBtn;document.getElementById('go-again-btn').textContent=t.playAgain;document.getElementById('go-menu-btn').textContent=t.mainMenu;document.getElementById('go-rank-btn').textContent=t.rankBtn;go('s-gameover')
+  const _dzW=document.getElementById('go-deezer-wrap');if(_dzW&&G.mode==='free'){_dzW.style.display='block';const _ls=G.songList[G.songIdx]||G.song;if(_ls?.dzId&&_ls.dzId!==0)document.getElementById('go-deezer-link').href=`https://www.deezer.com/track/${_ls.dzId}`;document.getElementById('go-deezer-songs').innerHTML=G.songList.slice(0,10).filter(s=>s?.dzId&&s.dzId!==0).map(s=>`<a href="https://www.deezer.com/track/${s.dzId}" target="_blank" rel="noopener" style="color:#1ac37c;text-decoration:none;margin:2px 4px;display:inline-block">♪ ${esc(s.t)}</a>`).join('');}else if(_dzW)_dzW.style.display='none';document.getElementById('sh-date').textContent=`#${gameNum}`;document.getElementById('sh-dots').textContent=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join('');document.getElementById('sh-score').textContent=G.score.toLocaleString();document.getElementById('sh-zone').textContent=G.zone;if(document.getElementById('sh-rank'))document.getElementById('sh-rank').textContent=getRank(G.lang).short;
+  // Posició al rànquing diari (mode diari)
+  const _posEl=document.getElementById('sh-pos');
+  if(_posEl&&G.mode==='daily'){
+    const _today2=new Date().toISOString().slice(0,10);
+    const _yest=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    const _dp=parseInt(localStorage.getItem(`cn:rpos:d:${G.lang}:${_today2}`)||'0');
+    const _dpY=parseInt(localStorage.getItem(`cn:rpos:d:${G.lang}:${_yest}`)||'0');
+    if(_dp>0){
+      const _diff=_dpY>0?_dpY-_dp:0;
+      const _arrow=_diff>0?`<span style="color:#22c55e"> ▲+${_diff}</span>`:_diff<0?`<span style="color:#f43f5e"> ▼${Math.abs(_diff)}</span>`:'';
+      _posEl.style.display='block';
+      _posEl.innerHTML=`📅 #${_dp} avui${_arrow}`;
+    } else _posEl.style.display='none';
+  } else if(_posEl) _posEl.style.display='none';document.getElementById('sh-streak').textContent=streak>1?`🔥${'🔥'.repeat(Math.min(streak,5))}`:'';document.getElementById('sh-mode').textContent=t.levelBadge[G.mode]||G.mode;document.getElementById('go-share-btn').textContent=t.shareBtn;document.getElementById('go-again-btn').textContent=t.playAgain;document.getElementById('go-menu-btn').textContent=t.mainMenu;document.getElementById('go-rank-btn').textContent=t.rankBtn;go('s-gameover')
 }
 function onShare(){
   telTrackEvent('share',{score:G.score,mode:G.mode,lang:G.lang});
@@ -1278,7 +1375,13 @@ function onShare(){
   const dailyPos=parseInt(localStorage.getItem(`cn:rpos:d:${G.lang}:${today}`)||'0');
 
   let posLine='';
-  if(dailyPos>0)posLine+=`\n\uD83D\uDCC5 #${dailyPos} avui`;
+  if(dailyPos>0){
+    const yesterday2=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    const prevDailyPos=parseInt(localStorage.getItem(`cn:rpos:d:${G.lang}:${yesterday2}`)||'0');
+    const diffD=prevDailyPos>0?prevDailyPos-dailyPos:0;
+    const arrow=diffD>0?` ▲+${diffD}`:diffD<0?` ▼${Math.abs(diffD)}`:'';
+    posLine+=`\n\uD83D\uDCC5 #${dailyPos} avui${arrow}`;
+  }
 
   const txt=
     `\uD83C\uDFB5 CançoNet #${gn}\n`+
@@ -1409,9 +1512,10 @@ async function loadRankings(){
     header=`<div style="background:rgba(212,160,23,.08);border:1px solid rgba(212,160,23,.25);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:.82rem;color:var(--gold);text-align:center">🏅 La teva lliga: <strong>${r?r.name:'—'}</strong></div>`;
   }
 
+  const myIdx=rows.findIndex(e=>e.nick===G.nick);
   el.innerHTML=header+rows.map((e,i)=>{
     const isMe=G.nick&&e.nick===G.nick;
-    return`<div class="rrow${isMe?' highlight':''}"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}${posChangeHtml(e.nick,i+1,prev,isMe)}</div><div class="rzone">${subFor(e)}</div></div><div class="rscore">${(e.score||0).toLocaleString()}</div></div>`;
+    return`<div class="rrow${isMe?' highlight':''}" id="${isMe?'my-rank-row':''}" style="animation-delay:${i*40}ms"><div class="rpos">${med[i]||i+1}</div><div style="flex:1"><div class="rname">${esc(e.nick)}${isMe?' 👤':''}${posChangeHtml(e.nick,i+1,prev,isMe)}</div><div class="rzone">${subFor(e)}</div></div><div class="rscore">${(e.score||0).toLocaleString()}</div></div>`;
   }).join('');
 }
 function onTabChg(tab,btn){rTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');document.getElementById('ztabs').style.display=tab==='zone'?'flex':'none';loadRankings()}
@@ -1857,7 +1961,7 @@ async function resumePendingChallenge(){
     const isChallenge=await checkChallengeUrl(chId);
     if(isChallenge)return true;
   }
-  renderMenu();go('s-menu');testSB();
+  renderMenu();go('s-menu');testSB();setTimeout(checkDailyBonus,500);
   return false;
 }
 
