@@ -148,7 +148,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .sugg-item{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;font-size:.88rem}
 .sugg-item:hover{background:rgba(212,160,23,.1)}.sugg-art{color:var(--muted);font-size:.78rem}
 .mode-badge{display:inline-block;padding:4px 12px;border-radius:99px;font-size:.7rem;font-weight:700;margin-bottom:8px}
-.mode-badge.autor{background:rgba(124,58,237,.3);color:#a78bfa}.mode-badge.daily{background:rgba(212,160,23,.2);color:var(--gold)}
+.mode-badge.autor{background:rgba(124,58,237,.3);color:#a78bfa}.mode-badge.copa{background:rgba(249,115,22,.3);color:#f97316}.mode-badge.daily{background:rgba(212,160,23,.2);color:var(--gold)}
 .mode-badge.free{background:rgba(193,18,31,.2);color:#f87171}.mode-badge.challenge{background:rgba(124,58,237,.2);color:#a78bfa}
 .lang-badge{display:inline-block;background:rgba(255,255,255,.08);border-radius:99px;padding:3px 10px;font-size:.7rem;color:var(--muted);margin-left:6px}
 .tabs{display:flex;gap:4px;background:rgba(255,255,255,.05);border-radius:12px;padding:4px;width:100%;max-width:460px;margin:9px 0}
@@ -162,6 +162,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 .rrow.highlight{background:rgba(212,160,23,.07);border-radius:8px;margin:0 -8px;padding-left:8px;padding-right:8px;animation:rowSlide .35s ease-out both, myRowPulse 2s ease-in-out .5s 3}
 .rpos{width:28px;text-align:center;font-weight:900;color:var(--muted)}.rname{flex:1;font-weight:600;font-size:.9rem}
 .rzone{font-size:.74rem;color:var(--muted)}.rscore{font-weight:900;color:var(--gold)}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes posUp{0%{opacity:0;transform:translateY(6px) scale(.8)}60%{transform:translateY(-3px) scale(1.15)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes posDown{0%{opacity:0;transform:translateY(-6px) scale(.8)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes rowSlide{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
@@ -302,6 +303,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <button class="btn btn-ghost" onclick="go('s-challenge-create');loadChallengeStats()" style="border:1.5px solid rgba(193,18,31,.3);background:rgba(193,18,31,.07)">⚔️ Repte a un amic</button>
     <button class="btn btn-ghost" onclick="go('s-sala-menu');renderSalaMenu()" style="border:1.5px solid rgba(212,160,23,.3);background:rgba(212,160,23,.07)">👨‍👩‍👧 Mode Família</button>
     <button class="btn btn-ghost" onclick="go('s-missions');renderMissions()" style="border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.07)">🏅 Missions i recompenses</button>
+    <button class="btn btn-ghost" id="m-btn-copa" onclick="go('s-copa');loadCopa()" style="border:1.5px solid rgba(249,115,22,.4);background:rgba(249,115,22,.08)">🏆 Copa Setmanal</button>
 
     <div class="sep"></div>
     <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Pròximament</div>
@@ -843,7 +845,7 @@ const ALL_SONGS=[...SONGS_CA,...SONGS_AUTOR_CA,...SONGS_ES,...SONGS_EU,...SONGS_
 
 const LEVELS=[{tl:55,dur:8,seg:"full",hk:'hT'},{tl:45,dur:6,seg:"chorus",hk:'hL'},{tl:40,dur:7,seg:"intro",hk:'hY'},{tl:35,dur:6,seg:"end",hk:'hG'},{tl:30,dur:6,seg:"mid",hk:'hA'},{tl:28,dur:4,seg:"chorus",hk:'hW'},{tl:24,dur:5,seg:"full",hk:'hD'},{tl:22,dur:5,seg:"mid",hk:null},{tl:20,dur:4,seg:"end",hk:null},{tl:18,dur:3,seg:"chorus",hk:null}];
 
-const G={nick:'',zone:'',mode:'free',lang:'ca',lvl:1,lives:3,score:0,song:null,songList:[],songIdx:0,tLeft:0,tMax:60,timerID:null,playing:false,active:false,results:[],playCount:0,maxPlays:3,answerMode:'write-title',answerIsBonus:false};
+const G={nick:'',zone:'',mode:'free',lang:'ca',lvl:1,lives:3,score:0,song:null,songList:[],songIdx:0,tLeft:0,tMax:60,timerID:null,playing:false,active:false,results:[],playCount:0,maxPlays:3,answerMode:'write-title',answerIsBonus:false,riskMode:false};
 let rTab='global',rZone='',selZone='',selGender='',selAge='',actx,audioStopTimer,splashDone=false,currentChallenge=null;
 
 
@@ -948,7 +950,7 @@ const WIP_DATA={emsona:{
 function showWip(type){const d=WIP_DATA[type]||{title:'En construcció',sub:'Aviat!',features:[]};document.getElementById('wip-title').textContent=d.title;document.getElementById('wip-sub').textContent=d.sub;document.getElementById('wip-features').innerHTML=d.features.map(f=>`<div>✦ ${esc(f)}</div>`).join('');const _ne=document.getElementById('wip-note');if(_ne){_ne.style.display=d.note?'block':'none';if(d.note)_ne.textContent=d.note;}document.getElementById('modal-wip').classList.remove('hide')}
 function closeWip(){document.getElementById('modal-wip').classList.add('hide')}
 
-function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id!=='s-splash')soundNav();if(id==='s-rankings'){loadRankings();telTrackEvent('view_rankings',{lang:G.lang});}if(id==='s-bustia'){loadBustia();telTrackEvent('open_bustia',{lang:G.lang});}}
+function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id!=='s-splash')soundNav();if(id==='s-rankings'){loadRankings();telTrackEvent('view_rankings',{lang:G.lang});}if(id==='s-bustia'){loadBustia();telTrackEvent('open_bustia',{lang:G.lang});}if(id==='s-copa'){loadCopa();}}
 
 function pickZone(btn){document.querySelectorAll('#zone-grid .zone-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selZone=btn.dataset.z}
 function pickGender(btn){document.querySelectorAll('[data-g]').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selGender=btn.dataset.g}
@@ -1151,7 +1153,15 @@ function initGame(list,mode){list=list.filter(s=>s.dzId&&s.dzId!==0);G.lvl=1;G.l
 
 function renderHUD(){document.getElementById('g-badge').textContent=`${G.lvl}/10`;document.getElementById('g-score').textContent=G.score;document.getElementById('g-lives').innerHTML=[1,2,3].map(i=>`<span class="heart${i>G.lives?' dead':''}">❤️</span>`).join('');document.getElementById('g-dots').innerHTML=LEVELS.map((_,i)=>{const r=G.results[i];const isB=(i+1)%3===0;const c=r==='ok'?'ok':r==='fail'||r==='skip'?'fail':i+1===G.lvl?'cur':'';return`<div class="dot ${c}${isB?' bonus':''}">${isB?'⭐':i+1}</div>`}).join('')}
 
-function startLevel(){audioStop(true);G.usedAidsThisLevel={};const _cl=document.getElementById('g-lvl10-clue');if(_cl){if(G.lvl===10&&G.song){const _tl=T[G.lang];_cl.style.display='block';_cl.innerHTML='<span style="font-size:.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.5px">💡 '+(_tl.clueLabel||'Pista final:')+'</span><br><span style="font-size:.88rem;color:var(--text);line-height:1.5">'+esc(G.song.pista6||_tl.clueDefault||'Cançó molt popular al seu gènere')+'</span>';}else _cl.style.display='none';}const lv=LEVELS[G.lvl-1],t=T[G.lang],lvT=t.lvls[G.lvl-1];G.playCount=0;G.maxPlays=G.lvl<=3?3:G.lvl<=6?2:1;G.playing=false;document.getElementById('g-lname').textContent=lvT.n;document.getElementById('g-ldesc').textContent=lvT.d;const pool=G.mode==='autor'?AUTOR_BY_LANG[G.lang]:SONGS_BY_LANG[G.lang];setupAnswerMode(G.lvl,G.song,pool);document.getElementById('g-bonus-badge').style.display=G.answerIsBonus?'block':'none';const mRT=(G.answerMode==='guess-year'&&(lv.hk==='hY'||lv.hk==='hD'))||(G.answerMode==='guess-author'&&(lv.hk==='hA'||lv.hk==='hL'))||(G.answerMode==='choose-title'&&(lv.hk==='hT'||lv.hk==='hL'))||(G.answerMode==='write-title'&&lv.hk==='hT');const showH=lv.hk&&t[lv.hk]&&!G.answerIsBonus&&!mRT;const hEl=document.getElementById('g-hint');if(showH){hEl.style.display='';document.getElementById('g-hint-txt').textContent=t[lv.hk](G.song)}else hEl.style.display='none';const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;document.getElementById('g-pinfo').textContent=`${t.plays} ${G.maxPlays}`;setWave(false);clearInterval(G.timerID);G.tLeft=lv.tl;G.tMax=lv.tl;updTimer();G.timerID=setInterval(()=>{G.tLeft--;updTimer();if(G.tLeft<=0){clearInterval(G.timerID);onWrong()}},1000);renderHUD();renderGameAids()}
+function startLevel(){audioStop(true);G.usedAidsThisLevel={};const _cl=document.getElementById('g-lvl10-clue');if(_cl){if(G.lvl===10&&G.song){const _tl=T[G.lang];_cl.style.display='block';_cl.innerHTML='<span style="font-size:.72rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.5px">💡 '+(_tl.clueLabel||'Pista final:')+'</span><br><span style="font-size:.88rem;color:var(--text);line-height:1.5">'+esc(G.song.pista6||_tl.clueDefault||'Cançó molt popular al seu gènere')+'</span>';}else _cl.style.display='none';}const lv=LEVELS[G.lvl-1],t=T[G.lang],lvT=t.lvls[G.lvl-1];G.playCount=0;G.maxPlays=G.lvl<=3?3:G.lvl<=6?2:1;G.playing=false;document.getElementById('g-lname').textContent=lvT.n;document.getElementById('g-ldesc').textContent=lvT.d;const pool=G.mode==='autor'?AUTOR_BY_LANG[G.lang]:SONGS_BY_LANG[G.lang];setupAnswerMode(G.lvl,G.song,pool);document.getElementById('g-bonus-badge').style.display=G.answerIsBonus?'block':'none';const mRT=(G.answerMode==='guess-year'&&(lv.hk==='hY'||lv.hk==='hD'))||(G.answerMode==='guess-author'&&(lv.hk==='hA'||lv.hk==='hL'))||(G.answerMode==='choose-title'&&(lv.hk==='hT'||lv.hk==='hL'))||(G.answerMode==='write-title'&&lv.hk==='hT');const showH=lv.hk&&t[lv.hk]&&!G.answerIsBonus&&!mRT;const hEl=document.getElementById('g-hint');if(showH){hEl.style.display='';document.getElementById('g-hint-txt').textContent=t[lv.hk](G.song)}else hEl.style.display='none';const pb=document.getElementById('g-pbtn');pb.textContent='▶';pb.classList.remove('on');pb.disabled=false;document.getElementById('g-pinfo').textContent=`${t.plays} ${G.maxPlays}`;setWave(false);clearInterval(G.timerID);G.tLeft=lv.tl;G.tMax=lv.tl;updTimer();G.timerID=setInterval(()=>{G.tLeft--;updTimer();if(G.tLeft<=0){clearInterval(G.timerID);onWrong()}},1000);renderHUD();renderGameAids();
+  // Doble aposta al nivell 6
+  if(G.lvl===6&&!G.answerIsBonus){
+    G.riskMode=false;
+    const _pb=document.getElementById('g-pbtn');
+    if(_pb){_pb.disabled=true;}
+    showRiskModal();
+  }
+}
 function updTimer(){const bar=document.getElementById('g-tbar');bar.style.width=((G.tLeft/G.tMax)*100)+'%';bar.classList.toggle('hot',G.tLeft<=10);document.getElementById('g-tnum').textContent=G.tLeft+'s'}
 
 function getACtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}
@@ -1197,7 +1207,16 @@ function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f
 function onConfirm(){if(!G.active)return;const ans=document.getElementById('g-ans');if(!ans)return;const v=ans.value.trim();if(!v||v.length<2){toast('⚠️ Escriu primer');return}if(norm(v)===norm(G.song.t))onCorrect();else onWrong()}
 
 function stopAll(){clearInterval(G.timerID);audioStop(true);G.playing=false;setWave(false)}
-function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;soundBonus();telTrackEvent('bonus_correct',{level:G.lvl,song_id:G.song?.id,lang:G.lang});toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;soundCorrect();toast(`${T[G.lang].correct} +${pts}`)}G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'ok');trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();setTimeout(()=>nextLvl(),1800)}
+function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.answerIsBonus){pts=100+G.tMax*2+G.lvl*25;soundBonus();telTrackEvent('bonus_correct',{level:G.lvl,song_id:G.song?.id,lang:G.lang});toast(`⭐ BONUS! +${pts}`)}else{pts=100+G.tLeft*2+G.lvl*25;soundCorrect();toast(`${T[G.lang].correct} +${pts}`)}// Risk bonus: nivel 6 + aposta arriscat + 1 sola escolta
+  if(G.riskMode&&G.lvl===6&&G.playCount===1&&!G.answerIsBonus){
+    const riskBonus=Math.round(pts*0.5);pts+=riskBonus;
+    toast(`🔥 Arriscat! +${riskBonus} pts bonus`)
+  }
+  G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'ok');trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();
+  // Bonus pregunta al nivell 7
+  if(G.lvl===7&&!G.answerIsBonus){setTimeout(()=>showBonusQuestion(),1300);}
+  else{setTimeout(()=>nextLvl(),1800);}
+}
 function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'fail');toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
 function onSkip(){if(!G.active)return;if(G.mode==='challenge'&&G.challengeMods?.blockSkip){toast('🚫 Aquest repte bloqueja saltar cançons!');return}if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'skip');toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
 function nextLvl(){if(G.lives<=0||G.lvl>=10){endGame();return}soundLevelUp();G.lvl++;G.songIdx=(G.songIdx+1)%G.songList.length;G.song=G.songList[G.songIdx];G.active=true;startLevel()}
@@ -1337,6 +1356,7 @@ async function endGame(){
   G.songList?.slice(0,G.songIdx+1).forEach(s=>{if(s?.a)trackUniqueAuthor(s.a)});
   trackStreakUpdate(getStreak());
   if(G.mode==='daily')localStorage.setItem(`cn:daily:${G.lang}:${new Date().toISOString().slice(0,10)}`,'1');
+  if(G.mode==='copa')saveCopa();
   const _prevScore=getTotalScore();addTotalScore(G.score);checkRankUp(_prevScore);await saveScore();
   loadGameOverRanking();
   if(G.mode==='challenge'){if(currentChallenge?.isCreator)await saveChallengeCreator();else await saveChallengeRival();return}
@@ -1993,6 +2013,7 @@ const SCREEN_PARENT = {
 
   // Pantalles del menú
   's-rankings':         's-menu',
+  's-copa':              's-menu',
   's-challenge-create': 's-menu',
   's-challenge-mods':   's-menu',
   's-challenge-play':   's-menu',
@@ -3024,5 +3045,502 @@ async function onJoinSala_fromUrl(code){
 }
 </script>
 
+
+<div id="s-copa" class="scr">
+  <div class="top-bar"><button class="back-btn" onclick="go('s-menu')">← Enrere</button><span class="top-title">🏆 Copa Setmanal</span><div></div></div>
+  <div class="scr-body">
+
+    <!-- Header setmana -->
+    <div id="copa-header" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);border-radius:14px;padding:14px 16px;margin-bottom:12px;text-align:center">
+      <div style="font-size:.7rem;color:rgba(249,115,22,.8);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Setmana en curs</div>
+      <div id="copa-week" style="font-size:1.1rem;font-weight:900;color:#f97316"></div>
+      <div id="copa-time" style="font-size:.78rem;color:var(--muted);margin-top:2px"></div>
+    </div>
+
+    <!-- Estat inscripció -->
+    <div id="copa-status" class="card" style="margin-bottom:10px">
+      <div class="card-ttl">El teu equip</div>
+      <div id="copa-team-info" style="font-size:.85rem;color:var(--muted);text-align:center;padding:10px 0">Carregant...</div>
+    </div>
+
+    <!-- Bracket / Enfront -->
+    <div id="copa-bracket" class="card" style="margin-bottom:10px;display:none">
+      <div class="card-ttl">⚔️ El teu partit</div>
+      <div id="copa-match-content"></div>
+    </div>
+
+    <!-- Historial -->
+    <div id="copa-history" class="card" style="display:none">
+      <div class="card-ttl">📊 Resultats anteriors</div>
+      <div id="copa-history-list" style="font-size:.82rem;color:var(--muted)"></div>
+    </div>
+
+    <!-- Botó principal -->
+    <div id="copa-cta" style="margin-top:8px"></div>
+
+    <!-- Reglament -->
+    <div style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.15);border-radius:10px;padding:12px 14px;margin-top:12px">
+      <div style="font-size:.72rem;color:rgba(249,115,22,.9);font-weight:700;margin-bottom:6px">📋 Reglament</div>
+      <div style="font-size:.73rem;color:var(--muted);line-height:1.7">
+        • Inscripció: <strong style="color:#f97316">200 🎵 Notes</strong> per zona i setmana<br>
+        • Calen <strong style="color:#f97316">10 jugadors</strong> per zona per activar el partit<br>
+        • Totes les zones juguen les <strong>mateixes cançons</strong> (seed setmanal)<br>
+        • Guanya la zona amb <strong>més puntuació total</strong><br>
+        • Guanyadors: <strong style="color:#22c55e">200 + 160 🎵</strong> (80% del pot rival)<br>
+        • Perfect (tots 10/10): <strong style="color:#f59e0b">200 + 200 🎵</strong> (100% del pot rival)<br>
+        • Perdedors: perden les 200 🎵 d'inscripció
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </body>
-</html>
+</html><script>
+// ═══════════════════════════════════════════════════════════════
+// COPA SETMANAL PER ZONES
+// ═══════════════════════════════════════════════════════════════
+const COPA_COST = 200;
+const COPA_TEAM_SIZE = 10;
+const COPA_WIN_PCT = 0.80;
+const COPA_PERFECT_PCT = 1.0;
+
+function getCopaSetmana(){
+  const d=new Date();
+  const day=d.getDay()||7; // 1=Dl...7=Dg
+  d.setDate(d.getDate()-(day-1));
+  return d.toISOString().slice(0,10); // Dilluns d'aquesta setmana
+}
+
+function copaDaysLeft(){
+  const d=new Date();
+  const day=d.getDay()||7;
+  return 7-day; // dies fins a diumenge
+}
+
+async function loadCopa(){
+  if(!G.nick){
+    document.getElementById('copa-cta').innerHTML='<div class="center muted" style="padding:16px">Cal estar registrat per participar a la Copa.</div>';
+    return;
+  }
+  const setmana=getCopaSetmana();
+  document.getElementById('copa-week').textContent=`Setmana del ${setmana}`;
+  document.getElementById('copa-time').textContent=`Tanca en ${copaDaysLeft()} dies (diumenge)`;
+
+  // Carregar inscripció de l'usuari
+  const myIns=await sbS('copa_inscripcions',`setmana=eq.${setmana}&nick=eq.${encodeURIComponent(G.nick)}&lang=eq.${G.lang}`,'',1);
+  const isInscrit=myIns&&myIns.length>0;
+  const myData=isInscrit?myIns[0]:null;
+
+  // Carregar l'equip de la meva zona
+  const teamRows=await sbS('copa_inscripcions',`setmana=eq.${setmana}&zona=eq.${encodeURIComponent(G.zone)}&lang=eq.${G.lang}`,'created_at.asc',COPA_TEAM_SIZE+2);
+  const teamSize=teamRows?teamRows.length:0;
+  const teamReady=teamSize>=COPA_TEAM_SIZE;
+
+  // Equip info
+  const teamEl=document.getElementById('copa-team-info');
+  if(!isInscrit){
+    teamEl.innerHTML=`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="flex:1;background:rgba(255,255,255,.05);border-radius:99px;height:8px;overflow:hidden">
+          <div style="height:100%;width:${Math.round((teamSize/COPA_TEAM_SIZE)*100)}%;background:linear-gradient(90deg,#f97316,#f59e0b);border-radius:99px;transition:width .5s"></div>
+        </div>
+        <span style="font-size:.8rem;color:#f97316;font-weight:700">${teamSize}/${COPA_TEAM_SIZE}</span>
+      </div>
+      <div style="font-size:.8rem;color:var(--muted)">${teamReady?'✅ Equip completat! Uneix-te per jugar.':`Falten ${COPA_TEAM_SIZE-teamSize} jugadors per activar l'equip de ${G.zone}`}</div>
+      ${teamRows&&teamRows.length?'<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">'+teamRows.slice(0,6).map(r=>`<span style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.2);border-radius:99px;padding:2px 8px;font-size:.7rem">${esc(r.nick)}</span>`).join('')+(teamSize>6?`<span style="color:var(--muted);font-size:.7rem">+${teamSize-6}</span>`:'')+'</div>':''}
+    `;
+  } else {
+    const played=myData.score!==null;
+    teamEl.innerHTML=`
+      <div style="color:#22c55e;font-size:.82rem;font-weight:700;margin-bottom:6px">✅ Inscrit a la Copa!</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">${G.zone} · ${teamSize}/${COPA_TEAM_SIZE} jugadors</div>
+      ${played?`<div style="background:rgba(34,197,94,.1);border-radius:8px;padding:8px;font-size:.82rem;color:#22c55e">Partida jugada: <strong>${(myData.score||0).toLocaleString()} pts</strong> · ${myData.levels_ok}/10 nivells</div>`:'<div style="font-size:.78rem;color:#f97316">⏳ Pendent jugar la teva partida</div>'}
+      ${teamRows&&teamRows.length?'<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">'+teamRows.slice(0,COPA_TEAM_SIZE).map(r=>{const played=r.score!==null;return`<span style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.2);border-radius:99px;padding:2px 8px;font-size:.7rem">${esc(r.nick)}${played?'✅':''}</span>`}).join('')+'</div>':''}
+    `;
+  }
+
+  // Buscar si hi ha un partit per a la meva zona
+  const partitRows=await sbS('copa_partits',
+    `setmana=eq.${setmana}&lang=eq.${G.lang}`,
+    'created_at.asc',10);
+  const myPartit=partitRows?.find(p=>p.zona_1===G.zone||p.zona_2===G.zone);
+
+  // Si no hi ha partit però hi ha 10 jugadors, busquem rival automàticament
+  if(!myPartit&&teamReady&&isInscrit){
+    await tryMatchmaking(setmana);
+    // Re-carregar
+    await loadCopa();
+    return;
+  }
+
+  // Mostrar bracket si hi ha partit
+  const bracketEl=document.getElementById('copa-bracket');
+  if(myPartit){
+    bracketEl.style.display='block';
+    const isZ1=myPartit.zona_1===G.zone;
+    const myScore=isZ1?myPartit.zona_1_score:myPartit.zona_2_score;
+    const rivScore=isZ1?myPartit.zona_2_score:myPartit.zona_1_score;
+    const rivalZona=isZ1?myPartit.zona_2:myPartit.zona_1;
+    const finished=myPartit.winner!==null;
+    const myWon=myPartit.winner===G.zone;
+    document.getElementById('copa-match-content').innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="flex:1;text-align:center">
+          <div style="font-size:1rem;font-weight:900;color:#f97316">${esc(G.zone)}</div>
+          <div style="font-size:1.5rem;font-weight:900;color:var(--gold)">${(myScore||0).toLocaleString()}</div>
+          <div style="font-size:.7rem;color:var(--muted)">TU</div>
+        </div>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--muted)">VS</div>
+        <div style="flex:1;text-align:center">
+          <div style="font-size:1rem;font-weight:900;color:var(--muted)">${esc(rivalZona)}</div>
+          <div style="font-size:1.5rem;font-weight:900;color:var(--muted)">${(rivScore||0).toLocaleString()}</div>
+          <div style="font-size:.7rem;color:var(--muted)">RIVAL</div>
+        </div>
+      </div>
+      ${finished?`<div style="text-align:center;padding:10px;background:${myWon?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};border-radius:10px;font-weight:700;color:${myWon?'#22c55e':'#ef4444'}">${myWon?'🏆 Heu guanyat!':'💔 Heu perdut'} ${myPartit.is_perfect&&myWon?'· PERFECT! 🌟':''}</div>`:'<div style="font-size:.75rem;color:var(--muted);text-align:center">Partida en curs · Resultats al final de setmana</div>'}
+    `;
+  } else {
+    bracketEl.style.display='none';
+  }
+
+  // CTA
+  const ctaEl=document.getElementById('copa-cta');
+  if(!isInscrit){
+    const myNotes=getNotes();
+    const canJoin=myNotes>=COPA_COST;
+    ctaEl.innerHTML=`<button class="btn btn-gold" style="width:100%;${!canJoin?'opacity:.5':''}font-size:1rem;padding:16px" onclick="${canJoin?'onCopaInscriure()':'void(0)'}">🏆 Inscriure'm — ${COPA_COST} 🎵${!canJoin?'<br><small style=font-size:.7rem>Notes insuficients</small>':''}</button>`;
+  } else if(myData&&myData.score===null&&myPartit){
+    ctaEl.innerHTML=`<button class="btn btn-gold" style="width:100%;font-size:1rem;padding:16px;background:linear-gradient(135deg,#f97316,#ea580c)" onclick="onCopaJugar()">▶️ Jugar la meva partida de Copa!</button>`;
+  } else if(myData&&myData.score===null){
+    ctaEl.innerHTML=`<div style="text-align:center;font-size:.82rem;color:var(--muted);padding:12px">Esperant que es formi l'equip rival (${COPA_TEAM_SIZE} jugadors necessaris)</div>`;
+  } else {
+    ctaEl.innerHTML=`<div style="text-align:center;font-size:.82rem;color:#22c55e;padding:12px">✅ Has jugat la teva partida. Espera els resultats finals.</div>`;
+  }
+
+  // Historial
+  await loadCopaHistory();
+}
+
+async function tryMatchmaking(setmana){
+  // Buscar zones amb 10+ jugadors sense partit assignat
+  const allIns=await sbS('copa_inscripcions',`setmana=eq.${setmana}&lang=eq.${G.lang}`,'created_at.asc',200);
+  if(!allIns||!allIns.length)return;
+
+  // Comptar per zona
+  const byZona={};
+  allIns.forEach(r=>{if(!byZona[r.zona])byZona[r.zona]=[];byZona[r.zona].push(r.nick)});
+  const readyZones=Object.keys(byZona).filter(z=>byZona[z].length>=COPA_TEAM_SIZE);
+
+  // Buscar partits existents
+  const existingPartits=await sbS('copa_partits',`setmana=eq.${setmana}&lang=eq.${G.lang}`,'',50);
+  const busyZones=new Set();
+  if(existingPartits)existingPartits.forEach(p=>{busyZones.add(p.zona_1);busyZones.add(p.zona_2)});
+
+  // Zones lliures
+  const freeZones=readyZones.filter(z=>!busyZones.has(z));
+
+  // Aparellar de dos en dos
+  for(let i=0;i<freeZones.length-1;i+=2){
+    const z1=freeZones[i], z2=freeZones[i+1];
+    try{
+      await fetch(`${SB_URL}/rest/v1/copa_partits`,{
+        method:'POST',headers:{...SBH,'Prefer':'return=minimal'},
+        body:JSON.stringify({setmana,lang:G.lang,zona_1:z1,zona_2:z2})
+      });
+    }catch(e){}
+  }
+}
+
+async function onCopaInscriure(){
+  const myNotes=getNotes();
+  if(myNotes<COPA_COST){toast('⚠️ Notes insuficients');return}
+  if(!confirm(`Inscriure't a la Copa Setmanal? Costa ${COPA_COST} 🎵 Notes.`))return;
+
+  const setmana=getCopaSetmana();
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/copa_inscripcions`,{
+      method:'POST',headers:{...SBH,'Prefer':'return=minimal'},
+      body:JSON.stringify({setmana,nick:G.nick,zona:G.zone,lang:G.lang,notes_paid:COPA_COST})
+    });
+    if(!r.ok){const d=await r.json();if(d.code==='23505'){toast('⚠️ Ja estàs inscrit!');return}throw new Error();}
+    addNotes(-COPA_COST);
+    toast(`✅ Inscrit a la Copa! -${COPA_COST} 🎵`);
+    await loadCopa();
+  }catch(e){toast('⚠️ Error d\'inscripció. Torna-ho a intentar.')}
+}
+
+async function onCopaJugar(){
+  const setmana=getCopaSetmana();
+  // Seed: setmana + zona per garantir mateixes cançons per zona
+  const seedStr=setmana+G.zone;
+  const seed=seedStr.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.dzId&&s.dzId!==0);
+  telTrackEvent('start_game',{mode:'copa',lang:G.lang,zona:G.zone});
+  G.mode='copa';
+  initGame(seededShuffle(pool,seed),'copa');
+}
+
+// Cridat des d'endGame quan mode='copa'
+async function saveCopa(){
+  if(G.mode!=='copa')return;
+  const setmana=getCopaSetmana();
+  const lvlsOk=G.results.filter(r=>r==='ok').length;
+
+  // Actualitzar la inscripció amb el resultat
+  try{
+    await fetch(`${SB_URL}/rest/v1/copa_inscripcions?setmana=eq.${setmana}&nick=eq.${encodeURIComponent(G.nick)}&lang=eq.${G.lang}`,{
+      method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},
+      body:JSON.stringify({score:G.score,levels_ok:lvlsOk,played_at:new Date().toISOString()})
+    });
+    // Actualitzar la puntuació del partit
+    await updateCopaPartit(setmana,G.zone,G.score,lvlsOk);
+  }catch(e){}
+}
+
+async function updateCopaPartit(setmana,zona,score,lvlsOk){
+  const partits=await sbS('copa_partits',`setmana=eq.${setmana}&lang=eq.${G.lang}`,'',20);
+  if(!partits||!partits.length)return;
+  const p=partits.find(x=>x.zona_1===zona||x.zona_2===zona);
+  if(!p)return;
+
+  const isZ1=p.zona_1===zona;
+  const scoreField=isZ1?'zona_1_score':'zona_2_score';
+  const okField=isZ1?'zona_1_ok':'zona_2_ok';
+
+  // Sumar al total acumulat
+  const newScore=(isZ1?p.zona_1_score:p.zona_2_score)+score;
+  const newOk=(isZ1?p.zona_1_ok:p.zona_2_ok)+(lvlsOk===10?1:0);
+
+  const update={[scoreField]:newScore,[okField]:newOk};
+
+  // Comprovar si el partit ha acabat (tots 10 jugadors han jugat)
+  const allIns=await sbS('copa_inscripcions',`setmana=eq.${setmana}&lang=eq.${G.lang}`,'',200);
+  const z1Players=allIns?.filter(r=>r.zona===p.zona_1&&r.score!==null)||[];
+  const z2Players=allIns?.filter(r=>r.zona===p.zona_2&&r.score!==null)||[];
+  const z1Score=z1Players.reduce((s,r)=>s+(r.score||0),0)+(isZ1?score:0);
+  const z2Score=z2Players.reduce((s,r)=>s+(r.score||0),0)+(!isZ1?score:0);
+  const z1Ok=z1Players.filter(r=>r.levels_ok===10).length+(isZ1&&lvlsOk===10?1:0);
+  const z2Ok=z2Players.filter(r=>r.levels_ok===10).length+(!isZ1&&lvlsOk===10?1:0);
+
+  const z1Done=z1Players.length+(isZ1?1:0)>=COPA_TEAM_SIZE;
+  const z2Done=z2Players.length+(!isZ1?1:0)>=COPA_TEAM_SIZE;
+
+  if(z1Done&&z2Done){
+    // Partit acabat!
+    const winner=z1Score>z2Score?p.zona_1:(z2Score>z1Score?p.zona_2:null);
+    const isPerfect=winner===p.zona_1?z1Ok>=COPA_TEAM_SIZE:z2Ok>=COPA_TEAM_SIZE;
+    update.zona_1_score=z1Score;
+    update.zona_2_score=z2Score;
+    update.zona_1_ok=z1Ok;
+    update.zona_2_ok=z2Ok;
+    update.winner=winner||'tie';
+    update.is_perfect=isPerfect;
+    if(winner)await distribuirNotes(p,winner,isPerfect,z1Score,z2Score);
+  }
+
+  await fetch(`${SB_URL}/rest/v1/copa_partits?id=eq.${p.id}`,{
+    method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},
+    body:JSON.stringify(update)
+  });
+}
+
+async function distribuirNotes(partit,winner,isPerfect,z1Score,z2Score){
+  // Calcular recompensa
+  const loserZona=winner===partit.zona_1?partit.zona_2:partit.zona_1;
+  const pct=isPerfect?COPA_PERFECT_PCT:COPA_WIN_PCT;
+  const loserPot=COPA_COST*COPA_TEAM_SIZE;
+  const prizePerWinner=Math.floor((loserPot*pct)/COPA_TEAM_SIZE);
+
+  // Si l'usuari actual és del guanyador, afegim Notes
+  if(G.zone===winner){
+    const totalReward=COPA_COST+prizePerWinner;
+    addNotes(totalReward);
+    toast(`🏆 Copa guanyada! +${totalReward} 🎵 ${isPerfect?'(PERFECT!)':''}`);
+  } else {
+    toast(`💔 Copa perduda. Bona sort la setmana vinent!`);
+  }
+
+  // Marcar notes com a distribuïdes
+  await fetch(`${SB_URL}/rest/v1/copa_partits?id=eq.${partit.id}`,{
+    method:'PATCH',headers:{...SBH,'Prefer':'return=minimal'},
+    body:JSON.stringify({notes_repartides:true})
+  });
+}
+
+async function loadCopaHistory(){
+  const el=document.getElementById('copa-history');
+  const listEl=document.getElementById('copa-history-list');
+  const partits=await sbS('copa_partits',`lang=eq.${G.lang}&notes_repartides=eq.true`,'created_at.desc',5);
+  if(!partits||!partits.length){el.style.display='none';return}
+  el.style.display='block';
+  listEl.innerHTML=partits.map(p=>{
+    const myZone=p.zona_1===G.zone||p.zona_2===G.zone;
+    const myWon=p.winner===G.zone;
+    const score1=(p.zona_1_score||0).toLocaleString();
+    const score2=(p.zona_2_score||0).toLocaleString();
+    return`<div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:.8rem">${esc(p.zona_1)} <span style="color:var(--muted)">${score1}</span> — ${esc(p.zona_2)} <span style="color:var(--muted)">${score2}</span></div>
+        <div style="font-size:.68rem;color:var(--muted)">${p.setmana} ${p.is_perfect?'· 🌟 PERFECT':''}</div>
+      </div>
+      ${myZone?`<span style="font-size:.75rem;font-weight:700;color:${myWon?'#22c55e':'#ef4444'}">${myWon?'+Notes':'—'}</span>`:''}
+    </div>`;
+  }).join('');
+}
+</script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DOBLE APOSTA (Nivell 6) + BONUS PREGUNTA (Nivell 7)
+// ═══════════════════════════════════════════════════════════════
+
+// ── DOBLE APOSTA ──────────────────────────────────────────────────
+function showRiskModal(){
+  const html=`
+  <div id="risk-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:6000;display:flex;align-items:flex-end;justify-content:center;padding:20px">
+    <div style="background:#0f0f1a;border:1.5px solid rgba(249,115,22,.4);border-radius:20px 20px 20px 20px;padding:22px 20px;width:100%;max-width:420px;animation:slideUp .3s ease-out both">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="display:inline-block;background:rgba(249,115,22,.15);border-radius:99px;padding:3px 12px;font-size:.72rem;color:#f97316;font-weight:700;margin-bottom:8px">🎲 NIVELL 6 · DOBLE APOSTA</div>
+        <div style="font-size:1rem;font-weight:900">Com vols jugar?</div>
+        <div style="font-size:.8rem;color:#64748b;margin-top:4px">El temporitzador segueix! Decideix ràpid.</div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <button id="risk-safe-btn" onclick="chooseRisk(false)" style="flex:1;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 10px;cursor:pointer;transition:all .15s">
+          <div style="font-size:1.6rem;margin-bottom:6px">🔒</div>
+          <div style="font-weight:700;font-size:.9rem;color:#e2e8f0">Segur</div>
+          <div style="font-size:.7rem;color:#64748b;margin-top:4px">2 escoltes<br>Punts normals</div>
+        </button>
+        <button id="risk-risc-btn" onclick="chooseRisk(true)" style="flex:1;background:rgba(249,115,22,.1);border:1.5px solid rgba(249,115,22,.5);border-radius:14px;padding:16px 10px;cursor:pointer;transition:all .15s">
+          <div style="font-size:1.6rem;margin-bottom:6px">🔥</div>
+          <div style="font-weight:700;font-size:.9rem;color:#f97316">Arriscat</div>
+          <div style="font-size:.7rem;color:#64748b;margin-top:4px">1 escolta<br><span style="color:#f97316;font-weight:700">+50% punts</span> si encertes</div>
+        </button>
+      </div>
+
+      <div style="text-align:center;font-size:.72rem;color:#475569">
+        Segur automàtic en <span id="risk-cd" style="color:#f97316;font-weight:700">5</span>s
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+  let cd=5;
+  G._riskTimer=setInterval(()=>{
+    cd--;
+    const el=document.getElementById('risk-cd');
+    if(el)el.textContent=cd;
+    if(cd<=0){clearInterval(G._riskTimer);chooseRisk(false);}
+  },1000);
+}
+
+function chooseRisk(isRisk){
+  if(G._riskTimer)clearInterval(G._riskTimer);
+  const m=document.getElementById('risk-modal');if(m)m.remove();
+  G.riskMode=isRisk;
+  if(isRisk){
+    G.maxPlays=1;
+    document.getElementById('g-pinfo').textContent=`${T[G.lang].plays} 1`;
+    toast('🔥 Arriscat! 1 escolta · +50% si encertes');
+  }else{
+    G.maxPlays=2;
+    document.getElementById('g-pinfo').textContent=`${T[G.lang].plays} 2`;
+  }
+  const pb=document.getElementById('g-pbtn');
+  if(pb)pb.disabled=false;
+}
+
+// ── BONUS PREGUNTA (Nivell 7) ────────────────────────────────────────
+function showBonusQuestion(){
+  const song=G.song;
+  if(!song)return nextLvl();
+  const wasYearMode=G.answerMode==='guess-year';
+
+  let q,options,correct;
+
+  if(wasYearMode){
+    // Ja hem preguntat l'any → ara preguntem l'artista
+    q='🎤 Quin és l\'artista?';
+    const pool=(SONGS_BY_LANG[G.lang]||[]).filter(s=>s.a&&s.a!==song.a);
+    const others=[...new Set(pool.map(s=>s.a))].sort(()=>Math.random()-.5).slice(0,3);
+    options=seededShuffle([song.a,...others],Date.now()%9999);
+    correct=song.a;
+  }else{
+    // Preguntem la dècada
+    q='📅 Quina dècada?';
+    const dec=Math.floor(song.y/10)*10;
+    const decs=[dec-20,dec-10,dec,dec+10].filter(d=>d>=1950&&d<=2030);
+    while(decs.length<4)decs.push(dec+(decs.length+1)*10);
+    options=seededShuffle(decs.slice(0,4),Date.now()%9999).map(d=>`Anys ${d}`);
+    correct=`Anys ${dec}`;
+  }
+
+  const html=`
+  <div id="bonus-q-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:6000;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#0f0f1a;border:1.5px solid rgba(212,160,23,.4);border-radius:20px;padding:24px 20px;width:100%;max-width:380px;animation:slideUp .3s ease-out both">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="display:inline-block;background:rgba(212,160,23,.15);border-radius:99px;padding:3px 12px;font-size:.72rem;color:var(--gold);font-weight:700;margin-bottom:8px">⭐ BONUS</div>
+        <div style="font-size:1rem;font-weight:900">${q}</div>
+        <div style="font-size:.78rem;color:#64748b;margin-top:4px">
+          +50 pts si encertes · <span id="bq-cd" style="color:var(--gold);font-weight:700">8</span>s
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:6px 10px;margin-top:8px;font-size:.78rem;color:#94a3b8">
+          🎵 <em>${esc(song.t)}</em> — ${esc(song.a)} (${song.y})
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px" id="bq-opts">
+        ${options.map((o,i)=>`<button
+          id="bq-btn-${i}"
+          onclick="answerBonus(${i},'${esc(o).replace(/'/g,"\\'")}','${esc(correct).replace(/'/g,"\\'")}',${options.length})"
+          style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 8px;font-size:.88rem;cursor:pointer;font-weight:600;transition:all .2s">
+          ${esc(o)}
+        </button>`).join('')}
+      </div>
+
+      <button onclick="skipBonus()" style="width:100%;background:transparent;border:none;color:#475569;font-size:.78rem;cursor:pointer;padding:4px">
+        Saltar →
+      </button>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+
+  let sec=8;
+  G._bonusTimer=setInterval(()=>{
+    sec--;
+    const el=document.getElementById('bq-cd');
+    if(el)el.textContent=sec;
+    if(sec<=0){clearInterval(G._bonusTimer);skipBonus();}
+  },1000);
+}
+
+function answerBonus(idx,chosen,correct,total){
+  if(G._bonusTimer)clearInterval(G._bonusTimer);
+  // Desactiva botons i mostra resultat
+  for(let i=0;i<total;i++){
+    const b=document.getElementById(`bq-btn-${i}`);
+    if(!b)continue;
+    b.disabled=true;
+    if(b.textContent.trim()===correct.trim()){
+      b.style.background='rgba(34,197,94,.2)';
+      b.style.border='1.5px solid rgba(34,197,94,.5)';
+    } else if(b.textContent.trim()===chosen.trim()&&chosen!==correct){
+      b.style.background='rgba(239,68,68,.2)';
+      b.style.border='1.5px solid rgba(239,68,68,.5)';
+    }
+  }
+  if(chosen===correct){
+    const bonus=50;G.score+=bonus;renderHUD();
+    toast(`⭐ Bonus! +${bonus} pts`);
+  }
+  setTimeout(()=>{
+    const m=document.getElementById('bonus-q-overlay');if(m)m.remove();
+    nextLvl();
+  },1400);
+}
+
+function skipBonus(){
+  if(G._bonusTimer)clearInterval(G._bonusTimer);
+  const m=document.getElementById('bonus-q-overlay');if(m)m.remove();
+  nextLvl();
+}
+</script>
