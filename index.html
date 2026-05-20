@@ -286,7 +286,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div id="m-rank-widget" style="width:100%;background:rgba(212,160,23,.08);border:.5px solid rgba(212,160,23,.25);border-radius:12px;padding:10px 14px;margin-bottom:10px;text-align:left"></div>
     <div id="m-notes-widget" style="width:100%;background:rgba(168,85,247,.08);border:.5px solid rgba(168,85,247,.25);border-radius:12px;padding:8px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="go('s-missions');renderMissions()">
       <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.2rem">🎵</span><span style="font-size:.9rem;font-weight:700;color:#c084fc" id="m-notes-count">0 Notes</span></div>
-      <span style="font-size:.7rem;color:var(--muted)">🏅 Missions →</span>
+      <span style="font-size:.7rem;color:var(--muted)" id="m-notes-missions-lbl">🏅 Missions →</span>
     </div>
     <div class="big" id="m-hello"></div><div class="muted mt" id="m-zone" style="margin-bottom:14px"></div>
     <div id="m-daily-info"></div>
@@ -299,20 +299,20 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <button class="btn btn-ghost" id="m-btn-info" onclick="go('s-info')"></button>
 
     <div class="sep"></div>
-    <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Joc i social</div>
-    <button class="btn btn-ghost" onclick="go('s-challenge-create');loadChallengeStats()" style="border:1.5px solid rgba(193,18,31,.3);background:rgba(193,18,31,.07)">⚔️ Repte a un amic</button>
-    <button class="btn btn-ghost" onclick="go('s-sala-menu');renderSalaMenu()" style="border:1.5px solid rgba(212,160,23,.3);background:rgba(212,160,23,.07)">👨‍👩‍👧 Mode Família</button>
-    <button class="btn btn-ghost" onclick="go('s-missions');renderMissions()" style="border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.07)">🏅 Missions i recompenses</button>
+    <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px" id="m-sec-social">Joc i social</div>
+    <button class="btn btn-ghost" onclick="go('s-challenge-create');loadChallengeStats()" style="border:1.5px solid rgba(193,18,31,.3);background:rgba(193,18,31,.07)" id="m-btn-challenge">⚔️ Repte a un amic</button>
+    <button class="btn btn-ghost" onclick="go('s-sala-menu');renderSalaMenu()" style="border:1.5px solid rgba(212,160,23,.3);background:rgba(212,160,23,.07)" id="m-btn-family">👨‍👩‍👧 Mode Família</button>
+    <button class="btn btn-ghost" onclick="go('s-missions');renderMissions()" style="border:1.5px solid rgba(168,85,247,.3);background:rgba(168,85,247,.07)" id="m-btn-missions">🏅 Missions i recompenses</button>
     <button class="btn btn-ghost" id="m-btn-copa" onclick="go('s-copa');loadCopa()" style="border:1.5px solid rgba(249,115,22,.4);background:rgba(249,115,22,.08)">🏆 Copa Setmanal</button>
 
     <div class="sep"></div>
-    <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Pròximament</div>
-    <button class="btn btn-ghost" onclick="showWip('emsona')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative">🎭 Em Sona — Plagi o Coincidència? <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
-    <button class="btn btn-ghost" onclick="showWip('relax')" style="opacity:.9;border:1.5px solid rgba(134,239,172,.35);background:rgba(134,239,172,.07);position:relative">🎹 Mode Relax <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#000;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
-    <button class="btn btn-ghost" onclick="showWip('provinces')" style="opacity:.7">🏴 Repte per zones</button>
-    <button class="btn btn-ghost" onclick="showWip('realia')" style="opacity:.7">🤖 Real o IA?</button>
-    <button class="btn btn-ghost" onclick="go('s-modes')" style="font-size:.78rem;padding:10px">← Canviar idioma</button>
-    <button class="btn btn-ghost" onclick="signOut()" style="font-size:.78rem;padding:10px;opacity:.6">🚪 Tancar sessió</button>
+    <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px" id="m-sec-coming">Pròximament</div>
+    <button class="btn btn-ghost" onclick="showWip('emsona')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative"><span id="m-btn-emsona-txt">🎭 Em Sona</span> <span id="m-badge-emsona" style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
+    <button class="btn btn-ghost" onclick="showWip('relax')" style="opacity:.9;border:1.5px solid rgba(134,239,172,.35);background:rgba(134,239,172,.07);position:relative"><span id="m-btn-relax-txt">🎹 Mode Relax</span> <span id="m-badge-relax" style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#000;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
+    <button class="btn btn-ghost" onclick="showWip('provinces')" style="opacity:.7" id="m-btn-provinces">🏴 Repte per zones</button>
+    <button class="btn btn-ghost" onclick="showWip('realia')" style="opacity:.7" id="m-btn-realia">🤖 Real o IA?</button>
+    <button class="btn btn-ghost" onclick="go('s-modes')" style="font-size:.78rem;padding:10px" id="m-btn-changelang">← Canviar idioma</button>
+    <button class="btn btn-ghost" onclick="signOut()" style="font-size:.78rem;padding:10px;opacity:.6" id="m-btn-signout">🚪 Tancar sessió</button>
     <div style="margin-top:18px;padding:12px 0;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap">
       <a href="https://instagram.com/canconet" target="_blank" rel="noopener" style="color:var(--muted);font-size:.78rem;text-decoration:none;display:flex;align-items:center;gap:4px">📷 Instagram</a>
       <span style="color:rgba(255,255,255,.15)">·</span>
@@ -321,11 +321,11 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
       <a href="https://tiktok.com/@canconet" target="_blank" rel="noopener" style="color:var(--muted);font-size:.78rem;text-decoration:none;display:flex;align-items:center;gap:4px">🎵 TikTok</a>
     </div>
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;font-size:.7rem;color:rgba(255,255,255,.3)">
-      <a href="#" onclick="go('s-privacy');return false" style="color:inherit;text-decoration:none">Privacitat</a>
+      <a href="#" onclick="go('s-privacy');return false" style="color:inherit;text-decoration:none" id="m-lnk-privacy">Privacitat</a>
       <span>·</span>
-      <a href="#" onclick="go('s-terms');return false" style="color:inherit;text-decoration:none">Termes</a>
+      <a href="#" onclick="go('s-terms');return false" style="color:inherit;text-decoration:none" id="m-lnk-terms">Termes</a>
       <span>·</span>
-      <a href="#" onclick="onDeleteMyAccount();return false" style="color:rgba(239,68,68,.5);text-decoration:none">Eliminar compte</a>
+      <a href="#" onclick="onDeleteMyAccount();return false" style="color:rgba(239,68,68,.5);text-decoration:none" id="m-lnk-delete">Eliminar compte</a>
     </div>
   </div>
 </div>
@@ -380,7 +380,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="tabs" style="flex-wrap:wrap;gap:4px"><button class="tab on" onclick="onTabChg('global',this)">🌍 Global</button><button class="tab" onclick="onTabChg('zone',this)">📍 Zones</button><button class="tab" onclick="onTabChg('rang',this)">🏅 Rang</button><button class="tab" onclick="onTabChg('weekly',this)">📆 Setmanal</button><button class="tab" onclick="onTabChg('monthly',this)">🗓️ Mensual</button><button class="tab" onclick="onTabChg('daily',this)">📅 Avui</button></div>
   <div class="ztabs" id="ztabs" style="display:none"></div>
   <div class="card" style="padding:0 16px 4px"><div id="rank-list"></div></div>
-  <div class="w-full"><button class="btn btn-ghost mt" onclick="onBackRank()">↩️ Enrere</button></div>
+  <div class="w-full"><button class="btn btn-ghost mt" onclick="onBackRank()">↩️ <span class="i18n-back">Enrere</span></button></div>
 </div>
 
 <div id="s-bustia" class="scr">
@@ -389,7 +389,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div class="field"><label>Tipus</label><div class="radio-grp" id="bust-type-grp"><button class="radio-pill sel" data-v="canco" onclick="pickPill(this,'bust-type-grp')">🎵 Cançó</button><button class="radio-pill" data-v="artista" onclick="pickPill(this,'bust-type-grp')">🎸 Artista</button><button class="radio-pill" data-v="error" onclick="pickPill(this,'bust-type-grp')">🐛 Error</button><button class="radio-pill" data-v="idea" onclick="pickPill(this,'bust-type-grp')">💡 Idea</button><button class="radio-pill" data-v="altre" onclick="pickPill(this,'bust-type-grp')">✏️ Altre</button></div></div>
     <div class="field"><label>Missatge</label><textarea id="bust-msg" placeholder="Escriu aquí..."></textarea></div>
     <div class="field"><label>Correu (opcional)</label><input type="email" id="bust-email" placeholder="correu@exemple.com"></div>
-    <button class="btn btn-gold" onclick="onBustiaEnviar()">📤 Enviar</button><button class="btn btn-ghost" onclick="go('s-menu')">↩️ Enrere</button>
+    <button class="btn btn-gold" onclick="onBustiaEnviar()">📤 Enviar</button><button class="btn btn-ghost" onclick="go('s-menu')">↩️ <span class="i18n-back">Enrere</span></button>
   </div>
   <div class="card"><div class="card-ttl">Suggeriments recents</div><div id="bust-list" style="font-size:.82rem;color:var(--muted)">Cap suggeriment encara.</div></div>
 </div>
@@ -398,7 +398,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">ℹ️ CançoNet</div>
   <div class="card"><div class="card-ttl">Com jugar</div><div style="font-size:.85rem;color:var(--muted);line-height:2">🎵 Escolta · ✅ Respon · ❤️ 3 vides · ⏭️ Saltar · ⏱️ Compte enrere<br>📈 10 nivells creixents<br><br><strong style="color:var(--text)">Modes:</strong> ✏️ Escriu · 🎵 Tria títol · 🗓️ Any · 🎤 Autor<br>⭐ <strong style="color:var(--gold)">BONUS cada 3 nivells</strong><br>📅 Diari: 1/dia · 🎮 Lliure: sense límit</div></div>
   <div class="card"><div class="card-ttl">Segueix-nos</div><div class="social-row"><a class="social-btn" href="https://instagram.com" target="_blank">📸 IG</a><a class="social-btn" href="https://tiktok.com" target="_blank">🎵 TikTok</a><a class="social-btn" href="https://twitter.com" target="_blank">🐦 X</a></div></div>
-  <div class="w-full"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+  <div class="w-full"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ <span class="i18n-back">Enrere</span></button></div>
 </div>
 
 
@@ -406,7 +406,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div style="font-size:1.5rem;font-weight:900;margin:8px 0 4px;text-align:center">🎮 Partida lliure</div>
   <div class="sub" id="sty-sub" style="margin-bottom:16px;text-align:center"></div>
   <div id="sty-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:460px;margin:0 0 12px"></div>
-  <button class="btn btn-ghost" onclick="go('s-menu')" style="width:100%;max-width:460px">↩️ <span id="sty-back-lbl">Enrere</span></button>
+  <button class="btn btn-ghost" onclick="go('s-menu')" style="width:100%;max-width:460px">↩️ <span id="sty-back-lbl" class="i18n-back">Enrere</span></button>
 </div>
 
 <div id="s-challenge-create" class="scr">
@@ -416,7 +416,7 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div style="font-size:.9rem;color:var(--muted);line-height:1.8;margin-bottom:16px">Juga 10 nivells. Comparteix el link.<br>El teu amic juga les <strong style="color:var(--gold)">mateixes cançons</strong>.<br>Qui fa més punts, guanya! 🏆</div>
     <div id="ch-my-stats" style="margin-bottom:14px"></div>
     <button class="btn btn-gold" onclick="onChallengeStart()">🎵 Començar repte!</button>
-    <button class="btn btn-ghost" onclick="go('s-menu')">↩️ Enrere</button>
+    <button class="btn btn-ghost" onclick="go('s-menu')">↩️ <span class="i18n-back">Enrere</span></button>
   </div>
   <div class="card"><div class="card-ttl">🏆 Millors reptadors</div><div id="ch-leaderboard" style="font-size:.82rem;color:var(--muted)">Carregant...</div></div>
 </div>
@@ -753,10 +753,10 @@ async function trackArtist(nick,zona,lang,artist){if(!nick||!artist)return;const
 
 function hideTtl(t){return t.split('').map((c,i)=>{if(c===' ')return' ';if(i===0||i===t.length-1)return c;return i%2===0?c:'_'}).join('')}
 const T={
-ca:{appSub:'Endevina la cançó catalana',yourName:'El teu nom',namePH:'Com et dius?',yourZone:'La teva zona',playBtn:'Jugar! 🎵',seeRank:'🏆 Veure rànquing',hello:'Hola',dailyBtn:'📅 Cançó del dia',freeBtn:'🎮 Partida lliure',autorBtn:'🎸 Cançó d\'Autor',rankBtn:'🏆 Rànquing',suggestBtn:'💌 Bustia',infoBtn:'ℹ️ Informació',answerPH:'Escriu el títol...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Sortir',listenFull:'🎵 Cançó sencera',correct:'✅ Correcte!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escoltes:',playsLeft:'Restants:',noPlays:'No queden',playing:'♪ Reproduint...',hT:s=>`💡 Títol: ${hideTtl(s.t)}`,hL:s=>`💡 Lletra: "${s.t[0]}"`,hY:s=>`💡 Any: ${s.y}`,hG:s=>`💡 Gènere: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Paraules: ${s.t.split(' ').length}`,hD:s=>`💡 Dècada: ${s.dec}`,perfect:'Perfecte! 10/10!',vgood:'Molt bé!',ggame:'Bona partida!',guessed:'cançons encertades',allLvl:'🏆 Tots els nivells!',upToLvl:'Fins al nivell',shareBtn:'📤 Compartir',playAgain:'🔄 Tornar a jugar',mainMenu:'↩️ Menú',dailyPlayed:'✅ Ja has jugat avui!',dailyPlayedSub:'Torna demà.',noScores:'Cap puntuació encara.',wipBack:'🎵 Tornar al joc',wipSuggest:'💌 Suggerir millores',levelBadge:{daily:'📅 Diari',free:'🎮 Lliure',autor:'🎸 Autor',challenge:'⚔️ Repte'},lvls:[{n:'10 segons',d:'Fragment llarg — fàcil'},{n:'8 segons',d:'Fragment mig'},{n:'6 segons',d:'Fragment curt'},{n:'5 segons',d:'Fragment curt'},{n:'4 segons',d:'Fragment molt curt'},{n:'3 segons',d:'Fragmentet'},{n:'5 segons',d:'Sense pistes'},{n:'4 segons',d:'Sense pistes'},{n:'Velocitat 0.5x',d:'Melodia a mig tempo'},{n:'🔥 Repte final',d:'Velocitat 1.75x + pista escrita'}],zones:["Barcelona","Girona","Lleida","Tarragona","Terres de l'Ebre"]},
-es:{appSub:'Adivina la canción',yourName:'Tu nombre',namePH:'¿Cómo te llamas?',yourZone:'Tu zona',playBtn:'¡Jugar! 🎵',seeRank:'🏆 Ver ranking',hello:'Hola',dailyBtn:'📅 Canción del día',freeBtn:'🎮 Partida libre',autorBtn:'🎸 Canción de Autor',rankBtn:'🏆 Ranking',suggestBtn:'💌 Buzón',infoBtn:'ℹ️ Info',answerPH:'Título de la canción...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Salir',listenFull:'🎵 Canción entera',correct:'✅ ¡Correcto!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escuchas:',playsLeft:'Restantes:',noPlays:'No quedan',playing:'♪ Reproduciendo...',hT:s=>`💡 Título: ${hideTtl(s.t)}`,hL:s=>`💡 Letra: "${s.t[0]}"`,hY:s=>`💡 Año: ${s.y}`,hG:s=>`💡 Género: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Palabras: ${s.t.split(' ').length}`,hD:s=>`💡 Década: ${s.dec}`,perfect:'¡Perfecto!',vgood:'¡Muy bien!',ggame:'¡Buena partida!',guessed:'canciones',allLvl:'🏆 ¡Todos!',upToLvl:'Hasta nivel',shareBtn:'📤 Compartir',playAgain:'🔄 Otra vez',mainMenu:'↩️ Menú',dailyPlayed:'✅ ¡Ya jugaste hoy!',dailyPlayedSub:'Vuelve mañana.',noScores:'Sin puntuaciones.',wipBack:'🎵 Volver al juego',wipSuggest:'💌 Sugerir mejoras',levelBadge:{daily:'📅 Diario',free:'🎮 Libre',autor:'🎸 Autor',challenge:'⚔️ Reto'},lvls:[{n:'10 segundos',d:'Fragmento largo — fácil'},{n:'8 segundos',d:'Fragmento medio'},{n:'6 segundos',d:'Fragmento corto'},{n:'5 segundos',d:'Fragmento corto'},{n:'4 segundos',d:'Fragmento muy corto'},{n:'3 segundos',d:'Fragmentito'},{n:'5 segundos',d:'Sin pistas'},{n:'4 segundos',d:'Sin pistas'},{n:'Velocidad 0.5x',d:'Melodía a medio tempo'},{n:'🔥 Reto final',d:'Velocidad 1.75x + pista escrita'}],zones:["Andalucía","Aragón","Asturias","Islas Baleares","Canarias","Cantabria","Castilla y León","Castilla-La Mancha","Cataluña","Extremadura","Galicia","La Rioja","Madrid","Murcia","Navarra","País Vasco","Comunidad Valenciana","Ceuta y Melilla"]},
-eu:{appSub:'Guess the European song',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',wipBack:'🎵 Back to game',wipSuggest:'💌 Suggest improvements',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'10 seconds',d:'Long fragment — easy'},{n:'8 seconds',d:'Medium fragment'},{n:'6 seconds',d:'Short fragment'},{n:'5 seconds',d:'Short fragment'},{n:'4 seconds',d:'Very short fragment'},{n:'3 seconds',d:'Tiny fragment'},{n:'5 seconds',d:'No hints'},{n:'4 seconds',d:'No hints'},{n:'Speed 0.5x',d:'Half tempo melody'},{n:'🔥 Final challenge',d:'Speed 1.75x + written clue'}],zones:["France","Germany","Italy","Portugal","Netherlands"]},
-int:{appSub:'Guess the hit',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',wipBack:'🎵 Back to game',wipSuggest:'💌 Suggest improvements',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'10 seconds',d:'Long — easy'},{n:'8 seconds',d:'Medium'},{n:'6 seconds',d:'Short'},{n:'5 seconds',d:'Short'},{n:'4 seconds',d:'Very short'},{n:'3 seconds',d:'Tiny'},{n:'5 seconds',d:'No hints'},{n:'4 seconds',d:'No hints'},{n:'Speed 0.5x',d:'Half tempo'},{n:'🔥 Final',d:'Speed 1.75x + clue'}],zones:["Americas","Asia","Africa","Oceania","Europe"]}
+ca:{appSub:'Endevina la cançó catalana',yourName:'El teu nom',namePH:'Com et dius?',yourZone:'La teva zona',playBtn:'Jugar! 🎵',seeRank:'🏆 Veure rànquing',hello:'Hola',dailyBtn:'📅 Cançó del dia',freeBtn:'🎮 Partida lliure',autorBtn:'🎸 Cançó d\'Autor',rankBtn:'🏆 Rànquing',suggestBtn:'💌 Bustia',infoBtn:'ℹ️ Informació',answerPH:'Escriu el títol...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Sortir',listenFull:'🎵 Cançó sencera',correct:'✅ Correcte!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escoltes:',playsLeft:'Restants:',noPlays:'No queden',playing:'♪ Reproduint...',hT:s=>`💡 Títol: ${hideTtl(s.t)}`,hL:s=>`💡 Lletra: "${s.t[0]}"`,hY:s=>`💡 Any: ${s.y}`,hG:s=>`💡 Gènere: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Paraules: ${s.t.split(' ').length}`,hD:s=>`💡 Dècada: ${s.dec}`,perfect:'Perfecte! 10/10!',vgood:'Molt bé!',ggame:'Bona partida!',guessed:'cançons encertades',allLvl:'🏆 Tots els nivells!',upToLvl:'Fins al nivell',shareBtn:'📤 Compartir',playAgain:'🔄 Tornar a jugar',mainMenu:'↩️ Menú',dailyPlayed:'✅ Ja has jugat avui!',dailyPlayedSub:'Torna demà.',noScores:'Cap puntuació encara.',wipBack:'🎵 Tornar al joc',wipSuggest:'💌 Suggerir millores',secSocial:'Joc i social',secComing:'Pròximament',challengeBtn:'⚔️ Repte a un amic',familyBtn:'👨‍👩‍👧 Mode Família',missionsBtn:'🏅 Missions i recompenses',copaBtn:'🏆 Copa Setmanal',emsonaBtn:'🎭 Em Sona',relaxBtn:'🎹 Mode Relax',provincesBtn:'🏴 Repte per zones',realiaBtn:'🤖 Real o IA?',changeLangBtn:'← Canviar idioma',signOutBtn:'🚪 Tancar sessió',privacyLnk:'Privacitat',termsLnk:'Termes',deleteAccLnk:'Eliminar compte',badgeAviat:'AVIAT',badgeNou:'NOU',backBtn:'↩️ Enrere',missionsMini:'🏅 Missions',levelBadge:{daily:'📅 Diari',free:'🎮 Lliure',autor:'🎸 Autor',challenge:'⚔️ Repte'},lvls:[{n:'10 segons',d:'Fragment llarg — fàcil'},{n:'8 segons',d:'Fragment mig'},{n:'6 segons',d:'Fragment curt'},{n:'5 segons',d:'Fragment curt'},{n:'4 segons',d:'Fragment molt curt'},{n:'3 segons',d:'Fragmentet'},{n:'5 segons',d:'Sense pistes'},{n:'4 segons',d:'Sense pistes'},{n:'Velocitat 0.5x',d:'Melodia a mig tempo'},{n:'🔥 Repte final',d:'Velocitat 1.75x + pista escrita'}],zones:["Barcelona","Girona","Lleida","Tarragona","Terres de l'Ebre"]},
+es:{appSub:'Adivina la canción',yourName:'Tu nombre',namePH:'¿Cómo te llamas?',yourZone:'Tu zona',playBtn:'¡Jugar! 🎵',seeRank:'🏆 Ver ranking',hello:'Hola',dailyBtn:'📅 Canción del día',freeBtn:'🎮 Partida libre',autorBtn:'🎸 Canción de Autor',rankBtn:'🏆 Ranking',suggestBtn:'💌 Buzón',infoBtn:'ℹ️ Info',answerPH:'Título de la canción...',confirmBtn:'✅ Confirmar',skipBtn:'⏭️ Saltar (-1 vida)',exitBtn:'↩️ Salir',listenFull:'🎵 Canción entera',correct:'✅ ¡Correcto!',wrong:'❌ Era:',skipped:'⏭️ Era:',plays:'Escuchas:',playsLeft:'Restantes:',noPlays:'No quedan',playing:'♪ Reproduciendo...',hT:s=>`💡 Título: ${hideTtl(s.t)}`,hL:s=>`💡 Letra: "${s.t[0]}"`,hY:s=>`💡 Año: ${s.y}`,hG:s=>`💡 Género: ${s.g}`,hA:s=>`💡 Artista: "${s.ai}"`,hW:s=>`💡 Palabras: ${s.t.split(' ').length}`,hD:s=>`💡 Década: ${s.dec}`,perfect:'¡Perfecto!',vgood:'¡Muy bien!',ggame:'¡Buena partida!',guessed:'canciones',allLvl:'🏆 ¡Todos!',upToLvl:'Hasta nivel',shareBtn:'📤 Compartir',playAgain:'🔄 Otra vez',mainMenu:'↩️ Menú',dailyPlayed:'✅ ¡Ya jugaste hoy!',dailyPlayedSub:'Vuelve mañana.',noScores:'Sin puntuaciones.',wipBack:'🎵 Volver al juego',wipSuggest:'💌 Sugerir mejoras',secSocial:'Juego y social',secComing:'Próximamente',challengeBtn:'⚔️ Reto a un amigo',familyBtn:'👨‍👩‍👧 Modo Familia',missionsBtn:'🏅 Misiones y recompensas',copaBtn:'🏆 Copa Semanal',emsonaBtn:'🎭 Em Sona',relaxBtn:'🎹 Modo Relax',provincesBtn:'🏴 Reto por zonas',realiaBtn:'🤖 ¿Real o IA?',changeLangBtn:'← Cambiar idioma',signOutBtn:'🚪 Cerrar sesión',privacyLnk:'Privacidad',termsLnk:'Términos',deleteAccLnk:'Eliminar cuenta',badgeAviat:'PRONTO',badgeNou:'NUEVO',backBtn:'↩️ Atrás',missionsMini:'🏅 Misiones',levelBadge:{daily:'📅 Diario',free:'🎮 Libre',autor:'🎸 Autor',challenge:'⚔️ Reto'},lvls:[{n:'10 segundos',d:'Fragmento largo — fácil'},{n:'8 segundos',d:'Fragmento medio'},{n:'6 segundos',d:'Fragmento corto'},{n:'5 segundos',d:'Fragmento corto'},{n:'4 segundos',d:'Fragmento muy corto'},{n:'3 segundos',d:'Fragmentito'},{n:'5 segundos',d:'Sin pistas'},{n:'4 segundos',d:'Sin pistas'},{n:'Velocidad 0.5x',d:'Melodía a medio tempo'},{n:'🔥 Reto final',d:'Velocidad 1.75x + pista escrita'}],zones:["Andalucía","Aragón","Asturias","Islas Baleares","Canarias","Cantabria","Castilla y León","Castilla-La Mancha","Cataluña","Extremadura","Galicia","La Rioja","Madrid","Murcia","Navarra","País Vasco","Comunidad Valenciana","Ceuta y Melilla"]},
+eu:{appSub:'Guess the European song',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',wipBack:'🎵 Back to game',wipSuggest:'💌 Suggest improvements',secSocial:'Game & social',secComing:'Coming soon',challengeBtn:'⚔️ Challenge a friend',familyBtn:'👨‍👩‍👧 Family Mode',missionsBtn:'🏅 Missions & rewards',copaBtn:'🏆 Weekly Cup',emsonaBtn:'🎭 Em Sona',relaxBtn:'🎹 Relax Mode',provincesBtn:'🏴 Zone Challenge',realiaBtn:'🤖 Real or AI?',changeLangBtn:'← Change language',signOutBtn:'🚪 Sign out',privacyLnk:'Privacy',termsLnk:'Terms',deleteAccLnk:'Delete account',badgeAviat:'SOON',badgeNou:'NEW',backBtn:'↩️ Back',missionsMini:'🏅 Missions',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'10 seconds',d:'Long fragment — easy'},{n:'8 seconds',d:'Medium fragment'},{n:'6 seconds',d:'Short fragment'},{n:'5 seconds',d:'Short fragment'},{n:'4 seconds',d:'Very short fragment'},{n:'3 seconds',d:'Tiny fragment'},{n:'5 seconds',d:'No hints'},{n:'4 seconds',d:'No hints'},{n:'Speed 0.5x',d:'Half tempo melody'},{n:'🔥 Final challenge',d:'Speed 1.75x + written clue'}],zones:["France","Germany","Italy","Portugal","Netherlands"]},
+int:{appSub:'Guess the hit',yourName:'Your name',namePH:'Your name?',yourZone:'Your region',playBtn:'Play! 🎵',seeRank:'🏆 Ranking',hello:'Hello',dailyBtn:'📅 Song of the day',freeBtn:'🎮 Free game',autorBtn:'🎸 Artist spotlight',rankBtn:'🏆 Ranking',suggestBtn:'💌 Suggest',infoBtn:'ℹ️ Info',answerPH:'Song title...',confirmBtn:'✅ Confirm',skipBtn:'⏭️ Skip (-1 life)',exitBtn:'↩️ Exit',listenFull:'🎵 Full song',correct:'✅ Correct!',wrong:'❌ It was:',skipped:'⏭️ It was:',plays:'Plays:',playsLeft:'Left:',noPlays:'No plays left',playing:'♪ Playing...',hT:s=>`💡 Title: ${hideTtl(s.t)}`,hL:s=>`💡 Letter: "${s.t[0]}"`,hY:s=>`💡 Year: ${s.y}`,hG:s=>`💡 Genre: ${s.g}`,hA:s=>`💡 Artist: "${s.ai}"`,hW:s=>`💡 Words: ${s.t.split(' ').length}`,hD:s=>`💡 Decade: ${s.dec}`,perfect:'Perfect!',vgood:'Very good!',ggame:'Good game!',guessed:'songs',allLvl:'🏆 All!',upToLvl:'Up to level',shareBtn:'📤 Share',playAgain:'🔄 Play again',mainMenu:'↩️ Menu',dailyPlayed:'✅ Played today!',dailyPlayedSub:'Come back tomorrow.',noScores:'No scores yet.',wipBack:'🎵 Back to game',wipSuggest:'💌 Suggest improvements',secSocial:'Game & social',secComing:'Coming soon',challengeBtn:'⚔️ Challenge a friend',familyBtn:'👨‍👩‍👧 Family Mode',missionsBtn:'🏅 Missions & rewards',copaBtn:'🏆 Weekly Cup',emsonaBtn:'🎭 Em Sona',relaxBtn:'🎹 Relax Mode',provincesBtn:'🏴 Zone Challenge',realiaBtn:'🤖 Real or AI?',changeLangBtn:'← Change language',signOutBtn:'🚪 Sign out',privacyLnk:'Privacy',termsLnk:'Terms',deleteAccLnk:'Delete account',badgeAviat:'SOON',badgeNou:'NEW',backBtn:'↩️ Back',missionsMini:'🏅 Missions',levelBadge:{daily:'📅 Daily',free:'🎮 Free',autor:'🎸 Artist',challenge:'⚔️ Challenge'},lvls:[{n:'10 seconds',d:'Long — easy'},{n:'8 seconds',d:'Medium'},{n:'6 seconds',d:'Short'},{n:'5 seconds',d:'Short'},{n:'4 seconds',d:'Very short'},{n:'3 seconds',d:'Tiny'},{n:'5 seconds',d:'No hints'},{n:'4 seconds',d:'No hints'},{n:'Speed 0.5x',d:'Half tempo'},{n:'🔥 Final',d:'Speed 1.75x + clue'}],zones:["Americas","Asia","Africa","Oceania","Europe"]}
 };
 
 const SONGS_CA=[
@@ -995,7 +995,7 @@ function onAgeChange(v){const n=parseInt(v);if(!v||isNaN(n)||n<8||n>99){selAge='
 function pickPill(btn,grp){document.querySelectorAll(`#${grp} .radio-pill`).forEach(b=>b.classList.remove('sel'));btn.classList.add('sel')}
 function selectLang(lang){G.lang=lang;localStorage.setItem('cn:last-lang',lang);
   // Actualitzar el subtítol del login amb l'idioma seleccionat
-  const _ls=document.getElementById('login-sub');if(_ls)_ls.textContent='🎵 '+(T[lang]?.appSub||'');
+  const _ls=document.getElementById('login-sub');if(_ls)_ls.textContent='🎵 '+(T[lang]?.appSub||'');updateI18nBack?.();
   // Comprova si ja té sessió guardada
   const email=localStorage.getItem('cn:user-email');
   if(email){
@@ -1078,7 +1078,31 @@ function showDailyBonusPopup(bonus,streak,mult){
 }
 // ─── FI BONUS DIARI ───────────────────────────────────────────────────
 
-function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;renderRankWidget();renderNotesWidget();checkMissionsCompleted();applyCosmetics();const _ds2=getDailyStyle(G.lang);const _db=document.getElementById('m-daily-style');if(_db)_db.textContent=`${_ds2.emoji} ${_ds2.label[G.lang]||_ds2.label.ca}`;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
+
+function updateI18nBack(){
+  const t=T[G.lang]||T.ca;
+  document.querySelectorAll('.i18n-back').forEach(el=>el.textContent=(t.backBtn||'↩️ Enrere').replace('↩️ ',''));
+}
+function renderMenu(){const t=T[G.lang],today=new Date().toISOString().slice(0,10);document.getElementById('m-sub').textContent=t.appSub;document.getElementById('m-hello').innerHTML=`${t.hello}, <span style="color:var(--gold)">${esc(G.nick)}</span>! 👋`;document.getElementById('m-zone').textContent='📍 '+G.zone;document.getElementById('m-btn-daily').textContent=t.dailyBtn;document.getElementById('m-btn-free').textContent=t.freeBtn;document.getElementById('m-btn-autor').textContent=t.autorBtn;document.getElementById('m-btn-rank').textContent=t.rankBtn;document.getElementById('m-btn-suggest').textContent=t.suggestBtn;document.getElementById('m-btn-info').textContent=t.infoBtn;
+  // Seccions i botons del menú secundari
+  const _ss=document.getElementById('m-sec-social');if(_ss)_ss.textContent=t.secSocial||'Joc i social';
+  const _sc=document.getElementById('m-sec-coming');if(_sc)_sc.textContent=t.secComing||'Pròximament';
+  const _bc=document.getElementById('m-btn-challenge');if(_bc)_bc.textContent=t.challengeBtn||'⚔️ Repte a un amic';
+  const _bf=document.getElementById('m-btn-family');if(_bf)_bf.textContent=t.familyBtn||'👨‍👩‍👧 Mode Família';
+  const _bm=document.getElementById('m-btn-missions');if(_bm)_bm.textContent=t.missionsBtn||'🏅 Missions i recompenses';
+  const _bco=document.getElementById('m-btn-copa');if(_bco)_bco.textContent=t.copaBtn||'🏆 Copa Setmanal';
+  const _be=document.getElementById('m-btn-emsona-txt');if(_be)_be.textContent=t.emsonaBtn||'🎭 Em Sona';
+  const _bge=document.getElementById('m-badge-emsona');if(_bge)_bge.textContent=t.badgeAviat||'AVIAT';
+  const _br=document.getElementById('m-btn-relax-txt');if(_br)_br.textContent=t.relaxBtn||'🎹 Mode Relax';
+  const _bgr=document.getElementById('m-badge-relax');if(_bgr)_bgr.textContent=t.badgeNou||'NOU';
+  const _bp=document.getElementById('m-btn-provinces');if(_bp)_bp.textContent=t.provincesBtn||'🏴 Repte per zones';
+  const _bra=document.getElementById('m-btn-realia');if(_bra)_bra.textContent=t.realiaBtn||'🤖 Real o IA?';
+  const _cl=document.getElementById('m-btn-changelang');if(_cl)_cl.textContent=t.changeLangBtn||'← Canviar idioma';
+  const _so=document.getElementById('m-btn-signout');if(_so)_so.textContent=t.signOutBtn||'🚪 Tancar sessió';
+  const _lp=document.getElementById('m-lnk-privacy');if(_lp)_lp.textContent=t.privacyLnk||'Privacitat';
+  const _lt=document.getElementById('m-lnk-terms');if(_lt)_lt.textContent=t.termsLnk||'Termes';
+  const _ld=document.getElementById('m-lnk-delete');if(_ld)_ld.textContent=t.deleteAccLnk||'Eliminar compte';
+  const _nm=document.getElementById('m-notes-missions-lbl');if(_nm)_nm.textContent=(t.missionsMini||'🏅 Missions')+' →';updateI18nBack();renderRankWidget();renderNotesWidget();checkMissionsCompleted();applyCosmetics();const _ds2=getDailyStyle(G.lang);const _db=document.getElementById('m-daily-style');if(_db)_db.textContent=`${_ds2.emoji} ${_ds2.label[G.lang]||_ds2.label.ca}`;const played=localStorage.getItem(`cn:daily:${G.lang}:${today}`)==='1';const db=document.getElementById('m-btn-daily'),di=document.getElementById('m-daily-info');if(played){db.disabled=true;di.innerHTML=`<div class="daily-played-box"><strong>${esc(t.dailyPlayed)}</strong><br><span style="font-size:.78rem;color:var(--muted)">${esc(t.dailyPlayedSub)}</span></div>`}else{db.disabled=false;di.innerHTML=''}}
 function onLogin(){const nv=V.nick(document.getElementById('inp-nick').value);if(!nv.ok)return toast('⚠️ '+nv.e);if(!selZone)return toast('⚠️ Selecciona zona!');if(!selGender)return toast('⚠️ Selecciona gènere!');G.nick=nv.val;G.zone=selZone;G.gender=selGender;G.age=selAge;saveUserProfile();renderMenu();go('s-menu');testSB()}
 async function testSB(){const el=document.getElementById('sb-status');const r=await sbS('scores','','score.desc',1);if(r===null){el.textContent='❌ Sense connexió';el.style.color='var(--err)'}else{el.textContent='✅ Connectat';el.style.color='var(--ok)'}checkSalaUrlParam();}
 
@@ -2199,7 +2223,7 @@ pushBackState();
 
   <div class="w-full" style="max-width:460px">
     <button class="btn btn-gold" onclick="go('s-shop');renderShop()" style="background:linear-gradient(135deg,#a855f7,#c084fc);border-color:#a855f7">🛍️ Botiga · Gasta les teves Notes</button>
-    <button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button>
+    <button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ <span class="i18n-back">Enrere</span></button>
   </div>
 </div>
 
@@ -2222,7 +2246,7 @@ pushBackState();
 
   <div id="shop-list" style="width:100%;max-width:460px"></div>
 
-  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-missions');renderMissions()">↩️ Enrere</button></div>
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-missions');renderMissions()">↩️ <span class="i18n-back">Enrere</span></button></div>
 </div>
 
 <!-- ═══ PRIVACITAT ═══ -->
@@ -2250,7 +2274,7 @@ pushBackState();
 
     <p style="margin-top:14px;color:var(--gold);font-size:.78rem">📧 Dubtes? Escriu a canconet.app@gmail.com</p>
   </div>
-  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="onLegalBack()">↩️ Enrere</button></div>
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="onLegalBack()">↩️ <span class="i18n-back">Enrere</span></button></div>
 </div>
 
 <!-- ═══ TERMES D'ÚS ═══ -->
@@ -2281,7 +2305,7 @@ pushBackState();
 
     <p style="margin-top:14px;color:var(--gold);font-size:.78rem">📧 Dubtes? Escriu a canconet.app@gmail.com</p>
   </div>
-  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="onLegalBack()">↩️ Enrere</button></div>
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="onLegalBack()">↩️ <span class="i18n-back">Enrere</span></button></div>
 </div>
 
 <script>
@@ -2741,7 +2765,7 @@ function useAidHintDecade(){
     <div id="sala-meves-list"></div>
   </div>
 
-  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ <span class="i18n-back">Enrere</span></button></div>
 </div>
 
 <div id="s-sala" class="scr">
@@ -2786,7 +2810,7 @@ function useAidHintDecade(){
     <button class="btn btn-outline" onclick="onDeleteSala()" style="border-color:var(--err);color:var(--err);font-size:.8rem;padding:10px">🗑️ Eliminar sala</button>
   </div>
 
-  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ Enrere</button></div>
+  <div class="w-full" style="max-width:460px"><button class="btn btn-ghost mt" onclick="go('s-menu')">↩️ <span class="i18n-back">Enrere</span></button></div>
 </div>
 
 <script>
@@ -3087,31 +3111,31 @@ async function onJoinSala_fromUrl(code){
 
 
 <div id="s-copa" class="scr">
-  <div class="top-bar"><button class="back-btn" onclick="go('s-menu')">← Enrere</button><span class="top-title">🏆 Copa Setmanal</span><div></div></div>
+  <div class="top-bar"><button class="back-btn" id="copa-back-btn" onclick="go('s-menu')">← Enrere</button><span class="top-title" id="copa-title-lbl">🏆 Copa Setmanal</span><div></div></div>
   <div class="scr-body">
 
     <!-- Header setmana -->
     <div id="copa-header" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);border-radius:14px;padding:14px 16px;margin-bottom:12px;text-align:center">
-      <div style="font-size:.7rem;color:rgba(249,115,22,.8);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Setmana en curs</div>
+      <div id="copa-week-label" style="font-size:.7rem;color:rgba(249,115,22,.8);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Setmana en curs</div>
       <div id="copa-week" style="font-size:1.1rem;font-weight:900;color:#f97316"></div>
       <div id="copa-time" style="font-size:.78rem;color:var(--muted);margin-top:2px"></div>
     </div>
 
     <!-- Estat inscripció -->
     <div id="copa-status" class="card" style="margin-bottom:10px">
-      <div class="card-ttl">El teu equip</div>
+      <div class="card-ttl" id="copa-myteam-lbl">El teu equip</div>
       <div id="copa-team-info" style="font-size:.85rem;color:var(--muted);text-align:center;padding:10px 0">Carregant...</div>
     </div>
 
     <!-- Bracket / Enfront -->
     <div id="copa-bracket" class="card" style="margin-bottom:10px;display:none">
-      <div class="card-ttl">⚔️ El teu partit</div>
+      <div class="card-ttl" id="copa-mymatch-lbl">⚔️ El teu partit</div>
       <div id="copa-match-content"></div>
     </div>
 
     <!-- Historial -->
     <div id="copa-history" class="card" style="display:none">
-      <div class="card-ttl">📊 Resultats anteriors</div>
+      <div class="card-ttl" id="copa-history-lbl">📊 Resultats anteriors</div>
       <div id="copa-history-list" style="font-size:.82rem;color:var(--muted)"></div>
     </div>
 
@@ -3120,22 +3144,84 @@ async function onJoinSala_fromUrl(code){
 
     <!-- Reglament -->
     <div style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.15);border-radius:10px;padding:12px 14px;margin-top:12px">
-      <div style="font-size:.72rem;color:rgba(249,115,22,.9);font-weight:700;margin-bottom:6px">📋 Reglament</div>
-      <div style="font-size:.73rem;color:var(--muted);line-height:1.7">
-        • Inscripció: <strong style="color:#f97316">200 🎵 Notes</strong> per zona i setmana<br>
-        • Calen <strong style="color:#f97316">10 jugadors</strong> per zona per activar el partit<br>
-        • Totes les zones juguen les <strong>mateixes cançons</strong> (seed setmanal)<br>
-        • Guanya la zona amb <strong>més puntuació total</strong><br>
-        • Guanyadors: <strong style="color:#22c55e">200 + 160 🎵</strong> (80% del pot rival)<br>
-        • Perfect (tots 10/10): <strong style="color:#f59e0b">200 + 200 🎵</strong> (100% del pot rival)<br>
-        • Perdedors: perden les 200 🎵 d'inscripció
-      </div>
+      <div id="copa-rules-title" style="font-size:.72rem;color:rgba(249,115,22,.9);font-weight:700;margin-bottom:6px">📋 Reglament</div>
+      <div id="copa-rules-body" style="font-size:.73rem;color:var(--muted);line-height:1.7"></div>
     </div>
 
   </div>
 </div>
 
 <script>
+
+// ═══════════════════════════════════════════════════════════════
+// TRADUCCIONS COPA SETMANAL
+// ═══════════════════════════════════════════════════════════════
+const COPA_T={
+ca:{
+  back:'← Enrere',title:'🏆 Copa Setmanal',weekInProgress:'Setmana en curs',
+  weekLabel:s=>`Setmana del ${s}`,closesIn:d=>`Tanca en ${d} dies (diumenge)`,
+  myTeam:'El teu equip',loading:'Carregant...',myMatch:'⚔️ El teu partit',
+  pastResults:'📊 Resultats anteriors',rulesTitle:'📋 Reglament',
+  rulesHtml:c=>`• Inscripció: <strong style="color:#f97316">${c} 🎵 Notes</strong> per zona i setmana<br>• Calen <strong style="color:#f97316">10 jugadors</strong> per zona per activar el partit<br>• Totes les zones juguen les <strong>mateixes cançons</strong> (seed setmanal)<br>• Guanya la zona amb <strong>més puntuació total</strong><br>• Guanyadors: <strong style="color:#22c55e">${c} + 160 🎵</strong> (80% del pot rival)<br>• Perfect (tots 10/10): <strong style="color:#f59e0b">${c} + ${c} 🎵</strong> (100% del pot rival)<br>• Perdedors: perden les ${c} 🎵 d'inscripció`,
+  notRegistered:'Cal estar registrat per participar a la Copa.',
+  teamReady:'✅ Equip completat! Uneix-te per jugar.',
+  teamNeedMore:(n,z)=>`Falten ${n} jugadors per activar l'equip de ${z}`,
+  inscribed:'✅ Inscrit a la Copa!',players:'jugadors',gamePlayed:'Partida jugada:',
+  pts:'pts',levels:'nivells',pendingPlay:'⏳ Pendent jugar la teva partida',
+  youLabel:'TU',rivalLabel:'RIVAL',won:'🏆 Heu guanyat!',lost:'💔 Heu perdut',
+  perfect:'PERFECT! 🌟',inProgress:'Partida en curs · Resultats al final de setmana',
+  joinBtn:c=>`🏆 Inscriure'm — ${c} 🎵`,notEnoughNotes:'Notes insuficients',
+  playBtn:'▶️ Jugar la meva partida de Copa!',
+  waitingRival:n=>`Esperant que es formi l'equip rival (${n} jugadors necessaris)`,
+  alreadyPlayed:'✅ Has jugat la teva partida. Espera els resultats finals.',
+  alreadyInscribed:'⚠️ Ja estàs inscrit!',joinError:"⚠️ Error d'inscripció. Torna-ho a intentar.",
+  joinConfirm:c=>`Inscriure't a la Copa Setmanal? Costa ${c} 🎵 Notes.`,
+  joinSuccess:c=>`✅ Inscrit a la Copa! -${c} 🎵`
+},
+es:{
+  back:'← Atrás',title:'🏆 Copa Semanal',weekInProgress:'Semana en curso',
+  weekLabel:s=>`Semana del ${s}`,closesIn:d=>`Cierra en ${d} días (domingo)`,
+  myTeam:'Tu equipo',loading:'Cargando...',myMatch:'⚔️ Tu partido',
+  pastResults:'📊 Resultados anteriores',rulesTitle:'📋 Reglamento',
+  rulesHtml:c=>`• Inscripción: <strong style="color:#f97316">${c} 🎵 Notas</strong> por zona y semana<br>• Se necesitan <strong style="color:#f97316">10 jugadores</strong> por zona para activar la partida<br>• Todas las zonas juegan las <strong>mismas canciones</strong> (seed semanal)<br>• Gana la zona con <strong>más puntuación total</strong><br>• Ganadores: <strong style="color:#22c55e">${c} + 160 🎵</strong> (80% del bote rival)<br>• Perfecto (todos 10/10): <strong style="color:#f59e0b">${c} + ${c} 🎵</strong> (100% del bote rival)<br>• Perdedores: pierden las ${c} 🎵 de inscripción`,
+  notRegistered:'Debes estar registrado para participar en la Copa.',
+  teamReady:'✅ ¡Equipo completado! Únete para jugar.',
+  teamNeedMore:(n,z)=>`Faltan ${n} jugadores para activar el equipo de ${z}`,
+  inscribed:'✅ ¡Inscrito en la Copa!',players:'jugadores',gamePlayed:'Partida jugada:',
+  pts:'pts',levels:'niveles',pendingPlay:'⏳ Pendiente de jugar tu partida',
+  youLabel:'TÚ',rivalLabel:'RIVAL',won:'🏆 ¡Habéis ganado!',lost:'💔 Habéis perdido',
+  perfect:'PERFECTO! 🌟',inProgress:'Partida en curso · Resultados al final de semana',
+  joinBtn:c=>`🏆 Inscribirme — ${c} 🎵`,notEnoughNotes:'Notas insuficientes',
+  playBtn:'▶️ ¡Jugar mi partida de Copa!',
+  waitingRival:n=>`Esperando que se forme el equipo rival (${n} jugadores necesarios)`,
+  alreadyPlayed:'✅ Has jugado tu partida. Espera los resultados finales.',
+  alreadyInscribed:'⚠️ ¡Ya estás inscrito!',joinError:'⚠️ Error al inscribirse. Inténtalo de nuevo.',
+  joinConfirm:c=>`¿Inscribirte en la Copa Semanal? Cuesta ${c} 🎵 Notas.`,
+  joinSuccess:c=>`✅ ¡Inscrito en la Copa! -${c} 🎵`
+},
+eu:{
+  back:'← Back',title:'🏆 Weekly Cup',weekInProgress:'Current week',
+  weekLabel:s=>`Week of ${s}`,closesIn:d=>`Closes in ${d} days (Sunday)`,
+  myTeam:'Your team',loading:'Loading...',myMatch:'⚔️ Your match',
+  pastResults:'📊 Past results',rulesTitle:'📋 Rules',
+  rulesHtml:c=>`• Entry: <strong style="color:#f97316">${c} 🎵 Notes</strong> per zone per week<br>• <strong style="color:#f97316">10 players</strong> per zone needed to activate the match<br>• All zones play the <strong>same songs</strong> (weekly seed)<br>• Zone with <strong>highest total score</strong> wins<br>• Winners: <strong style="color:#22c55e">${c} + 160 🎵</strong> (80% of rival pot)<br>• Perfect (all 10/10): <strong style="color:#f59e0b">${c} + ${c} 🎵</strong> (100% of rival pot)<br>• Losers: lose their ${c} 🎵 entry fee`,
+  notRegistered:'You must be registered to participate in the Cup.',
+  teamReady:'✅ Team complete! Join to play.',
+  teamNeedMore:(n,z)=>`${n} more players needed to activate the ${z} team`,
+  inscribed:'✅ Registered for the Cup!',players:'players',gamePlayed:'Game played:',
+  pts:'pts',levels:'levels',pendingPlay:'⏳ Pending: play your game',
+  youLabel:'YOU',rivalLabel:'RIVAL',won:'🏆 You won!',lost:'💔 You lost',
+  perfect:'PERFECT! 🌟',inProgress:'Game in progress · Results at end of week',
+  joinBtn:c=>`🏆 Join — ${c} 🎵`,notEnoughNotes:'Insufficient Notes',
+  playBtn:"▶️ Play my Cup game!",
+  waitingRival:n=>`Waiting for rival team to form (${n} players needed)`,
+  alreadyPlayed:"✅ You've played your game. Wait for the final results.",
+  alreadyInscribed:'⚠️ Already registered!',joinError:'⚠️ Registration error. Please try again.',
+  joinConfirm:c=>`Join the Weekly Cup? Cost: ${c} 🎵 Notes.`,
+  joinSuccess:c=>`✅ Joined the Cup! -${c} 🎵`
+}};
+COPA_T.int=COPA_T.eu;
+function ctL(){return COPA_T[G.lang]||COPA_T.eu}
 // ═══════════════════════════════════════════════════════════════
 // COPA SETMANAL PER ZONES
 // ═══════════════════════════════════════════════════════════════
@@ -3158,13 +3244,23 @@ function copaDaysLeft(){
 }
 
 async function loadCopa(){
+  const ct=ctL();
+  // Actualitzar textos estàtics amb idioma actual
+  const _bb=document.getElementById('copa-back-btn');if(_bb)_bb.textContent=ct.back;
+  const _tl=document.getElementById('copa-title-lbl');if(_tl)_tl.textContent=ct.title;
+  const _wl=document.getElementById('copa-week-label');if(_wl)_wl.textContent=ct.weekInProgress;
+  const _ml=document.getElementById('copa-myteam-lbl');if(_ml)_ml.textContent=ct.myTeam;
+  const _pm=document.getElementById('copa-mymatch-lbl');if(_pm)_pm.textContent=ct.myMatch;
+  const _hl=document.getElementById('copa-history-lbl');if(_hl)_hl.textContent=ct.pastResults;
+  const _rt=document.getElementById('copa-rules-title');if(_rt)_rt.textContent=ct.rulesTitle;
+  const _rb=document.getElementById('copa-rules-body');if(_rb)_rb.innerHTML=ct.rulesHtml(COPA_COST);
   if(!G.nick){
-    document.getElementById('copa-cta').innerHTML='<div class="center muted" style="padding:16px">Cal estar registrat per participar a la Copa.</div>';
+    document.getElementById('copa-cta').innerHTML=`<div class="center muted" style="padding:16px">${ct.notRegistered}</div>`;
     return;
   }
   const setmana=getCopaSetmana();
-  document.getElementById('copa-week').textContent=`Setmana del ${setmana}`;
-  document.getElementById('copa-time').textContent=`Tanca en ${copaDaysLeft()} dies (diumenge)`;
+  document.getElementById('copa-week').textContent=ct.weekLabel(setmana);
+  document.getElementById('copa-time').textContent=ct.closesIn(copaDaysLeft());
 
   // Carregar inscripció de l'usuari
   const myIns=await sbS('copa_inscripcions',`setmana=eq.${setmana}&nick=eq.${encodeURIComponent(G.nick)}&lang=eq.${G.lang}`,'',1);
@@ -3186,7 +3282,7 @@ async function loadCopa(){
         </div>
         <span style="font-size:.8rem;color:#f97316;font-weight:700">${teamSize}/${COPA_TEAM_SIZE}</span>
       </div>
-      <div style="font-size:.8rem;color:var(--muted)">${teamReady?'✅ Equip completat! Uneix-te per jugar.':`Falten ${COPA_TEAM_SIZE-teamSize} jugadors per activar l'equip de ${G.zone}`}</div>
+      <div style="font-size:.8rem;color:var(--muted)">${teamReady?ct.teamReady:ct.teamNeedMore(COPA_TEAM_SIZE-teamSize,G.zone)}</div>
       ${teamRows&&teamRows.length?'<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">'+teamRows.slice(0,6).map(r=>`<span style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.2);border-radius:99px;padding:2px 8px;font-size:.7rem">${esc(r.nick)}</span>`).join('')+(teamSize>6?`<span style="color:var(--muted);font-size:.7rem">+${teamSize-6}</span>`:'')+'</div>':''}
     `;
   } else {
@@ -3194,7 +3290,7 @@ async function loadCopa(){
     teamEl.innerHTML=`
       <div style="color:#22c55e;font-size:.82rem;font-weight:700;margin-bottom:6px">✅ Inscrit a la Copa!</div>
       <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">${G.zone} · ${teamSize}/${COPA_TEAM_SIZE} jugadors</div>
-      ${played?`<div style="background:rgba(34,197,94,.1);border-radius:8px;padding:8px;font-size:.82rem;color:#22c55e">Partida jugada: <strong>${(myData.score||0).toLocaleString()} pts</strong> · ${myData.levels_ok}/10 nivells</div>`:'<div style="font-size:.78rem;color:#f97316">⏳ Pendent jugar la teva partida</div>'}
+      ${played?`<div style="background:rgba(34,197,94,.1);border-radius:8px;padding:8px;font-size:.82rem;color:#22c55e">${ct.gamePlayed} <strong>${(myData.score||0).toLocaleString()} ${ct.pts}</strong> · ${myData.levels_ok}/10 ${ct.levels}</div>`:`<div style="font-size:.78rem;color:#f97316">${ct.pendingPlay}</div>`}
       ${teamRows&&teamRows.length?'<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">'+teamRows.slice(0,COPA_TEAM_SIZE).map(r=>{const played=r.score!==null;return`<span style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.2);border-radius:99px;padding:2px 8px;font-size:.7rem">${esc(r.nick)}${played?'✅':''}</span>`}).join('')+'</div>':''}
     `;
   }
@@ -3228,16 +3324,16 @@ async function loadCopa(){
         <div style="flex:1;text-align:center">
           <div style="font-size:1rem;font-weight:900;color:#f97316">${esc(G.zone)}</div>
           <div style="font-size:1.5rem;font-weight:900;color:var(--gold)">${(myScore||0).toLocaleString()}</div>
-          <div style="font-size:.7rem;color:var(--muted)">TU</div>
+          <div style="font-size:.7rem;color:var(--muted)">${ct.youLabel}</div>
         </div>
         <div style="font-size:1.5rem;font-weight:900;color:var(--muted)">VS</div>
         <div style="flex:1;text-align:center">
           <div style="font-size:1rem;font-weight:900;color:var(--muted)">${esc(rivalZona)}</div>
           <div style="font-size:1.5rem;font-weight:900;color:var(--muted)">${(rivScore||0).toLocaleString()}</div>
-          <div style="font-size:.7rem;color:var(--muted)">RIVAL</div>
+          <div style="font-size:.7rem;color:var(--muted)">${ct.rivalLabel}</div>
         </div>
       </div>
-      ${finished?`<div style="text-align:center;padding:10px;background:${myWon?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};border-radius:10px;font-weight:700;color:${myWon?'#22c55e':'#ef4444'}">${myWon?'🏆 Heu guanyat!':'💔 Heu perdut'} ${myPartit.is_perfect&&myWon?'· PERFECT! 🌟':''}</div>`:'<div style="font-size:.75rem;color:var(--muted);text-align:center">Partida en curs · Resultats al final de setmana</div>'}
+      ${finished?`<div style="text-align:center;padding:10px;background:${myWon?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)'};border-radius:10px;font-weight:700;color:${myWon?'#22c55e':'#ef4444'}">${myWon?ct.won:ct.lost} ${myPartit.is_perfect&&myWon?'· '+ct.perfect:''}</div>`:'<div style="font-size:.75rem;color:var(--muted);text-align:center">Partida en curs · Resultats al final de setmana</div>'}
     `;
   } else {
     bracketEl.style.display='none';
@@ -3293,8 +3389,8 @@ async function tryMatchmaking(setmana){
 
 async function onCopaInscriure(){
   const myNotes=getNotes();
-  if(myNotes<COPA_COST){toast('⚠️ Notes insuficients');return}
-  if(!confirm(`Inscriure't a la Copa Setmanal? Costa ${COPA_COST} 🎵 Notes.`))return;
+  const ct2=ctL();if(myNotes<COPA_COST){toast(ct2.notEnoughNotes);return}
+  if(!confirm(ct2.joinConfirm(COPA_COST)))return;
 
   const setmana=getCopaSetmana();
   try{
@@ -3302,11 +3398,11 @@ async function onCopaInscriure(){
       method:'POST',headers:{...SBH,'Prefer':'return=minimal'},
       body:JSON.stringify({setmana,nick:G.nick,zona:G.zone,lang:G.lang,notes_paid:COPA_COST})
     });
-    if(!r.ok){const d=await r.json();if(d.code==='23505'){toast('⚠️ Ja estàs inscrit!');return}throw new Error();}
+    if(!r.ok){const d=await r.json();if(d.code==='23505'){toast(ct2.alreadyInscribed);return}throw new Error();}
     addNotes(-COPA_COST);
-    toast(`✅ Inscrit a la Copa! -${COPA_COST} 🎵`);
+    toast(ct2.joinSuccess(COPA_COST));
     await loadCopa();
-  }catch(e){toast('⚠️ Error d\'inscripció. Torna-ho a intentar.')}
+  }catch(e){toast(ct2.joinError)}
 }
 
 async function onCopaJugar(){
