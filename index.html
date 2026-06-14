@@ -208,6 +208,24 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   .card-ttl{font-size:.85rem!important;margin-bottom:8px!important}
   .btn{padding:10px 14px;font-size:.85rem}
 }
+
+/* === Transicions de pantalla (View Transitions API) === */
+::view-transition-old(root){animation:vtOut .18s ease forwards}
+::view-transition-new(root){animation:vtIn .22s ease forwards}
+@keyframes vtOut{to{opacity:0;transform:translateY(-6px)}}
+@keyframes vtIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+/* === Confetti canvas === */
+#cn-confetti{position:fixed;inset:0;pointer-events:none;z-index:9999}
+/* === Mascota la Nota === */
+#nota-mascota{position:fixed;bottom:90px;right:14px;z-index:9998;pointer-events:none;display:none;flex-direction:column;align-items:center;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+#nota-mascota.show{display:flex;animation:notaIn .4s cubic-bezier(.34,1.56,.64,1)}
+#nota-mascota .nota-body{font-size:52px;animation:notaDance .5s ease-in-out infinite alternate;transform-origin:bottom center}
+#nota-mascota .nota-msg{background:var(--gold,#d4a017);color:#1a1a2e;font-weight:900;font-size:.8rem;padding:3px 12px;border-radius:99px;margin-top:2px;animation:notaPop .4s ease}
+@keyframes notaIn{from{transform:translateY(40px) scale(.4);opacity:0}to{transform:none;opacity:1}}
+@keyframes notaDance{from{transform:rotate(-14deg) translateY(0)}to{transform:rotate(14deg) translateY(-7px)}}
+@keyframes notaPop{from{transform:scale(0)}to{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){#nota-mascota .nota-body{animation:none}}
 </style>
 </head>
 <body>
@@ -308,6 +326,12 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
     <div class="sep"></div>
     <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Pròximament</div>
     <button class="btn btn-ghost" onclick="showWip('emsona')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative">🎭 Em Sona — Plagi o Coincidència? <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
+    <button class="btn btn-ghost" onclick="showWip('cronologia')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative">🕰️ Línia del Temps <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
+    <button class="btn btn-ghost" onclick="showWip('intros')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative">⚡ Batalla d'Intros <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
+    <button class="btn btn-ghost" onclick="showWip('decades')" style="opacity:.9;border:1.5px solid rgba(168,85,247,.35);background:rgba(168,85,247,.07);position:relative">📅 Mode Dècades <span style="position:absolute;top:-8px;right:10px;background:#a855f7;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">AVIAT</span></button>
+    <button class="btn btn-purple" onclick="startRosco('txarango')" style="position:relative">🔤 Rosco Musical · Txarango <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
+    <button class="btn btn-purple" onclick="startRosco('hits2026_'+(G.lang||'ca'))" style="position:relative">🔤 Rosco · Èxits 2026 <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
+    <button class="btn btn-purple" onclick="startMundials()" style="position:relative">🏆 Cançons dels Mundials <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#fff;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
     <button class="btn btn-ghost" onclick="showWip('relax')" style="opacity:.9;border:1.5px solid rgba(134,239,172,.35);background:rgba(134,239,172,.07);position:relative">🎹 Mode Relax <span style="position:absolute;top:-8px;right:10px;background:#22c55e;color:#000;font-size:.55rem;font-weight:900;padding:2px 7px;border-radius:99px">NOU</span></button>
     <button class="btn btn-ghost" onclick="showWip('provinces')" style="opacity:.7">🏴 Repte per zones</button>
     <button class="btn btn-ghost" onclick="showWip('realia')" style="opacity:.7">🤖 Real o IA?</button>
@@ -375,6 +399,40 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
   <div class="w-full"><button class="btn btn-gold" id="go-share-btn" onclick="onShare()"></button><button class="btn btn-red" id="go-again-btn" onclick="telTrackEvent('play_again',{mode:G.mode,score:G.score});onFree()"></button><button class="btn btn-ghost" id="go-menu-btn" onclick="go('s-menu')"></button><button class="btn btn-ghost" id="go-rank-btn" onclick="go('s-rankings')"></button></div>
 </div>
 
+<div id="s-mundials" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:460px;margin-bottom:4px">
+    <button class="back-btn" onclick="go('s-menu')">←</button>
+    <div style="font-weight:900">🏆 Cançons dels Mundials</div>
+    <div id="wc-score" style="font-weight:900;color:var(--gold)">0</div>
+  </div>
+  <div id="wc-hint" style="text-align:center;margin:14px 0">
+    <div id="wc-emoji" style="font-size:64px;line-height:1">🏆</div>
+    <div id="wc-meta" class="muted" style="font-size:.85rem;margin-top:4px"></div>
+  </div>
+  <div class="card" style="margin-top:6px">
+    <div id="wc-player" style="text-align:center;margin-bottom:10px"></div>
+    <div style="font-size:.8rem;font-weight:800;color:var(--gold);margin-bottom:6px">QUINA CANÇÓ DE MUNDIAL ÉS?</div>
+    <div id="wc-opts" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div id="wc-progress" class="muted" style="font-size:.75rem;text-align:center;margin-top:10px"></div>
+  </div>
+</div>
+<div id="s-rosco" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:460px;margin-bottom:4px">
+    <button class="back-btn" onclick="roscoQuit()">←</button>
+    <div style="font-weight:900">🔤 Rosco · <span id="ro-grup"></span></div>
+    <div id="ro-timer" style="font-weight:900;color:var(--gold);min-width:48px;text-align:right">3:00</div>
+  </div>
+  <div id="ro-circle" style="position:relative;width:300px;height:300px;margin:6px auto"></div>
+  <div class="card" style="margin-top:0">
+    <div id="ro-tipus" style="font-size:.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.5px"></div>
+    <div id="ro-q" style="font-size:.95rem;line-height:1.45;margin:6px 0 10px"></div>
+    <input id="ro-input" autocomplete="off" placeholder="Escriu la resposta..." style="width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);border-radius:10px;color:var(--text);padding:11px;font-size:1rem;font-family:inherit" onkeydown="if(event.key==='Enter')roscoCheck()">
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-ghost" style="flex:1" onclick="roscoPass()">⏭️ Pasaparaula</button>
+      <button class="btn btn-gold" style="flex:1" onclick="roscoCheck()">✓ Comprovar</button>
+    </div>
+  </div>
+</div>
 <div id="s-rankings" class="scr">
   <div style="font-size:1.7rem;font-weight:900;margin:8px 0 4px">🏆 Rànquing</div>
   <div class="tabs" style="flex-wrap:wrap;gap:4px"><button class="tab on" onclick="onTabChg('global',this)">🌍 Global</button><button class="tab" onclick="onTabChg('zone',this)">📍 Zones</button><button class="tab" onclick="onTabChg('rang',this)">🏅 Rang</button><button class="tab" onclick="onTabChg('weekly',this)">📆 Setmanal</button><button class="tab" onclick="onTabChg('monthly',this)">🗓️ Mensual</button><button class="tab" onclick="onTabChg('daily',this)">📅 Avui</button></div>
@@ -494,6 +552,9 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const SBH={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
 async function sbI(table,row){try{const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(row)});return r.ok}catch(e){return false}}
 async function sbS(table,f='',o='score.desc',l=20){try{const r=await fetch(`${SB_URL}/rest/v1/${table}?${f}&order=${o}&limit=${Math.min(l,100)}`,{headers:SBH});if(!r.ok)return null;return await r.json()}catch(e){return null}}
+let _repSong=null;
+function openReport(idx){const song=(G.songList&&G.songList[idx])||G.song;if(!song)return;_repSong=song;document.getElementById('rep-song').textContent=`${song.t} — ${song.a}`;document.querySelectorAll('input[name=repmotiu]').forEach(r=>r.checked=false);document.getElementById('rep-text').value='';document.getElementById('modal-report').classList.remove('hide')}
+async function sendReport(){const m=document.querySelector('input[name=repmotiu]:checked');const txt=document.getElementById('rep-text').value.trim();if(!m&&!txt){toast('Tria un motiu o escriu què passa 🙏');return}const btn=document.getElementById('rep-send');btn.disabled=true;const row={song_id:_repSong?.id||null,dz_id:_repSong?.dzId||null,song_title:(_repSong?.t||'').slice(0,80),song_artist:(_repSong?.a||'').slice(0,80),lang:G.lang,motiu:m?m.value:'altre',detall:txt.slice(0,500)||null,nick:G.guest?null:(G.nick||null)};const ok=await sbI('song_reports',row);btn.disabled=false;document.getElementById('modal-report').classList.add('hide');toast(ok?'🚩 Gràcies! Ho revisarem aviat 🙌':'No s\'ha pogut enviar. Torna-ho a provar més tard.');if(ok)telTrackEvent&&telTrackEvent('song_report',{motiu:row.motiu,song:row.song_title})}
 
 const RL={_s:{},check(k,mx,ms){const n=Date.now();if(!this._s[k])this._s[k]=[];this._s[k]=this._s[k].filter(t=>n-t<ms);if(this._s[k].length>=mx)return false;this._s[k].push(n);return true}};
 const canScore=()=>RL.check('sc',3,10*60*1000);const canBustia=()=>RL.check('bu',5,60*60*1000);
@@ -1641,7 +1702,22 @@ function addFloatingNotes(){const el=document.getElementById('s-splash');['🎵'
 function skipSplash(){if(splashDone)return;splashDone=true;document.getElementById('s-splash').classList.add('fadeout');setTimeout(()=>go('s-modes'),500)}
 function initSplash(){addFloatingNotes();document.getElementById('s-splash').addEventListener('click',()=>playSplashMusic(),{once:true});setTimeout(skipSplash,4000)}
 
-const WIP_DATA={emsona:{
+const WIP_DATA={cronologia:{
+  title:'🕰️ Línia del Temps',
+  sub:"Sona una cançó i l'has de col·locar al lloc correcte de la teva línia temporal: abans, després o entre les que ja has encertat.",
+  features:['🎵 Escolta i col·loca la cançó cronològicament','📈 Cada encert allarga la teva línia','❤️ 3 vides — un error de dècada i en perds una','🏆 Rècord personal: quina línia més llarga pots fer?','👥 Ideal per jugar en grup passant el mòbil','🎯 Amb tot el catàleg de 770+ cançons'],
+  note:"Inspirat en la mecànica de Hitster. En construcció amb el catàleg nou."
+},intros:{
+  title:"⚡ Batalla d'Intros",
+  sub:"Dos jugadors, un mòbil. Sona una intro i el primer que prem el seu botó respon. Qui encerta més de 10?",
+  features:["📱 Pantalla dividida en dos colors","⚡ El més ràpid es queda la pregunta","✅ Encert: +1 punt · ❌ Errada: punt per al rival","🔥 Rondes de 10 intros","🍻 Perfecte per a bars, sobretaules i festes","🎵 Sense registre: jugueu i ja està"],
+  note:"Mode 100% local: no cal connexió un cop carregat."
+},decades:{
+  title:'📅 Mode Dècades',
+  sub:"Tria una dècada (60s, 70s, 80s, 90s, 2000s, 2010s, 2020s) i juga només amb cançons d'aquella època.",
+  features:["🕺 Dels anys 60 fins avui","👵 Tria els 80 per a la mare i els 2020 per al nebot","🏅 Rànquing per dècada","🎯 10 nivells com el mode lliure","👨‍👩‍👧 Pensat per a partides familiars","🎵 Disponible en els 4 idiomes"],
+  note:"Gairebé a punt: aprofita el catàleg nou amb anys verificats."
+},emsona:{
   title:'🎭 Em Sona — Plagi o Coincidència?',
   sub:'Escolta dos fragments i decideix: és un plagi, una coincidència o un homenatge? Basat en casos reals de la història de la música.',
   features:[
@@ -1657,7 +1733,99 @@ const WIP_DATA={emsona:{
 function showWip(type){const d=WIP_DATA[type]||{title:'En construcció',sub:'Aviat!',features:[]};document.getElementById('wip-title').textContent=d.title;document.getElementById('wip-sub').textContent=d.sub;document.getElementById('wip-features').innerHTML=d.features.map(f=>`<div>✦ ${esc(f)}</div>`).join('');const _ne=document.getElementById('wip-note');if(_ne){_ne.style.display=d.note?'block':'none';if(d.note)_ne.textContent=d.note;}document.getElementById('modal-wip').classList.remove('hide')}
 function closeWip(){document.getElementById('modal-wip').classList.add('hide')}
 
-function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id!=='s-splash')soundNav();if(id==='s-rankings'){loadRankings();telTrackEvent('view_rankings',{lang:G.lang});}if(id==='s-bustia'){loadBustia();telTrackEvent('open_bustia',{lang:G.lang});}if(id==='s-copa'){loadCopa();}}
+const _rm=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function go(id){if(document.startViewTransition&&!_rm()){document.startViewTransition(()=>_goRaw(id))}else{_goRaw(id)}}
+
+/* ============ MODE ROSCO (Pasaparaula musical) ============ */
+/* ============ MODE MUNDIALS (cançons oficials FIFA) ============ */
+const WC_SEED=[{"y": 1962, "t": "El Rock del Mundial", "a": "Los Ramblers", "emoji": "⚽", "host": "Xile", "note": "Primera cançó de Mundial reconeguda"}, {"y": 1966, "t": "World Cup Willie", "a": "Lonnie Donegan", "emoji": "🦁", "host": "Anglaterra", "note": "Mascota: Willie el lleó"}, {"y": 1978, "t": "El Mundial", "a": "Ennio Morricone", "emoji": "👦", "host": "Argentina", "note": "Mascota: Gauchito"}, {"y": 1982, "t": "Naranjito", "a": "varis", "emoji": "🍊", "host": "Espanya", "note": "Mascota: Naranjito"}, {"y": 1990, "t": "Un'estate italiana", "a": "Edoardo Bennato & Gianna Nannini", "emoji": "🟩", "host": "Itàlia", "note": "Mascota: Ciao"}, {"y": 1994, "t": "Gloryland", "a": "Daryl Hall", "emoji": "🐶", "host": "Estats Units", "note": "Mascota: Striker"}, {"y": 1998, "t": "The Cup of Life", "a": "Ricky Martin", "emoji": "🐓", "host": "França", "note": "Mascota: Footix"}, {"y": 1998, "t": "La Copa de la Vida", "a": "Ricky Martin", "emoji": "🐓", "host": "França", "note": "Versió en castellà"}, {"y": 2002, "t": "Boom", "a": "Anastacia", "emoji": "🟠", "host": "Corea/Japó", "note": "Mascotes: Ato, Kaz i Nik"}, {"y": 2006, "t": "The Time of Our Lives", "a": "Il Divo & Toni Braxton", "emoji": "🦁", "host": "Alemanya", "note": "Mascota: Goleo VI"}, {"y": 2006, "t": "Hips Don't Lie (Bamboo)", "a": "Shakira", "emoji": "🦁", "host": "Alemanya", "note": "Cançó promocional FIFA 2006"}, {"y": 2010, "t": "Waka Waka (This Time for Africa)", "a": "Shakira ft. Freshlyground", "emoji": "🐆", "host": "Sud-àfrica", "note": "Mascota: Zakumi"}, {"y": 2010, "t": "Wavin' Flag", "a": "K'naan", "emoji": "🐆", "host": "Sud-àfrica", "note": "Himne Coca-Cola 2010"}, {"y": 2010, "t": "Game On", "a": "Pitbull ft. TKZee & Dario G", "emoji": "🐆", "host": "Sud-àfrica", "note": "Cançó oficial de la mascota"}, {"y": 2014, "t": "We Are One (Ole Ola)", "a": "Pitbull ft. Jennifer Lopez & Claudia Leitte", "emoji": "🦔", "host": "Brasil", "note": "Mascota: Fuleco (armadillo)"}, {"y": 2014, "t": "La La La (Brazil 2014)", "a": "Shakira ft. Carlinhos Brown", "emoji": "🦔", "host": "Brasil", "note": "Cançó oficial activació Sony"}, {"y": 2014, "t": "Dar um Jeito (We Will Find a Way)", "a": "Santana, Wyclef, Avicii & Alexandre Pires", "emoji": "🦔", "host": "Brasil", "note": "Himne oficial 2014"}, {"y": 2018, "t": "Live It Up", "a": "Nicky Jam ft. Will Smith & Era Istrefi", "emoji": "🐺", "host": "Rússia", "note": "Mascota: Zabivaka"}, {"y": 2018, "t": "Colors", "a": "Jason Derulo", "emoji": "🐺", "host": "Rússia", "note": "Himne Coca-Cola 2018"}, {"y": 2022, "t": "Hayya Hayya (Better Together)", "a": "Trinidad Cardona, Davido & Aisha", "emoji": "🧣", "host": "Qatar", "note": "Mascota: La'eeb"}, {"y": 2022, "t": "Tukoh Taka", "a": "Nicki Minaj, Maluma & Myriam Fares", "emoji": "🧣", "host": "Qatar", "note": "Cançó oficial FanFest"}, {"y": 2022, "t": "Light the Sky", "a": "Nora Fatehi, Balqees, Rahma Riad & Manal", "emoji": "🧣", "host": "Qatar", "note": "Cançó oficial 2022"}, {"y": 2026, "t": "(cançó oficial 2026 — pendent)", "a": "FIFA", "emoji": "🦅", "host": "Canadà/Mèxic/EUA", "note": "Mascotes: Maple, Zayu i Clutch"}];
+let WC_SONGS=[]; // s'omple amb dzId reals (importats del BigHelper)
+const WCG={i:0,score:0,active:false,song:null,order:[]};
+const ROSCO_DATA={txarango:[{"l": "A", "tp": "comença", "q": "Nom de pila del cantant i cofundador del grup, nascut a Sant Joan de les Abadesses", "r": "Alguer", "alt": "", "d": 1}, {"l": "B", "tp": "comença", "q": "Primera paraula del títol del seu primer disc d'estudi (2012)", "r": "Benvinguts", "alt": "", "d": 1}, {"l": "C", "tp": "comença", "q": "Festival que el grup va organitzar a Sant Joan de les Abadesses entre 2014 i 2019, nom de la seva capital imaginària", "r": "Clownia", "alt": "", "d": 1}, {"l": "D", "tp": "comença", "q": "Cançó del primer disc: «La ___ del vestit»", "r": "Dansa", "alt": "", "d": 1}, {"l": "E", "tp": "comença", "q": "Cançó del disc 'El cor de la terra' que parla de no perdre mai la fe en el demà", "r": "Esperança", "alt": "", "d": 2}, {"l": "F", "tp": "comença", "q": "Mes de l'any 2012 en què van penjar gratis el primer disc a la seva web (5.000 descàrregues en 24h)", "r": "Febrer", "alt": "", "d": 3}, {"l": "G", "tp": "comença", "q": "Barri de Barcelona on, en un pis d'estudiants prop de la plaça del Tripi, va néixer la llavor del grup (2006)", "r": "Gòtic", "alt": "", "d": 2}, {"l": "H", "tp": "comença", "q": "Sobrenom de Sergi Carbonell, el teclista del grup", "r": "Hipi", "alt": "", "d": 2}, {"l": "I", "tp": "comença", "q": "Grup amb qui van compartir cartell (amb Empalmaos) al seu primer concert a Ripoll el desembre de 2010", "r": "Intifada", "alt": "", "d": 3}, {"l": "J", "tp": "comença", "q": "Nom de pila del bateria del grup, de cognom Canals", "r": "Joaquim", "alt": "", "d": 2}, {"l": "K", "tp": "conté", "q": "Grup que va col·laborar al seu primer concert a Ripoll, juntament amb La Pegatina i The Sey Sisters", "r": "Malakaton", "alt": "", "d": 3}, {"l": "L", "tp": "comença", "q": "Cançó del 2017: «Una ___ a l'aigua»", "r": "Lluna", "alt": "", "d": 1}, {"l": "M", "tp": "comença", "q": "Nom de pila del cofundador conegut com a 'Tito', que tocava el charango que dona nom al grup", "r": "Marcel", "alt": "", "d": 2}, {"l": "N", "tp": "comença", "q": "Una de les dues cançons del seu primer senzill autoeditat: «___ amb Txarango»", "r": "Nits", "alt": "", "d": 2}, {"l": "O", "tp": "comença", "q": "Comarca d'origen d'una part dels membres, juntament amb el Ripollès i la Garrotxa", "r": "Osona", "alt": "", "d": 2}, {"l": "P", "tp": "comença", "q": "Cognom del baixista del grup, de nom Àlex", "r": "Pujols", "alt": "", "d": 3}, {"l": "Q", "tp": "comença", "q": "Cançó del primer disc: «___ tot s'enlaira»", "r": "Quan", "alt": "", "d": 1}, {"l": "R", "tp": "comença", "q": "Última paraula del títol del seu segon disc (2014): «Som ___»", "r": "Riu", "alt": "", "d": 1}, {"l": "S", "tp": "comença", "q": "Instrument que toca Ivan López dins del grup", "r": "Saxo", "alt": "Saxofon", "d": 2}, {"l": "T", "tp": "comença", "q": "Última paraula del títol del seu tercer disc (2017): «El cor de la ___»", "r": "Terra", "alt": "", "d": 1}, {"l": "U", "tp": "comença", "q": "Acaba el títol de la cançó: «Tanca els ___»", "r": "Ulls", "alt": "", "d": 1}, {"l": "V", "tp": "comença", "q": "Cançó del primer senzill que van regravar per al primer disc i que es va fer himne", "r": "Vola", "alt": "", "d": 1}, {"l": "W", "tp": "comença", "q": "Primera paraula del títol del seu primer senzill autoeditat (2010): «___ to Clownia»", "r": "Welcome", "alt": "", "d": 2}, {"l": "X", "tp": "conté", "q": "Nom del grup, inspirat en un instrument de corda dels Andes", "r": "Txarango", "alt": "", "d": 1}, {"l": "Y", "tp": "conté", "q": "Segell discogràfic amb què van publicar l'últim disc 'De vent i ales' (2020)", "r": "Halley", "alt": "Halley Records", "d": 3}, {"l": "Z", "tp": "conté", "q": "Cognom del cofundador Marcel, conegut com a Tito", "r": "Lazara", "alt": "Lázara", "d": 3}],hits2026_ca:[{"l": "B", "tp": "comença", "q": "«Pel ___ es comenta», el disc més esperat de l'any, de La Ludwig Band", "r": "Barri", "alt": "", "d": 1},{"l": "C", "tp": "comença", "q": "Grup que canta «PAÍS ESTRANY» amb Roger Mas, dins l'àlbum PARACAIGUDISTES", "r": "Catarres", "alt": "Els Catarres", "d": 1},{"l": "D", "tp": "comença", "q": "Nom artístic del cantant que arrasa amb El Comboi: «___ Peralbo»", "r": "Dan", "alt": "", "d": 2},{"l": "E", "tp": "comença", "q": "Última paraula del títol de la cançó d'Els Catarres i Roger Mas: «PAÍS ___»", "r": "Estrany", "alt": "", "d": 2},{"l": "F", "tp": "comença", "q": "Nom de pila de Palau, que publica el disc «Aniversari feliç» aquest 2026", "r": "Ferran", "alt": "", "d": 2},{"l": "G", "tp": "comença", "q": "Grup dels germans Serrasolsas que treu disc nou aquesta primavera", "r": "Ginestà", "alt": "", "d": 2},{"l": "J", "tp": "comença", "q": "Artista que ha publicat «Els contes» aquest 2026", "r": "Julieta", "alt": "", "d": 2},{"l": "L", "tp": "comença", "q": "«La ___ Band», el grup del moment, autor de «Xavier, el tècnic de so»", "r": "Ludwig", "alt": "", "d": 1},{"l": "S", "tp": "comença", "q": "Grup de «De Lao», una de les cançons que més setmanes ha aguantat a la Primera Llista", "r": "Sexenni", "alt": "", "d": 3},{"l": "X", "tp": "comença", "q": "Cançó de La Ludwig Band dedicada a un tècnic de so: «___, el tècnic de so»", "r": "Xavier", "alt": "", "d": 1}],hits2026_es:[{"l": "A", "tp": "comença", "q": "Primera paraula del nom del grup de rock de «La Salvación»: «___ Bogotá»", "r": "Arde", "alt": "", "d": 2},{"l": "B", "tp": "comença", "q": "Cançó de Rosalía amb Björk i Yves Tumor, núm. 1, que pren el nom d'una discoteca de Berlín", "r": "Berghain", "alt": "", "d": 1},{"l": "D", "tp": "comença", "q": "Bachata de Romeo Santos i Prince Royce que va obrir el 2026 com a núm. 1", "r": "Dardos", "alt": "", "d": 2},{"l": "G", "tp": "comença", "q": "Bad ___, artista catalana de «Más Cara» i «Da Me»", "r": "Gyal", "alt": "", "d": 1},{"l": "I", "tp": "comença", "q": "«Baile ___», cançó de Bad Bunny núm. 1 al febrer", "r": "Inolvidable", "alt": "", "d": 1},{"l": "L", "tp": "comença", "q": "Quart àlbum de Rosalía: 18 cançons en 14 idiomes amb la London Symphony Orchestra", "r": "Lux", "alt": "", "d": 1},{"l": "N", "tp": "comença", "q": "Nom de pila de Moliner, líder de ràdios amb «Nexo 04: Tu Cuerpo en Braille»", "r": "Nil", "alt": "", "d": 2},{"l": "P", "tp": "comença", "q": "Cançó de Rosalía amb Yahritza y su Esencia, núm. 1 al gener-febrer: «La ___»", "r": "Perla", "alt": "", "d": 1},{"l": "Q", "tp": "comença", "q": "Artista canari núm. 1 amb «Ni Borracho»", "r": "Quevedo", "alt": "", "d": 1},{"l": "S", "tp": "comença", "q": "Cançó d'Aitana núm. 1 a les ràdios el març del 2026", "r": "Superestrella", "alt": "", "d": 2}],hits2026_eu:[{"l": "B", "tp": "comença", "q": "Cançó guanyadora d'Eurovisió 2026 amb un rècord de 516 punts i 173 de marge", "r": "Bangaranga", "alt": "", "d": 1},{"l": "D", "tp": "comença", "q": "Artista que va donar a Bulgària la seva primera victòria a Eurovisió 2026", "r": "Dara", "alt": "", "d": 1},{"l": "E", "tp": "comença", "q": "Cançó viral de Djo, núm. 1 a Itàlia aquest 2026: «___ of Beginning»", "r": "End", "alt": "", "d": 2},{"l": "G", "tp": "comença", "q": "Cançó de Huntr/x amb rècord de 20 setmanes al núm. 1 del Global Excl. US", "r": "Golden", "alt": "", "d": 1},{"l": "O", "tp": "comença", "q": "Cançó d'Alex Warren que ha triomfat a les ràdios de mitja Europa", "r": "Ordinary", "alt": "", "d": 2},{"l": "R", "tp": "comença", "q": "Cantant britànica de «Where Is My Husband!», núm. 1 a Àustria al febrer", "r": "Raye", "alt": "", "d": 2},{"l": "T", "tp": "comença", "q": "Cançó amb què Cosmó va representar Àustria a Eurovisió 2026", "r": "Tanzschein", "alt": "", "d": 3},{"l": "V", "tp": "comença", "q": "Ciutat amfitriona d'Eurovisió 2026, al Wiener Stadthalle", "r": "Viena", "alt": "Vienna|Wien", "d": 1},{"l": "W", "tp": "comença", "q": "Cançó amb què JJ va guanyar Eurovisió 2025 i va portar el festival a Àustria: «___ Love»", "r": "Wasted", "alt": "", "d": 2},{"l": "Z", "tp": "comença", "q": "Nom de pila de Larsson, la sueca núm. 1 a Àustria amb «Lush Life»", "r": "Zara", "alt": "", "d": 2}],hits2026_int:[{"l": "A", "tp": "comença", "q": "Cançó de Harry Styles núm. 1 al febrer, del disc «Kiss All the Time. Disco, Occasionally.»", "r": "Aperture", "alt": "", "d": 2},{"l": "B", "tp": "comença", "q": "Nom de pila de Mars, amb dos núm. 1 el 2026: «I Just Might» i «Risk It All»", "r": "Bruno", "alt": "", "d": 1},{"l": "C", "tp": "comença", "q": "«___' Texas», la cançó amb més setmanes al núm. 1 del 2026 (10), d'Ella Langley", "r": "Choosin", "alt": "Choosing", "d": 2},{"l": "D", "tp": "comença", "q": "Cançó de Bad Bunny: les sigles del seu àlbum, primer en castellà a guanyar el Grammy a Àlbum de l'Any", "r": "DTMF", "alt": "", "d": 1},{"l": "H", "tp": "comença", "q": "Grup virtual de «Golden», de la pel·lícula K-pop Demon Hunters", "r": "Huntrix", "alt": "Huntr/x", "d": 2},{"l": "J", "tp": "comença", "q": "«___ STFU», el 14è núm. 1 de Drake, amb què supera Michael Jackson", "r": "Janice", "alt": "", "d": 3},{"l": "M", "tp": "comença", "q": "Nom de pila de Carey, que cada Nadal torna al núm. 1 amb «All I Want for Christmas Is You»", "r": "Mariah", "alt": "", "d": 1},{"l": "O", "tp": "comença", "q": "«The Fate of ___», la cançó de Taylor Swift que supera «Anti-Hero» com el seu núm. 1 més llarg", "r": "Ophelia", "alt": "", "d": 1},{"l": "R", "tp": "comença", "q": "«___ It All», un dels dos núm. 1 de Bruno Mars del 2026", "r": "Risk", "alt": "", "d": 2},{"l": "S", "tp": "comença", "q": "Cançó de BTS núm. 1 a l'abril, del seu àlbum «Arirang»", "r": "Swim", "alt": "", "d": 2}]};
+const RO={qs:[],st:[],cur:0,t:180,tid:null,grup:''};
+function _ronorm(s){return s.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'')}
+async function startRosco(grup){
+  RO.grup=grup;let qs=null;
+  try{const rows=await sbS('rosco_questions',`grup=eq.${grup}&actiu=eq.true`,'lletra.asc',40);
+    if(rows&&rows.length>=20)qs=rows.map(r=>({l:r.lletra,tp:r.tipus,q:r.pregunta,r:r.resposta,alt:r.alt_respostes||'',d:r.dificultat||2}));}catch(e){}
+  RO.qs=qs||ROSCO_DATA[grup];if(!RO.qs){toast('Rosco no disponible');return}
+  RO.st=RO.qs.map(()=>'pend');RO.cur=0;RO.t=180;
+  const _ron={txarango:'Txarango',hits2026_ca:'Èxits 2026 · CAT',hits2026_es:'Èxits 2026 · ES',hits2026_eu:'Èxits 2026 · EU',hits2026_int:'Èxits 2026 · INT'};document.getElementById('ro-grup').textContent=_ron[grup]||grup;
+  roscoCircle();roscoShow();go('s-rosco');
+  clearInterval(RO.tid);RO.tid=setInterval(()=>{RO.t--;roscoTimer();if(RO.t<=0)roscoEnd()},1000);roscoTimer();
+  telTrackEvent&&telTrackEvent('rosco_start',{grup});}
+function roscoTimer(){const m=Math.floor(RO.t/60),s=RO.t%60;const el=document.getElementById('ro-timer');el.textContent=`${m}:${s.toString().padStart(2,'0')}`;el.style.color=RO.t<=30?'#ef4444':'var(--gold)'}
+function roscoCircle(){const n=RO.qs.length,R2=132,cx=150,cy=150;
+  document.getElementById('ro-circle').innerHTML=RO.qs.map((q,i)=>{
+    const a=(i/n)*2*Math.PI-Math.PI/2,x=cx+R2*Math.cos(a)-15,y=cy+R2*Math.sin(a)-15;
+    const st=RO.st[i];const c=st==='ok'?'#22c55e':st==='fail'?'#ef4444':st==='pasa'?'#f59e0b':i===RO.cur?'var(--gold)':'rgba(255,255,255,.14)';
+    const tc=st==='pend'&&i!==RO.cur?'var(--text)':'#1a1a2e';
+    return `<div style="position:absolute;left:${x}px;top:${y}px;width:30px;height:30px;border-radius:50%;background:${c};color:${tc};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.82rem;${i===RO.cur?'box-shadow:0 0 0 3px rgba(212,160,23,.4);transform:scale(1.18);':''}transition:all .2s">${q.l}</div>`}).join('')}
+function roscoShow(){const q=RO.qs[RO.cur];document.getElementById('ro-tipus').textContent=(q.tp==='conte'?'Conté la ':'Comença per ')+q.l;document.getElementById('ro-q').textContent=q.q;const inp=document.getElementById('ro-input');inp.value='';inp.focus();roscoCircle()}
+function roscoNext(){const n=RO.qs.length;for(let k=1;k<=n;k++){const j=(RO.cur+k)%n;if(RO.st[j]==='pend'||RO.st[j]==='pasa'){RO.cur=j;roscoShow();return}}roscoEnd()}
+function roscoCheck(){const q=RO.qs[RO.cur];const v=_ronorm(document.getElementById('ro-input').value);if(!v)return;
+  const ok=v===_ronorm(q.r)||(q.alt&&q.alt.split('|').some(a=>_ronorm(a)===v));
+  RO.st[RO.cur]=ok?'ok':'fail';if(ok){soundCorrect&&soundCorrect();confettiBurst(25);vib(40)}else{soundWrong&&soundWrong();vib([60,50,60]);toast(`❌ Era: ${q.r}`)}
+  roscoNext()}
+function roscoPass(){RO.st[RO.cur]=RO.st[RO.cur]==='pend'?'pasa':RO.st[RO.cur];vib(20);roscoNext()}
+function roscoQuit(){clearInterval(RO.tid);go('s-menu')}
+function roscoEnd(){clearInterval(RO.tid);const ok=RO.st.filter(s=>s==='ok').length,fail=RO.st.filter(s=>s==='fail').length;
+  const k=`cn:rosco:${RO.grup}`;const best=parseInt(localStorage.getItem(k)||'0');if(ok>best)localStorage.setItem(k,ok);
+  if(ok>=20){confettiBurst(120);notaShow('Rosco èpic!','🏆')}
+  const t180=180-RO.t;
+  alert(`🔤 ROSCO COMPLETAT\n\n✅ Encerts: ${ok}/${RO.qs.length}\n❌ Errades: ${fail}\n⏱️ Temps: ${Math.floor(t180/60)}:${(t180%60).toString().padStart(2,'0')}\n🏅 Rècord personal: ${Math.max(ok,best)}`);
+  telTrackEvent&&telTrackEvent('rosco_end',{grup:RO.grup,ok,fail});go('s-menu')}
+/* === Lògica mode Mundials === */
+function startMundials(){
+  WC_SONGS=WC_SEED.filter(s=>s.dzId);  // només les que ja tenen dzId
+  if(WC_SONGS.length<4){toast("🏆 Mode a punt! Falta importar els dzID des del BigHelper (mín. 4 cançons).");return}
+  WCG.i=0;WCG.score=0;WCG.active=true;WCG.order=shuffle([...WC_SONGS]);
+  document.getElementById('wc-score').textContent='0';
+  go('s-mundials');wcRound();
+  telTrackEvent&&telTrackEvent('mundials_start',{n:WC_SONGS.length});
+}
+function wcRound(){
+  if(WCG.i>=WCG.order.length||WCG.i>=10){wcEnd();return}
+  const song=WCG.order[WCG.i];WCG.song=song;
+  // Pista visual: mascota (emoji) + amfitrió + any
+  document.getElementById('wc-emoji').textContent=song.emoji||'🏆';
+  document.getElementById('wc-meta').textContent=`${song.host} · ${song.y}`;
+  // reproductor Deezer (mateix patró fiable que el joc principal: getDzPreview JSONP)
+  const pl=document.getElementById('wc-player');
+  pl.innerHTML=`<div class="muted" style="font-size:.8rem">⏳ Carregant àudio...</div>`;
+  getDzPreview(song.dzId).then(url=>{
+    if(url){pl.innerHTML=`<audio id="wc-audio" controls autoplay src="${url}"></audio>`;}
+    else{pl.innerHTML=`<div class="muted" style="font-size:.8rem">⚠️ Sense preview disponible</div>`;}
+  });
+  // 4 opcions: la bona + 3 distractors d'altres anys
+  const others=shuffle(WC_SONGS.filter(s=>s.t!==song.t)).slice(0,3);
+  const opts=shuffle([song,...others]);
+  document.getElementById('wc-opts').innerHTML=opts.map(o=>
+    `<button class="btn btn-ghost" style="text-align:left" onclick="wcGuess('${o.t.replace(/'/g,"\\'")}',this)">${o.t} <span class="muted" style="font-size:.72rem">· ${o.a}</span></button>`).join('');
+  document.getElementById('wc-progress').textContent=`Cançó ${WCG.i+1} de ${Math.min(WCG.order.length,10)}`;
+}
+function wcGuess(title,btn){
+  if(!WCG.active)return;
+  const ok=title===WCG.song.t;
+  document.querySelectorAll('#wc-opts button').forEach(b=>b.disabled=true);
+  if(ok){WCG.score+=100;document.getElementById('wc-score').textContent=WCG.score;btn.style.background='rgba(34,197,94,.25)';confettiBurst(40);vib(40);}
+  else{btn.style.background='rgba(239,68,68,.25)';vib([60,50,60]);
+    document.querySelectorAll('#wc-opts button').forEach(b=>{if(b.textContent.startsWith(WCG.song.t))b.style.background='rgba(34,197,94,.25)'});}
+  WCG.i++;setTimeout(wcRound,1400);
+}
+function wcEnd(){WCG.active=false;const a=document.getElementById('wc-audio');if(a)a.pause();
+  alert(`🏆 FINAL!\n\nPuntuació: ${WCG.score}\nEncerts: ${WCG.score/100} de ${Math.min(WCG.order.length,10)}`);
+  telTrackEvent&&telTrackEvent('mundials_end',{score:WCG.score});go('s-menu');}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+/* === Confetti lleuger (sense llibreries) === */
+function confettiBurst(n){if(_rm())return;const cv=document.getElementById('cn-confetti');if(!cv)return;const ctx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;const C=['#d4a017','#a855f7','#22c55e','#ef4444','#3b82f6','#f59e0b'];const P=Array.from({length:n||50},()=>({x:innerWidth/2+(Math.random()-0.5)*120,y:innerHeight*0.35,vx:(Math.random()-0.5)*7,vy:-Math.random()*7-3,r:Math.random()*5+3,c:C[Math.random()*C.length|0],a:1,rot:Math.random()*6}));let t0=performance.now();function f(t){const dt=Math.min((t-t0)/16,3);t0=t;ctx.clearRect(0,0,cv.width,cv.height);let alive=false;P.forEach(p=>{p.vy+=0.18*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.a-=0.012*dt;p.rot+=0.1*dt;if(p.a>0){alive=true;ctx.save();ctx.globalAlpha=p.a;ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*0.6);ctx.restore()}});if(alive)requestAnimationFrame(f);else ctx.clearRect(0,0,cv.width,cv.height)}requestAnimationFrame(f)}
+/* === Count-up de puntuació === */
+function countUp(el,target,dur){if(_rm()){el.textContent=target.toLocaleString();return}const t0=performance.now();function f(t){const p=Math.min((t-t0)/(dur||900),1);const e=1-Math.pow(1-p,3);el.textContent=Math.round(target*e).toLocaleString();if(p<1)requestAnimationFrame(f)}requestAnimationFrame(f)}
+/* === Mascota la Nota === */
+let _notaT=null;
+function notaShow(msg,emoji){const m=document.getElementById('nota-mascota');if(!m)return;m.querySelector('.nota-body').textContent=emoji||'🎵';document.getElementById('nota-msg').textContent=msg;m.classList.remove('show');void m.offsetWidth;m.classList.add('show');clearTimeout(_notaT);_notaT=setTimeout(()=>m.classList.remove('show'),2600)}
+function vib(p){try{navigator.vibrate&&!_rm()&&navigator.vibrate(p)}catch(e){}}
+function _goRaw(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id!=='s-splash')soundNav();if(id==='s-rankings'){loadRankings();telTrackEvent('view_rankings',{lang:G.lang});}if(id==='s-bustia'){loadBustia();telTrackEvent('open_bustia',{lang:G.lang});}if(id==='s-copa'){loadCopa();}if(id==='s-challenge-accept'){notaShow('Tens un repte!','🥊');}}
 
 function pickZone(btn){document.querySelectorAll('#zone-grid .zone-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selZone=btn.dataset.z}
 function pickGender(btn){document.querySelectorAll('[data-g]').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selGender=btn.dataset.g}
@@ -1919,12 +2087,12 @@ function onCorrect(){if(!G.active)return;G.active=false;stopAll();let pts;if(G.a
     const riskBonus=Math.round(pts*0.5);pts+=riskBonus;
     toast(`🔥 Arriscat! +${riskBonus} pts bonus`)
   }
-  G.score+=pts;G.results[G.lvl-1]='ok';telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'ok');trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();
+  G.score+=pts;G.results[G.lvl-1]='ok';confettiBurst(G.lvl>=7?80:45);vib(40);telTrackRound(G.lvl-1,G.song?.id,'ok',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'ok');trackArtist(G.nick,G.zone,G.lang,G.song.a);renderHUD();
   // Bonus pregunta al nivell 7
   if(G.lvl===7&&!G.answerIsBonus){setTimeout(()=>showBonusQuestion(),1300);}
   else{setTimeout(()=>nextLvl(),1800);}
 }
-function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'fail');toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
+function onWrong(){if(!G.active)return;G.active=false;stopAll();soundWrong();vib([60,50,60]);G.lives--;G.results[G.lvl-1]='fail';telTrackRound(G.lvl-1,G.song?.id,'fail',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'fail');toast(`${T[G.lang].wrong} ${G.song.t} — ${G.song.a}`);renderHUD();setTimeout(()=>nextLvl(),2200)}
 function onSkip(){if(!G.active)return;if(G.mode==='challenge'&&G.challengeMods?.blockSkip){toast('🚫 Aquest repte bloqueja saltar cançons!');return}if(G.lives<=1&&!confirm('Perdràs l\'última vida. Segur?'))return;G.active=false;stopAll();G.lives--;G.results[G.lvl-1]='skip';telTrackRound(G.lvl-1,G.song?.id,'skip',G.tMax-G.tLeft);trackSongStat(G.song?.id,G.lang,'skip');toast(`${T[G.lang].skipped} ${G.song.t}`);renderHUD();setTimeout(()=>nextLvl(),1800)}
 function nextLvl(){if(G.lives<=0||G.lvl>=10){endGame();return}soundLevelUp();G.lvl++;G.songIdx=(G.songIdx+1)%G.songList.length;G.song=G.songList[G.songIdx];G.active=true;startLevel()}
 function onExit(){
@@ -2068,8 +2236,8 @@ async function endGame(){
   loadGameOverRanking();
   if(G.mode==='challenge'){if(currentChallenge?.isCreator)await saveChallengeCreator();else await saveChallengeRival();return}
   const t=T[G.lang],ok=G.results.filter(r=>r==='ok').length,gameNum=Math.floor((Date.now()-new Date('2025-01-01').getTime())/(1000*60*60*24)),streak=getStreak();
-  document.getElementById('go-emoji').textContent=ok>=9?'🏆':ok>=6?'🎵':'😅';document.getElementById('go-title').textContent=ok===10?t.perfect:ok>=7?t.vgood:t.ggame;document.getElementById('go-sub').textContent=`${ok}/10 ${t.guessed}`;document.getElementById('go-pts').textContent=G.score.toLocaleString();document.getElementById('go-lvltxt').textContent=ok===10?t.allLvl:`${t.upToLvl} ${G.lvl}/10`;
-  document.getElementById('go-res').innerHTML=G.results.map((r,i)=>{const ico=r==='ok'?'✅':r==='skip'?'⏭️':'❌';const song=G.songList[i]||G.songList[G.songList.length-1];return`<div class="res-row"><span>${ico} ${i+1}. ${esc(t.lvls[i].n)}</span><span class="muted" style="font-size:.76rem">${esc(song.t)}</span></div>`}).join('');
+  document.getElementById('go-emoji').textContent=ok>=9?'🏆':ok>=6?'🎵':'😅';document.getElementById('go-title').textContent=ok===10?t.perfect:ok>=7?t.vgood:t.ggame;document.getElementById('go-sub').textContent=`${ok}/10 ${t.guessed}`;countUp(document.getElementById('go-pts'),G.score);document.getElementById('go-lvltxt').textContent=ok===10?t.allLvl:`${t.upToLvl} ${G.lvl}/10`;
+  document.getElementById('go-res').innerHTML=G.results.map((r,i)=>{const ico=r==='ok'?'✅':r==='skip'?'⏭️':'❌';const song=G.songList[i]||G.songList[G.songList.length-1];return`<div class="res-row"><span>${ico} ${i+1}. ${esc(t.lvls[i].n)}</span><span class="muted" style="font-size:.76rem">${esc(song.t)} <button onclick="openReport(${i})" title="Informa d'un problema" style="background:none;border:none;cursor:pointer;font-size:.85rem;padding:0 2px;opacity:.55">🚩</button></span></div>`}).join('');
   const _dzW=document.getElementById('go-deezer-wrap');if(_dzW&&G.mode==='free'){_dzW.style.display='block';const _ls=G.songList[G.songIdx]||G.song;if(_ls?.dzId&&_ls.dzId!==0)document.getElementById('go-deezer-link').href=`https://www.deezer.com/track/${_ls.dzId}`;document.getElementById('go-deezer-songs').innerHTML=G.songList.slice(0,10).filter(s=>s?.dzId&&s.dzId!==0).map(s=>`<a href="https://www.deezer.com/track/${s.dzId}" target="_blank" rel="noopener" style="color:#1ac37c;text-decoration:none;margin:2px 4px;display:inline-block">♪ ${esc(s.t)}</a>`).join('');}else if(_dzW)_dzW.style.display='none';document.getElementById('sh-date').textContent=`#${gameNum}`;document.getElementById('sh-dots').textContent=G.results.map(r=>r==='ok'?'🟩':r==='skip'?'🟨':'🟥').join('');document.getElementById('sh-score').textContent=G.score.toLocaleString();document.getElementById('sh-zone').textContent=G.zone;if(document.getElementById('sh-rank'))document.getElementById('sh-rank').textContent=getRank(G.lang).short;
   // Posició al rànquing diari (mode diari)
   const _posEl=document.getElementById('sh-pos');
@@ -2965,7 +3133,7 @@ function onLegalBack(){
 
 function getNotes(){try{return parseInt(localStorage.getItem('cn:notes')||'0')}catch(e){return 0}}
 function setNotes(n){try{localStorage.setItem('cn:notes',String(Math.max(0,n)))}catch(e){}}
-function addNotes(n){setNotes(getNotes()+n);renderNotesWidget();}
+function addNotes(n){setNotes(getNotes()+n);renderNotesWidget();if(n>=5)notaShow('+'+n+' Notes!','🎵');}
 function spendNotes(n){const cur=getNotes();if(cur<n)return false;setNotes(cur-n);renderNotesWidget();return true}
 
 function renderNotesWidget(){
@@ -4250,5 +4418,30 @@ function skipBonus(){
   nextLvl();
 }
 </script>
+
+<!-- Modal report cançó -->
+<div id="modal-report" class="modal hide" onclick="if(event.target===this)this.classList.add('hide')">
+  <div class="modal-card" style="max-width:420px">
+    <div style="font-size:1.25rem;font-weight:900;margin-bottom:2px">🚩 Informar d'un problema</div>
+    <div class="muted" id="rep-song" style="font-size:.82rem;margin-bottom:12px"></div>
+    <div id="rep-opts" style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">
+      <label class="rep-opt"><input type="radio" name="repmotiu" value="so"> 🔇 No sona o hi ha un error de so</label>
+      <label class="rep-opt"><input type="radio" name="repmotiu" value="versio"> 🎭 Versió incorrecta (directe, karaoke, cover, remix)</label>
+      <label class="rep-opt"><input type="radio" name="repmotiu" value="any"> 📅 L'any no és correcte</label>
+      <label class="rep-opt"><input type="radio" name="repmotiu" value="dades"> ✏️ El títol o l'artista estan malament</label>
+      <label class="rep-opt"><input type="radio" name="repmotiu" value="idioma"> 🌍 No encaixa amb aquest idioma o mode</label>
+      <label class="rep-opt"><input type="radio" name="repmotiu" value="altre"> 💬 Una altra cosa</label>
+    </div>
+    <textarea id="rep-text" placeholder="Explica-ho amb més detall (opcional)..." style="width:100%;min-height:70px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:10px;color:var(--text);padding:10px;font-size:.85rem;font-family:inherit;resize:vertical"></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-ghost" style="flex:1" onclick="document.getElementById('modal-report').classList.add('hide')">Cancel·lar</button>
+      <button class="btn btn-gold" style="flex:1" id="rep-send" onclick="sendReport()">📤 Enviar</button>
+    </div>
+  </div>
+</div>
+<style>.rep-opt{display:flex;align-items:center;gap:8px;font-size:.84rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 11px;cursor:pointer}.rep-opt:has(input:checked){border-color:var(--gold);background:rgba(212,160,23,.1)}.rep-opt input{accent-color:var(--gold)}</style>
+
+<canvas id="cn-confetti"></canvas>
+<div id="nota-mascota"><div class="nota-body">🎵</div><div class="nota-msg" id="nota-msg"></div></div>
 </body>
 </html>
