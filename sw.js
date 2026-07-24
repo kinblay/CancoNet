@@ -1,4 +1,4 @@
-const CACHE = 'canconet-v54'; // v54: fix any undefined (nivell 3 guess-year + bonus decada)
+const CACHE = 'canconet-v55'; // v55: força update a la build 438K (Rosco/Mundials/Dècades + telemetria)
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
