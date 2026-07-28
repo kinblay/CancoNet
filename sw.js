@@ -1,4 +1,4 @@
-const CACHE = 'canconet-v56'; // v56: reorg de modes del menú (Copa a properament, sense Mundials, roscos reestilats)
+const CACHE = 'canconet-v57'; // v57: les peticions a Supabase van amb el token de l'usuari + renovació de sessió
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
