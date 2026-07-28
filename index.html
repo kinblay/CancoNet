@@ -558,7 +558,42 @@ label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1px
 <script>
 const SB_URL='https://ikfouhxdtkptafglthmd.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrZm91aHhkdGtwdGFmZ2x0aG1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMjY5MTksImV4cCI6MjA5MTYwMjkxOX0.j1GM0Ec2w_gDlRMHAoOk6LUdgX5YUYXpXp9ULX0kkJQ';
-const SBH={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+const SB_AUTH_KEY=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;
+
+// Sessió guardada al localStorage (la desa verifyOtp / handleAuthCallback)
+function sbSession(){try{return JSON.parse(localStorage.getItem(SB_AUTH_KEY)||'null')}catch(e){return null}}
+
+// Token de l'usuari si encara és vàlid (marge d'1 minut). Si no, null.
+function sbToken(){const s=sbSession();if(s&&s.access_token&&s.expires_at&&s.expires_at>Date.now()+60000)return s.access_token;return null}
+
+// Renova el token abans no caduqui. Es crida a l'arrencada.
+async function sbRefreshSession(){
+  const s=sbSession();
+  if(!s||!s.refresh_token)return false;
+  // Encara queda prou vida (>10 min): no cal renovar
+  if(s.expires_at&&s.expires_at>Date.now()+600000)return true;
+  try{
+    const r=await fetch(`${SB_URL}/auth/v1/token?grant_type=refresh_token`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SB_KEY},
+      body:JSON.stringify({refresh_token:s.refresh_token})
+    });
+    if(!r.ok){if(r.status===400||r.status===401)localStorage.removeItem(SB_AUTH_KEY);return false}
+    const d=await r.json();
+    if(!d.access_token)return false;
+    localStorage.setItem(SB_AUTH_KEY,JSON.stringify({
+      access_token:d.access_token,
+      refresh_token:d.refresh_token||s.refresh_token,
+      expires_at:Date.now()+((d.expires_in||3600)*1000)
+    }));
+    return true;
+  }catch(e){return false}
+}
+
+// Capçaleres de Supabase. Authorization és un getter: cada petició agafa el
+// token de l'usuari si n'hi ha, i si no cau a la clau anònima (comportament
+// anterior). Així les polítiques RLS poden fer servir auth.uid().
+const SBH={'Content-Type':'application/json','apikey':SB_KEY,get Authorization(){return 'Bearer '+(sbToken()||SB_KEY)}};
 async function sbI(table,row){try{const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{...SBH,'Prefer':'return=minimal'},body:JSON.stringify(row)});return r.ok}catch(e){return false}}
 async function sbS(table,f='',o='score.desc',l=20){try{const r=await fetch(`${SB_URL}/rest/v1/${table}?${f}&order=${o}&limit=${Math.min(l,100)}`,{headers:SBH});if(!r.ok)return null;return await r.json()}catch(e){return null}}
 let _repSong=null;
@@ -608,14 +643,15 @@ async function verifyOtp(email,token){
     const data=await r.json().catch(()=>({}));
     if(!r.ok)return{ok:false,msg:data.msg||data.message||data.error_description||'Codi invàlid o caducat'};
     if(data.access_token){
-      const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;
-      localStorage.setItem(key,JSON.stringify({access_token:data.access_token,refresh_token:data.refresh_token,expires_at:Date.now()+2592000000}));
+      // expires_in ve en segons (per defecte 3600). Abans es desava com si
+      // el token durés 30 dies, i quedava marcat com a vàlid tot i haver caducat.
+      localStorage.setItem(SB_AUTH_KEY,JSON.stringify({access_token:data.access_token,refresh_token:data.refresh_token,expires_at:Date.now()+((data.expires_in||3600)*1000)}));
       return{ok:true,session:data};
     }
     return{ok:false,msg:'Resposta inesperada'};
   }catch(e){return{ok:false,msg:'Error de connexió'}}
 }
-async function handleAuthCallback(){const hash=window.location.hash;if(!hash.includes('access_token'))return false;try{const p=new URLSearchParams(hash.slice(1));const a=p.get('access_token'),rf=p.get('refresh_token');if(!a)return false;const key=`sb-${SB_URL.split('//')[1].split('.')[0]}-auth-token`;localStorage.setItem(key,JSON.stringify({access_token:a,refresh_token:rf,expires_at:Date.now()+3600000}));window.history.replaceState(null,'',window.location.pathname);return true}catch(e){return false}}
+async function handleAuthCallback(){const hash=window.location.hash;if(!hash.includes('access_token'))return false;try{const p=new URLSearchParams(hash.slice(1));const a=p.get('access_token'),rf=p.get('refresh_token');if(!a)return false;const ei=parseInt(p.get('expires_in')||'3600',10);localStorage.setItem(SB_AUTH_KEY,JSON.stringify({access_token:a,refresh_token:rf,expires_at:Date.now()+(ei*1000)}));window.history.replaceState(null,'',window.location.pathname);return true}catch(e){return false}}
 async function loadUserProfile(user){
   // 1. Intenta carregar de Supabase (funciona entre dispositius)
   try{
@@ -2911,6 +2947,10 @@ window.addEventListener('load',()=>setTimeout(appInit,100));
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('modal-wip').addEventListener('click',function(e){if(e.target===this)closeWip()});
   initDebugMode();
+  // Manté viva la sessió: sense això el token caduca a l'hora i les peticions
+  // tornarien a sortir com a anònimes.
+  sbRefreshSession();
+  setInterval(sbRefreshSession,600000);
 });
 </script>
 
