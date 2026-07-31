@@ -1,4 +1,4 @@
-const CACHE = 'canconet-v57'; // v57: les peticions a Supabase van amb el token de l'usuari + renovació de sessió
+const CACHE = 'canconet-v58'; // v58: catàleg regenerat des del full mestre (+19 cançons, sense dades mortes) i arreglat el nivell de l'any
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
