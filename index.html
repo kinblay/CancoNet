@@ -2165,7 +2165,9 @@ function getAnswerMode(lvl,song){
   return{mode,isBonus:lvl%3===0};
 }
 function getWrongTitles(c,pool){return seededShuffle(pool.filter(s=>norm(s.t)!==norm(c.t)),Math.floor(Math.random()*9999)).slice(0,2).map(s=>s.t)}
-function getWrongYears(y,lvl){const d=lvl>=7?3:lvl>=4?6:12;const o=new Set([y]);let tries=0;while(o.size<3&&tries<50){tries++;const off=Math.floor(Math.random()*d+1)*(Math.random()<.5?1:-1);const yr=y+off;if(yr>1960&&yr<=2025)o.add(yr)}return[...o].sort(()=>Math.random()-.5)}
+// El sostre es calcula sol: amb un limit fix, les cancons de l'any en curs
+// nomes admetien anys erronis per sota i la correcta era sempre la mes alta.
+function getWrongYears(y,lvl){const d=lvl>=7?3:lvl>=4?6:12;const yMax=new Date().getFullYear()+1;const o=new Set([y]);let tries=0;while(o.size<3&&tries<50){tries++;const off=Math.floor(Math.random()*d+1)*(Math.random()<.5?1:-1);const yr=y+off;if(yr>1960&&yr<=yMax)o.add(yr)}return[...o].sort(()=>Math.random()-.5)}
 function getWrongAuthors(a,pool){const ca=a.split(/[&/,]|feat\./i).map(x=>x.trim().toLowerCase());return seededShuffle(pool.filter(s=>!s.a.split(/[&/,]|feat\./i).map(x=>x.trim().toLowerCase()).some(x=>ca.includes(x))),Math.floor(Math.random()*9999)).slice(0,2).map(s=>s.a)}
 
 function setupAnswerMode(lvl,song,pool){
