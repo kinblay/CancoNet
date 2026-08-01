@@ -1,0 +1,7 @@
+# Python (les eines de tools/)
+__pycache__/
+*.pyc
+
+# sistema
+.DS_Store
+Thumbs.db
