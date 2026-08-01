@@ -4462,6 +4462,10 @@ function showBonusQuestion(){
     correct=`Anys ${dec}`;
   }
 
+  // Les opcions viuen a l'estat i l'onclick només passa l'índex: així cap text
+  // amb cometes (Lax'n'Busto, Royce da 5'9") no trenca el handler.
+  G._bonusOpts=options;G._bonusCorrect=correct;
+
   const html=`
   <div id="bonus-q-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:6000;display:flex;align-items:center;justify-content:center;padding:20px">
     <div style="background:#0f0f1a;border:1.5px solid rgba(212,160,23,.4);border-radius:20px;padding:24px 20px;width:100%;max-width:380px;animation:slideUp .3s ease-out both">
@@ -4479,7 +4483,7 @@ function showBonusQuestion(){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px" id="bq-opts">
         ${options.map((o,i)=>`<button
           id="bq-btn-${i}"
-          onclick="answerBonus(${i},'${esc(o).replace(/'/g,"\\'")}','${esc(correct).replace(/'/g,"\\'")}',${options.length})"
+          onclick="answerBonus(${i})"
           style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 8px;font-size:.88rem;cursor:pointer;font-weight:600;transition:all .2s">
           ${esc(o)}
         </button>`).join('')}
@@ -4501,17 +4505,18 @@ function showBonusQuestion(){
   },1000);
 }
 
-function answerBonus(idx,chosen,correct,total){
+function answerBonus(idx){
   if(G._bonusTimer)clearInterval(G._bonusTimer);
+  const opts=G._bonusOpts||[],correct=G._bonusCorrect,chosen=opts[idx];
   // Desactiva botons i mostra resultat
-  for(let i=0;i<total;i++){
+  for(let i=0;i<opts.length;i++){
     const b=document.getElementById(`bq-btn-${i}`);
     if(!b)continue;
     b.disabled=true;
-    if(b.textContent.trim()===correct.trim()){
+    if(opts[i]===correct){
       b.style.background='rgba(34,197,94,.2)';
       b.style.border='1.5px solid rgba(34,197,94,.5)';
-    } else if(b.textContent.trim()===chosen.trim()&&chosen!==correct){
+    } else if(i===idx){
       b.style.background='rgba(239,68,68,.2)';
       b.style.border='1.5px solid rgba(239,68,68,.5)';
     }
