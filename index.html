@@ -1770,7 +1770,7 @@ function initSplash(){addFloatingNotes();document.getElementById('s-splash').add
 const WIP_DATA={copa:{title:'🏆 Copa Setmanal',sub:'Un rànquing global que es reinicia cada dilluns. Comença de zero i escala fins al podi competint amb tota la comunitat.',features:['🔄 El marcador torna a zero cada dilluns','🌍 Rànquing global de tota la comunitat','🥇 Puja al podi setmanal','🎯 Suma punts jugant qualsevol mode','⚡ Sense pagar: el rànquing no es compra mai'],note:'En preparació: acabant el sistema de puntuació setmanal i el podi.'},cronologia:{
   title:'🕰️ Línia del Temps',
   sub:"Sona una cançó i l'has de col·locar al lloc correcte de la teva línia temporal: abans, després o entre les que ja has encertat.",
-  features:['🎵 Escolta i col·loca la cançó cronològicament','📈 Cada encert allarga la teva línia','❤️ 3 vides — un error de dècada i en perds una','🏆 Rècord personal: quina línia més llarga pots fer?','👥 Ideal per jugar en grup passant el mòbil','🎯 Amb tot el catàleg de 770+ cançons'],
+  features:['🎵 Escolta i col·loca la cançó cronològicament','📈 Cada encert allarga la teva línia','❤️ 3 vides — un error de dècada i en perds una','🏆 Rècord personal: quina línia més llarga pots fer?','👥 Ideal per jugar en grup passant el mòbil',`🎯 Amb tot el catàleg de ${Object.values(SONGS_BY_LANG).reduce((a,b)=>a+b.length,0)} cançons`],
   note:"Inspirat en la mecànica de Hitster. En construcció amb el catàleg nou."
 },intros:{
   title:"⚡ Batalla d'Intros",
