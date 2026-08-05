@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import songlib
 
 R7 = "canconet_base_idiomes_r7.xlsx"
-CSV_COLS = ["id", "dzId", "t", "a", "y", "g", "ai", "dec", "st"]
+CSV_COLS = ["id", "dzId", "t", "a", "y", "g", "ai", "dec", "st", "u"]
 
 
 def quarantine_ids():
@@ -75,6 +75,8 @@ def to_song(row):
         "ai": (row.get("ai") or "").strip(),
         "dec": (row.get("dec") or "").strip(),
         "st": (row.get("st") or "").strip(),
+        # nivell de desbloqueig: el calcula assign_unlock_levels abans d'arribar aqui
+        "u": songlib.clean_int(row.get("u")) or 1,
     }
     # la decada surt sempre de l'any, per no tenir dues etiquetes per a la mateixa cosa
     song["dec"] = songlib.decade_label(song["y"]) if song["y"] else ""
@@ -133,6 +135,9 @@ def main():
     args = parser.parse_args()
 
     catalog = read_master()
+    # reparteix les cancons per nivell (rondes per artista, per popularitat)
+    for lang in songlib.LANGS:
+        songlib.assign_unlock_levels(catalog[lang])
     errors, warnings = validate(catalog, quarantine_ids())
 
     print("=== VALIDACIO ===")
@@ -142,6 +147,16 @@ def main():
         with_style = sum(1 for row in rows if (row.get("st") or "").strip())
         print("  CAT_%-4s %4d cancons | amb any %4d | amb estil %4d" % (lang, len(rows), with_year, with_style))
     print("  TOTAL    %4d" % sum(len(catalog[lang]) for lang in songlib.LANGS))
+    print("")
+    print("=== CANCONS DISPONIBLES PER NIVELL (acumulat) ===")
+    print("  %-5s %s" % ("nivell", "  ".join("%4s" % lang for lang in songlib.LANGS)))
+    for level in range(1, 11):
+        sizes = [sum(1 for row in catalog[lang] if (row.get("u") or 1) <= level) for lang in songlib.LANGS]
+        print("  %-5d %s" % (level, "  ".join("%4d" % size for size in sizes)))
+    sense_pop = sum(1 for lang in songlib.LANGS for row in catalog[lang]
+                    if not songlib.clean_int(row.get("pop")))
+    if sense_pop:
+        print("  (%d cancons sense popularitat: es desbloquejaran de les ultimes)" % sense_pop)
     print("")
     print("  errors  : %d" % len(errors))
     for item in errors[:15]:

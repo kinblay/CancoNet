@@ -12,7 +12,16 @@ import re
 import unicodedata
 
 # Ordre en que s'escriuen els camps a index.html (l'ordre historic del fitxer).
-FIELD_ORDER = ["id", "dzId", "t", "a", "y", "g", "ai", "dec", "st"]
+# `u` = nivell a partir del qual la canco surt al mode lliure (1..10).
+FIELD_ORDER = ["id", "dzId", "t", "a", "y", "g", "ai", "dec", "st", "u"]
+
+# Camps que s'escriuen com a nombre, sense cometes.
+INT_FIELDS = ("id", "dzId", "y", "u")
+
+# Percentatge del cataleg de cada idioma disponible a cada nivell (1..10).
+UNLOCK_PCT = [30, 38, 46, 54, 62, 70, 79, 87, 94, 100]
+# Per sota d'aquest nombre de cancons no te sentit limitar res (no hi hauria varietat).
+UNLOCK_FLOOR = 40
 
 # Camps morts que ja no s'escriuen mai (vegeu README de tools/).
 DEAD_FIELDS = ("seg", "ytId")
@@ -218,7 +227,7 @@ def emit_object(song):
         val = song.get(key)
         if val is None or val == "":
             continue
-        if key in ("id", "dzId", "y"):
+        if key in INT_FIELDS:
             parts.append("%s:%d" % (key, int(val)))
         else:
             parts.append("%s:%s" % (key, js_string(val)))
@@ -264,6 +273,57 @@ def decade_label(year):
     if base < 2000:
         return "anys %d" % (base - 1900)
     return "anys %d" % base
+
+
+def unlock_order(rows):
+    """Ordena les cancons d'un idioma en RONDES PER ARTISTA.
+
+    Ronda 1: la canco mes coneguda de cada artista. Ronda 2: la segona de cada
+    artista. Etc. Dins de cada ronda, els artistes van ordenats per la
+    popularitat del seu millor tema.
+
+    Aixi cap artista no aporta una segona canco fins que tots han aportat la
+    primera: el jugador nou veu molts artistes diferents, no nomes els que en
+    tenen moltes al cataleg.
+
+    `rows` son dicts amb 'Artista' i 'pop'. Retorna la llista reordenada.
+    """
+    by_artist = {}
+    for row in rows:
+        by_artist.setdefault((row.get("Artista") or "").strip().lower(), []).append(row)
+
+    for songs in by_artist.values():
+        # dins de l'artista: de mes coneguda a menys (les que no tenen dada, al final)
+        songs.sort(key=lambda item: -(clean_int(item.get("pop")) or 0))
+
+    # els artistes, pel seu millor tema
+    artists = sorted(by_artist.values(),
+                     key=lambda songs: -(clean_int(songs[0].get("pop")) or 0))
+
+    ordered = []
+    for round_index in range(max(len(songs) for songs in artists) if artists else 0):
+        for songs in artists:
+            if round_index < len(songs):
+                ordered.append(songs[round_index])
+    return ordered
+
+
+def unlock_pool_size(total, level):
+    """Quantes cancons hi ha disponibles a `level` (1..10) per a un cataleg de `total`."""
+    if total <= UNLOCK_FLOOR:
+        return total
+    size = int(round(total * UNLOCK_PCT[level - 1] / 100.0))
+    return min(total, max(UNLOCK_FLOOR, size))
+
+
+def assign_unlock_levels(rows):
+    """Escriu la clau 'u' (1..10) a cada fila segons l'ordre de rondes per artista."""
+    ordered = unlock_order(rows)
+    total = len(ordered)
+    cuts = [unlock_pool_size(total, level) for level in range(1, 11)]
+    for position, row in enumerate(ordered):
+        row["u"] = next((level for level in range(1, 11) if position < cuts[level - 1]), 10)
+    return rows
 
 
 def clean_int(value):
