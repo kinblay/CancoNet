@@ -3601,7 +3601,7 @@ function renderGameAids(){
     extra_life:{name:'❤️ Vida',handler:'useAidExtraLife()',perGame:true},
     free_skip:{name:'⏭️ Saltar',handler:'useAidFreeSkip()',perGame:true},
     hint_letter:{name:'🔤 Lletra',handler:'useAidHintLetter()',perLevel:true},
-    hint_decade:{name:'📅 Dècada',handler:'useAidHintDecade()',perLevel:true},
+    hint_decade:{name:'📅 Dècada',handler:'useAidHintDecade()',perLevel:true,needsYear:true},
   };
 
   // Sempre mostrem els 4 botons. Si no tens stock → en gris i porta a la botiga
@@ -3609,6 +3609,14 @@ function renderGameAids(){
     const d=aidDefs[t];
     const stock=counts[t]||0;
     const used=(d.perGame&&G.usedAidsThisGame[t])||(d.perLevel&&G.usedAidsThisLevel[t]);
+    // Hi ha cançons sense any (i per tant sense dècada). No podem oferir la
+    // pista: es gastaria l'ajuda i el jugador veuria "Anys NaN".
+    const naSong=d.needsYear&&!G.song?.y;
+    if(naSong){
+      // En gris i sense enllaç a la botiga: no és que no en tinguis, és que
+      // aquesta cançó no la pot fer servir.
+      return `<button class="aid-btn" onclick="toast('📅 Aquesta cançó no té any registrat',2500)" style="opacity:.35">${d.name}</button>`;
+    }
     if(stock>0&&!used){
       // Disponible
       return `<button class="aid-btn" onclick="${d.handler}">${d.name} <span class="cost">${stock}×</span></button>`;
@@ -3660,6 +3668,9 @@ function useAidHintLetter(){
 function useAidHintDecade(){
   if(G.usedAidsThisLevel.hint_decade)return;
   if(!G.song)return;
+  // Sense any no hi ha dècada. Comprovem-ho ABANS de consumir l'ajuda:
+  // altrament el jugador la perdria i només veuria "Anys NaN".
+  if(!G.song.y){toast('📅 Aquesta cançó no té any registrat',2500);return}
   if(!consumePendingAid('hint_decade'))return;
   G.usedAidsThisLevel.hint_decade=true;
   const dec=Math.floor(G.song.y/10)*10;
